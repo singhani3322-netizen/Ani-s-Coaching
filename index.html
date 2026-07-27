@@ -12,11 +12,10 @@
   --accent:#00D4AA;--accent-dim:#00A88A;--accent-glow:rgba(0,212,170,0.15);
   --warn:#FFB020;--danger:#EF5350;
   --easy:#4CAF50;--moderate:#FF9800;--hard:#EF5350;
-  --upper:#B47CFF;--lower:#FF8A3D;--full:#FF6B9D;--cardio:#4DD0E1;
+  --upper:#B47CFF;--lower:#FF8A3D;--full:#FF6B9D;--cardio:#4DD0E1;--mobility:#26D9C1;
   --activity:#FFD700;--rest:#4A5261;
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;-webkit-font-smoothing:antialiased;letter-spacing:-0.01em}
-
 .loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.4s}
 .loader.hidden{opacity:0;pointer-events:none}
 .loader-title{font-size:32px;font-weight:800;letter-spacing:-0.04em;margin-bottom:4px;background:linear-gradient(135deg,#fff 0%,#9AA0A6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -24,7 +23,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .loader-bar{width:180px;height:2px;background:var(--surface-2);border-radius:2px;overflow:hidden}
 .loader-fill{width:0%;height:100%;background:var(--accent);animation:loadFill 1.2s ease-out forwards}
 @keyframes loadFill{to{width:100%}}
-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:14px 20px;color:var(--text);font-size:13px;font-weight:600;z-index:2000;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 8px 32px rgba(0,0,0,0.5);display:flex;align-items:center;gap:10px;max-width:92%;line-height:1.4}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast-icon{width:22px;height:22px;background:var(--accent);color:#001210;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:12px}
@@ -32,21 +30,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .toast.info .toast-icon{background:var(--upper);color:#3A0066}
 .toast.milestone{background:linear-gradient(135deg,var(--surface) 0%,#2A3241 100%);border-color:var(--accent)}
 .toast.milestone .toast-icon{background:#FFD700;color:#3A2600}
-
-.header{background:linear-gradient(180deg,#141920 0%,var(--bg) 100%);padding:22px 20px 14px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background-color:rgba(15,20,25,0.9)}
+.header{background:linear-gradient(180deg,#141920 0%,var(--bg) 100%);padding:22px 20px 14px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);background-color:rgba(15,20,25,0.9)}
 .header-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .header-title{font-size:22px;font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,#fff 0%,#9AA0A6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .header-tag{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.2em;font-weight:600;margin-top:2px;font-style:italic}
 .header-date{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;font-weight:600;text-align:right}
 .container{max-width:900px;margin:0 auto;padding:16px}
-
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
 .card-title{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.15em}
-.card-sub{font-size:11px;color:var(--text-faint);margin-top:3px}
 .card-action{font-size:12px;color:var(--accent);cursor:pointer;font-weight:600;background:transparent;border:none;font-family:inherit}
-.card-action:hover{color:var(--accent-dim)}
-
 .hero{background:linear-gradient(135deg,#1E2530 0%,#2A3241 100%);border:1px solid var(--border-2);border-radius:20px;padding:24px 22px;margin-bottom:14px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 60%);pointer-events:none}
 .hero.rest::before{background:radial-gradient(circle,rgba(92,158,255,0.12) 0%,transparent 60%)}
@@ -61,12 +54,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .hero.activity .hero-reason{border-left-color:var(--activity)}
 .hero-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;position:relative}
 @media(max-width:400px){.hero-buttons{grid-template-columns:1fr}}
-
-/* Info icon */
 .info-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--text-dim);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all 0.15s;font-family:inherit;padding:0;line-height:1}
 .info-btn:hover{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
 .info-btn.inline{font-size:9px;width:16px;height:16px;vertical-align:middle}
-
 .btn{padding:11px 14px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;letter-spacing:-0.01em;white-space:nowrap}
 .btn:active{transform:scale(0.97)}
 .btn-primary{background:var(--accent);color:#001210}
@@ -75,9 +65,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
 .btn-ghost:hover{color:var(--text);border-color:var(--border-2)}
 .btn-danger{background:rgba(239,83,80,0.15);color:var(--danger);border:1px solid rgba(239,83,80,0.3)}
+.btn-warn{background:rgba(255,176,32,0.15);color:var(--warn);border:1px solid rgba(255,176,32,0.3)}
 .btn-sm{padding:8px 12px;min-height:34px;font-size:12px}
 .btn-full{width:100%}
-
 .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
 .stat-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
 .stat-num{font-size:20px;font-weight:800;letter-spacing:-0.03em;line-height:1}
@@ -87,13 +77,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .dot-yellow{background:var(--warn);box-shadow:0 0 8px rgba(255,176,32,0.5)}
 .dot-red{background:var(--danger);box-shadow:0 0 8px rgba(239,83,80,0.5)}
 @media(max-width:480px){.stats-strip{grid-template-columns:repeat(2,1fr)}.stat-num{font-size:18px}}
-
 .week-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px}
 .week-title{font-size:15px;font-weight:700;letter-spacing:-0.01em}
 .week-subtitle{font-size:11px;color:var(--text-faint);margin-top:3px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600}
 .week-badge{display:inline-block;padding:3px 8px;background:var(--accent-glow);color:var(--accent);border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-left:6px;vertical-align:middle}
 .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-
 .day{aspect-ratio:0.7;border-radius:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s;background:var(--surface-2);border:1px solid transparent;color:var(--text-dim);position:relative;min-height:82px;text-align:center;overflow:hidden}
 .day:hover{border-color:var(--border-2);transform:translateY(-1px)}
 .day.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow)}
@@ -103,13 +91,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .day-num{font-size:13px;font-weight:800;letter-spacing:-0.02em;line-height:1}
 .day-type{font-size:9px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;line-height:1.1;padding:0 2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .day-amt{font-size:10px;font-weight:700;line-height:1;opacity:0.9}
-
 .day.done-easy{background:rgba(76,175,80,0.18);color:var(--easy);border-color:rgba(76,175,80,0.35)}
 .day.done-moderate{background:rgba(255,152,0,0.18);color:var(--moderate);border-color:rgba(255,152,0,0.35)}
 .day.done-hard{background:rgba(239,83,80,0.18);color:var(--hard);border-color:rgba(239,83,80,0.35)}
 .day.done-upper{background:rgba(180,124,255,0.2);color:var(--upper);border-color:rgba(180,124,255,0.4)}
 .day.done-lower{background:rgba(255,138,61,0.2);color:var(--lower);border-color:rgba(255,138,61,0.4)}
+.day.done-push{background:rgba(180,124,255,0.2);color:var(--upper);border-color:rgba(180,124,255,0.4)}
+.day.done-pull{background:rgba(180,124,255,0.2);color:var(--upper);border-color:rgba(180,124,255,0.4)}
+.day.done-legs{background:rgba(255,138,61,0.2);color:var(--lower);border-color:rgba(255,138,61,0.4)}
 .day.done-full{background:rgba(255,107,157,0.18);color:var(--full);border-color:rgba(255,107,157,0.35)}
+.day.done-mobility{background:rgba(38,217,193,0.18);color:var(--mobility);border-color:rgba(38,217,193,0.35)}
 .day.done-cardio{background:rgba(77,208,225,0.18);color:var(--cardio);border-color:rgba(77,208,225,0.35)}
 .day.done-activity{background:rgba(255,215,0,0.15);color:var(--activity);border-color:rgba(255,215,0,0.35)}
 .day.done-combined{background:linear-gradient(135deg,rgba(76,175,80,0.15),rgba(180,124,255,0.15));color:var(--text);border-color:var(--border-2)}
@@ -122,34 +113,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .day.planned.plan-hard{color:var(--hard);border-color:rgba(239,83,80,0.4)}
 .day.planned.plan-upper{color:var(--upper);border-color:rgba(180,124,255,0.45)}
 .day.planned.plan-lower{color:var(--lower);border-color:rgba(255,138,61,0.45)}
+.day.planned.plan-push{color:var(--upper);border-color:rgba(180,124,255,0.45)}
+.day.planned.plan-pull{color:var(--upper);border-color:rgba(180,124,255,0.45)}
+.day.planned.plan-legs{color:var(--lower);border-color:rgba(255,138,61,0.45)}
 .day.planned.plan-full{color:var(--full);border-color:rgba(255,107,157,0.4)}
+.day.planned.plan-mobility{color:var(--mobility);border-color:rgba(38,217,193,0.4)}
 .day.planned.plan-activity{color:var(--activity);border-color:rgba(255,215,0,0.4)}
+.day.planned.plan-combined{background:linear-gradient(135deg,rgba(76,175,80,0.06),rgba(180,124,255,0.06));border-color:var(--border-2);color:var(--text)}
 .day-work-marker{position:absolute;top:3px;left:4px;font-size:8px;opacity:0.5}
-
 .week-progress{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .wp-bars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .wp-mini{background:var(--surface-2);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--text-dim);display:flex;justify-content:space-between;align-items:center}
 .wp-mini strong{color:var(--text);font-weight:700}
 .wp-mini.done{background:rgba(76,175,80,0.1);color:var(--easy)}
 .wp-mini.done strong{color:var(--easy)}
-
 .week-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:10px;color:var(--text-faint)}
 .legend-item{display:flex;align-items:center;gap:6px}
 .legend-dot{width:8px;height:8px;border-radius:2px}
-
 .coach-note{background:linear-gradient(135deg,rgba(0,212,170,0.08) 0%,rgba(180,124,255,0.05) 100%);border:1px solid rgba(0,212,170,0.2);border-radius:14px;padding:14px 16px;margin-bottom:14px}
 .coach-note-label{font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:6px}
 .coach-note-text{font-size:14px;line-height:1.55;color:var(--text);font-style:italic}
 .coach-note-text strong{font-style:normal}
-
-/* Baseline improvement banner */
+.conflict-banner{background:linear-gradient(135deg,rgba(255,176,32,0.1),rgba(255,138,61,0.05));border:1px solid rgba(255,176,32,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.cb-icon{width:28px;height:28px;background:var(--warn);color:#3A2600;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+.cb-content{flex:1}
+.cb-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.cb-body{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
 .improvement-banner{background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(0,212,170,0.05));border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
 .imp-icon{width:28px;height:28px;background:#FFD700;color:#3A2600;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
 .imp-content{flex:1}
 .imp-title{font-size:13px;font-weight:700;margin-bottom:4px}
 .imp-body{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
-.imp-actions{display:flex;gap:6px;flex-wrap:wrap}
-
 .insight{padding:12px 14px;border-radius:10px;margin-bottom:8px;font-size:13px;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
 .insight-icon{font-size:12px;flex-shrink:0;font-weight:900;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%}
 .insight.info{background:rgba(92,158,255,0.08);border:1px solid rgba(92,158,255,0.2)}
@@ -161,7 +155,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .insight.danger{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.2)}
 .insight.danger .insight-icon{background:var(--danger);color:#3A0000}
 .insight strong{font-weight:700}
-
 .ring-container{display:flex;justify-content:center;align-items:center;margin:8px 0 14px}
 .ring{width:130px;height:130px;position:relative}
 .ring svg{transform:rotate(-90deg)}
@@ -172,7 +165,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .ring-num{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1}
 .ring-unit{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;margin-top:4px;font-weight:600}
 .ring-detail{font-size:11px;color:var(--text-dim);margin-top:2px;text-align:center}
-
 .chart-wrap{position:relative;height:220px;margin-top:8px}
 .chart-summary{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .chart-big{font-size:28px;font-weight:800;letter-spacing:-0.03em}
@@ -180,56 +172,51 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .change-up{background:rgba(76,175,80,0.15);color:var(--easy)}
 .change-down{background:rgba(239,83,80,0.15);color:var(--danger)}
 .change-neutral{background:var(--surface-2);color:var(--text-dim)}
-
 .session-list{margin-top:4px}
 .session{display:grid;grid-template-columns:44px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;align-items:center}
 .session:last-child{border-bottom:none}
-.session:hover{opacity:0.85}
 .session-marker{width:44px;height:44px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
-.session-marker .m-day{font-size:9px;font-weight:700;opacity:0.9;text-transform:uppercase;letter-spacing:0.05em}
-.session-marker .m-date{font-size:16px;font-weight:800;letter-spacing:-0.03em}
+.session-marker .m-day{font-size:9px;font-weight:700;opacity:0.9;text-transform:uppercase}
+.session-marker .m-date{font-size:16px;font-weight:800}
 .mk-easy{background:rgba(76,175,80,0.18);color:var(--easy)}
 .mk-moderate{background:rgba(255,152,0,0.18);color:var(--moderate)}
 .mk-hard{background:rgba(239,83,80,0.18);color:var(--hard)}
 .mk-upper{background:rgba(180,124,255,0.2);color:var(--upper)}
 .mk-lower{background:rgba(255,138,61,0.2);color:var(--lower)}
 .mk-full{background:rgba(255,107,157,0.18);color:var(--full)}
+.mk-mobility{background:rgba(38,217,193,0.18);color:var(--mobility)}
 .mk-cardio{background:rgba(77,208,225,0.18);color:var(--cardio)}
 .mk-activity{background:rgba(255,215,0,0.18);color:var(--activity)}
 .session-info{min-width:0}
-.session-name{font-size:14px;font-weight:600;letter-spacing:-0.01em;margin-bottom:2px}
+.session-name{font-size:14px;font-weight:600;margin-bottom:2px}
 .session-meta{font-size:12px;color:var(--text-dim);display:flex;gap:10px;flex-wrap:wrap}
-.session-metric{font-size:14px;font-weight:800;color:var(--text);text-align:right;letter-spacing:-0.02em}
-.session-metric .unit{font-size:10px;color:var(--text-faint);font-weight:500;letter-spacing:0.05em;text-transform:uppercase;margin-left:2px}
-.session-badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-right:6px}
+.session-metric{font-size:14px;font-weight:800;text-align:right}
+.session-metric .unit{font-size:10px;color:var(--text-faint);font-weight:500;margin-left:2px;text-transform:uppercase}
+.session-badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;text-transform:uppercase;margin-right:6px}
 .bg-easy{background:rgba(76,175,80,0.15);color:var(--easy)}
 .bg-moderate{background:rgba(255,152,0,0.15);color:var(--moderate)}
 .bg-hard{background:rgba(239,83,80,0.15);color:var(--hard)}
 .bg-upper{background:rgba(180,124,255,0.18);color:var(--upper)}
 .bg-lower{background:rgba(255,138,61,0.18);color:var(--lower)}
 .bg-full{background:rgba(255,107,157,0.15);color:var(--full)}
+.bg-mobility{background:rgba(38,217,193,0.15);color:var(--mobility)}
 .bg-cardio{background:rgba(77,208,225,0.15);color:var(--cardio)}
 .bg-activity{background:rgba(255,215,0,0.15);color:var(--activity)}
-
 .empty{text-align:center;padding:30px 20px;color:var(--text-faint);font-size:13px}
-.empty-icon{font-size:24px;margin-bottom:8px;opacity:0.4}
-
 .pb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pb-item{background:var(--surface-2);border-radius:12px;padding:14px}
 .pb-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:6px}
 .pb-value{font-size:20px;font-weight:800;letter-spacing:-0.03em}
 .pb-detail{font-size:11px;color:var(--text-dim);margin-top:3px}
-
 .zones-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.zone-item{background:var(--surface-2);border-radius:10px;padding:12px;border-left:3px solid;position:relative}
+.zone-item{background:var(--surface-2);border-radius:10px;padding:12px;border-left:3px solid}
 .zone-item.z-easy{border-left-color:var(--easy)}
 .zone-item.z-mod{border-left-color:var(--moderate)}
 .zone-item.z-hard{border-left-color:var(--hard)}
 .zone-item.z-long{border-left-color:var(--upper)}
-.zone-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.zone-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;font-weight:600;display:flex;align-items:center;justify-content:space-between}
 .zone-value{font-size:16px;font-weight:800;margin-top:4px}
 .zone-detail{font-size:10px;color:var(--text-dim);margin-top:2px}
-
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s}
 @media(min-width:600px){.modal-bg{align-items:center;padding:20px}}
 .modal-bg.active{display:flex}
@@ -243,24 +230,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .modal-title{font-size:20px;font-weight:800;letter-spacing:-0.02em}
 .modal-close{background:transparent;border:none;color:var(--text-dim);font-size:28px;cursor:pointer;width:32px;height:32px;line-height:1;font-family:inherit}
 .modal-desc{font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.5}
-
-/* Glossary popup */
-.glossary-modal .modal-title{display:flex;align-items:center;gap:8px}
-.gloss-section{margin-bottom:14px}
-.gloss-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
-.gloss-row:last-child{border-bottom:none}
-.gloss-row-label{color:var(--text-dim)}
-.gloss-row-val{font-weight:700}
-.gloss-purpose{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;margin-top:10px}
-.gloss-purpose strong{color:var(--accent)}
-
 .tabs{display:flex;background:var(--surface-2);padding:3px;border-radius:10px;margin-bottom:18px}
 .tab{flex:1;padding:9px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-dim);background:transparent;border:none;transition:all 0.15s;font-family:inherit}
 .tab.active{background:var(--surface);color:var(--text)}
 .field{margin-bottom:14px}
 .field-label{display:block;font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
 .field-hint{font-size:11px;color:var(--text-faint);margin-top:4px;line-height:1.5}
-.input,.select{width:100%;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:inherit;transition:border-color 0.15s}
+.input,.select{width:100%;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:inherit}
 .input:focus,.select:focus{outline:none;border-color:var(--accent)}
 .time-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .time-grid .input{text-align:center;font-weight:700;font-size:18px}
@@ -278,30 +254,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .pill-goal .goal-title{font-size:14px;font-weight:700;margin-bottom:2px}
 .pill-goal .goal-sub{font-size:11px;color:var(--text-faint);font-weight:500}
 .pill-goal.active .goal-sub{color:rgba(0,18,16,0.7)}
-
-.warning-box{background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.3);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;color:var(--text);line-height:1.5}
+.warning-box{background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.3);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;line-height:1.5}
 .warning-box strong{color:var(--warn)}
-
+.danger-box{background:rgba(239,83,80,0.1);border:1px solid rgba(239,83,80,0.3);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;line-height:1.5}
+.danger-box strong{color:var(--danger)}
 .rec-box{background:linear-gradient(135deg,var(--accent-glow),rgba(180,124,255,0.05));border:1px solid rgba(0,212,170,0.25);border-radius:12px;padding:14px;margin:12px 0}
 .rec-box-title{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .rec-box-content{font-size:13px;line-height:1.5}
 .rec-box-content strong{color:var(--text)}
-
 .rest-picker{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:12px 0}
-.rest-day-btn{padding:14px 4px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;font-size:11px;font-weight:700;color:var(--text-dim);transition:all 0.15s;position:relative}
+.rest-day-btn{padding:14px 4px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;font-size:11px;font-weight:700;color:var(--text-dim);position:relative}
 .rest-day-btn.selected{background:var(--rest);border-color:var(--text-dim);color:var(--text)}
 .rest-day-btn.selected::before{content:'●';display:block;color:var(--warn);font-size:10px;margin-bottom:2px}
 .rest-day-btn.disabled{opacity:0.35;pointer-events:none}
 .rest-day-btn.has-session{background:rgba(76,175,80,0.1);color:var(--easy)}
-
 .activity-item{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .activity-info{flex:1;min-width:0}
 .activity-name{font-size:14px;font-weight:700;margin-bottom:2px}
 .activity-detail{font-size:12px;color:var(--text-dim)}
 .activity-remove{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:20px;padding:4px 8px;font-family:inherit}
-.add-btn{width:100%;padding:14px;background:var(--surface-2);border:1px dashed var(--border);border-radius:12px;cursor:pointer;color:var(--text-dim);font-size:13px;font-weight:600;transition:all 0.15s;font-family:inherit}
+.add-btn{width:100%;padding:14px;background:var(--surface-2);border:1px dashed var(--border);border-radius:12px;cursor:pointer;color:var(--text-dim);font-size:13px;font-weight:600;font-family:inherit}
 .add-btn:hover{border-color:var(--accent);color:var(--accent)}
-
+.option-item{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.option-item:hover{border-color:var(--accent);background:rgba(0,212,170,0.05)}
+.option-item.recommended{border-color:var(--accent);background:rgba(0,212,170,0.08)}
+.option-info{flex:1;min-width:0}
+.option-title{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.option-desc{font-size:12px;color:var(--text-dim);line-height:1.4}
+.recommended-badge{background:var(--accent);color:#001210;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em}
 .recap-hero{background:linear-gradient(135deg,var(--accent-glow),rgba(180,124,255,0.1));border-radius:14px;padding:18px;margin-bottom:14px;text-align:center}
 .recap-num{font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--accent)}
 .recap-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px}
@@ -309,7 +289,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .recap-stat{background:var(--surface-2);border-radius:10px;padding:12px}
 .recap-stat-num{font-size:18px;font-weight:800}
 .recap-stat-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}
-
 .setup{max-width:460px;margin:30px auto;padding:20px}
 .setup-header{text-align:center;margin-bottom:20px}
 .setup-title{font-size:30px;font-weight:800;letter-spacing:-0.03em;margin-bottom:2px;background:linear-gradient(135deg,#fff 0%,#9AA0A6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -320,16 +299,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .step-dot.done{background:var(--accent-dim)}
 .setup-quote{font-size:12px;color:var(--text-faint);text-align:center;margin-top:14px;font-style:italic;line-height:1.5}
 .step-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-
 .edu{padding:12px 14px;background:var(--surface-2);border-radius:10px;margin-bottom:8px;border-left:3px solid var(--accent);font-size:12px;line-height:1.6}
-.edu-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.01em}
-
+.edu-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.structure-section{background:var(--surface-2);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.structure-heading{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.structure-item{font-size:13px;line-height:1.5;margin-bottom:4px}
+.structure-item strong{font-weight:700}
+.structure-note{font-size:11px;color:var(--text-dim);font-style:italic;margin-top:6px;line-height:1.5}
 .hidden{display:none!important}
 .text-center{text-align:center}
 .mt-2{margin-top:8px}
 .mt-3{margin-top:14px}
-
-.viz-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.15s;font-family:inherit}
+.viz-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit}
 .viz-btn:hover{border-color:var(--text-faint)}
 #export-html-btn{background:var(--accent);border-color:var(--accent);color:#001210}
 </style>
@@ -338,7 +319,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 
 <div class="loader hidden" id="loader">
   <div class="loader-title">Not Strava</div>
-  <div class="loader-sub">Not warming up. Just loading.</div>
+  <div class="loader-sub">Reading your training notes...</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -356,13 +337,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="step-dot" id="dot3"></div>
     <div class="step-dot" id="dot4"></div>
     <div class="step-dot" id="dot5"></div>
+    <div class="step-dot" id="dot6"></div>
   </div>
   
-  <!-- Step 1 -->
+  <!-- Step 1: Name -->
   <div id="step1" class="setup-step">
     <div class="card">
+      <h3 style="font-size:20px;font-weight:700;margin-bottom:8px">Hey there.</h3>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.5">
+        Quick question before we start. What should I call you?
+      </div>
+      <div class="field">
+        <label class="field-label">Your name (or nickname)</label>
+        <input type="text" class="input" id="setupName" placeholder="First name, nickname, whatever" maxlength="20">
+        <div class="field-hint">Optional. Skip and I'll just use generic language.</div>
+      </div>
+    </div>
+    <div class="setup-quote">"Not certified. Just informed."</div>
+    <button class="btn btn-primary btn-full mt-3" onclick="nextStep(1)">Continue →</button>
+  </div>
+  
+  <!-- Step 2: Goal + Volume -->
+  <div id="step2" class="setup-step hidden">
+    <div class="card">
       <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">What's your goal?</h3>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Pick one. I'll suggest volume that fits.</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Pick one. I'll suggest volume.</div>
       
       <div id="setupGoal" style="display:grid;grid-template-columns:1fr;gap:6px">
         <div class="pill pill-goal" data-val="weightloss" onclick="pickGoal(this)">
@@ -371,7 +370,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         </div>
         <div class="pill pill-goal" data-val="muscle" onclick="pickGoal(this)">
           <div class="goal-title">💪 Build Muscle / Gain Strength</div>
-          <div class="goal-sub">Gym-focused · Minimal interference</div>
+          <div class="goal-sub">Gym-focused · Runs kept easy</div>
         </div>
         <div class="pill pill-goal" data-val="running" onclick="pickGoal(this)">
           <div class="goal-title">🏃 Get Faster at Running</div>
@@ -389,7 +388,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       
       <div class="rec-box hidden" id="goalRecommendation"></div>
       
-      <div class="field">
+      <div class="field mt-3">
         <label class="field-label">Runs per week</label>
         <div class="pill-row-5" id="setupRunDays">
           <div class="pill" data-val="2">2</div>
@@ -407,6 +406,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
           <div class="pill" data-val="3">3</div>
           <div class="pill" data-val="4">4</div>
           <div class="pill" data-val="5">5</div>
+          <div class="pill" data-val="6">6</div>
         </div>
       </div>
       <div class="field">
@@ -420,13 +420,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         </div>
       </div>
       <div class="warning-box hidden" id="setupWarning"></div>
+      <div class="danger-box hidden" id="setupOvertrainingWarning"></div>
+      
+      <!-- Goal-specific optional questions -->
+      <div id="goalSpecificField" class="hidden"></div>
     </div>
-    <div class="setup-quote">"Not certified. Just informed. Change anything later."</div>
-    <button class="btn btn-primary btn-full mt-3" onclick="nextStep(1)">Continue →</button>
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="prevStep(2)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+    </div>
   </div>
   
-  <!-- Step 2 -->
-  <div id="step2" class="setup-step hidden">
+  <!-- Step 3: Overflow preference (only if needed) -->
+  <div id="step3" class="setup-step hidden">
+    <div class="card">
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">How to handle overflow?</h3>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">
+        Your training days exceed 7. That's fine — but I need to know how to handle it.
+      </div>
+      
+      <div id="setupOverflow" style="display:grid;grid-template-columns:1fr;gap:8px">
+        <div class="pill pill-goal" data-val="combine" onclick="pickPill(this,'setupOverflowVal')">
+          <div class="goal-title">🔀 Combine Sessions</div>
+          <div class="goal-sub">Merge safe combos (easy run + upper body)</div>
+        </div>
+        <div class="pill pill-goal" data-val="mobility" onclick="pickPill(this,'setupOverflowVal')">
+          <div class="goal-title">🧘 Replace with Mobility</div>
+          <div class="goal-sub">Swap redundant lower for mobility (runner-smart)</div>
+        </div>
+        <div class="pill pill-goal" data-val="single" onclick="pickPill(this,'setupOverflowVal')">
+          <div class="goal-title">💪 One Harder Session</div>
+          <div class="goal-sub">Skip splitting, do fewer but harder sessions</div>
+        </div>
+        <div class="pill pill-goal" data-val="ask" onclick="pickPill(this,'setupOverflowVal')">
+          <div class="goal-title">🤔 Ask Me Weekly</div>
+          <div class="goal-sub">Different choice each week</div>
+        </div>
+      </div>
+      <input type="hidden" id="setupOverflowVal" value="">
+    </div>
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="prevStep(3)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+    </div>
+  </div>
+  
+  <!-- Step 4: Schedule + Split -->
+  <div id="step4" class="setup-step hidden">
     <div class="card">
       <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">Your schedule</h3>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Realistic plans need real context.</div>
@@ -442,7 +482,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
           <div class="pill pill-day" data-val="5">S</div>
           <div class="pill pill-day" data-val="6">S</div>
         </div>
-        <div class="field-hint">Tap days you work. Skip if none.</div>
+        <div class="field-hint">Tap days you work.</div>
       </div>
       
       <div class="field">
@@ -454,7 +494,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
           <div class="pill" data-val="75">75</div>
           <div class="pill" data-val="90">90</div>
         </div>
-        <div class="field-hint">Minutes of actual workout (not commute/shower)</div>
+        <div class="field-hint">Minutes of actual workout</div>
       </div>
       
       <div class="field">
@@ -467,15 +507,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
           <div class="pill" data-val="150">150</div>
         </div>
       </div>
+      
+      <div class="field" id="setupSplitField">
+        <label class="field-label">Preferred gym split</label>
+        <div class="pill-row" id="setupSplit">
+          <div class="pill" data-val="ul" onclick="pickPill(this,'setupSplitVal')">Upper/Lower</div>
+          <div class="pill" data-val="ppl" onclick="pickPill(this,'setupSplitVal')">Push/Pull/Legs</div>
+          <div class="pill" data-val="auto" onclick="pickPill(this,'setupSplitVal')">Coach decides</div>
+        </div>
+        <input type="hidden" id="setupSplitVal" value="">
+        <div class="field-hint">Only relevant if 3+ gym days per week</div>
+      </div>
     </div>
     <div class="step-nav">
-      <button class="btn btn-ghost" onclick="prevStep(2)">← Back</button>
-      <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+      <button class="btn btn-ghost" onclick="prevStep(4)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(4)">Continue →</button>
     </div>
   </div>
   
-  <!-- Step 3 -->
-  <div id="step3" class="setup-step hidden">
+  <!-- Step 5: Baseline -->
+  <div id="step5" class="setup-step hidden">
     <div class="card">
       <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">Your current fitness</h3>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Required. Without this, I'd just be guessing.</div>
@@ -488,25 +539,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
           <div class="pill" data-val="advanced" onclick="pickPill(this,'setupLevelVal')">Advanced</div>
         </div>
         <input type="hidden" id="setupLevelVal" value="">
-        <div class="field-hint">Beginner: 0-6mo. Intermediate: 6mo-2yr. Advanced: 2yr+</div>
       </div>
       
       <div class="field">
         <label class="field-label">Your typical easy run</label>
         <div class="two-col">
-          <input type="number" step="0.1" class="input" id="easyDist" placeholder="Distance km" style="text-align:center">
-          <input type="number" class="input" id="easyTime" placeholder="Time (min)" style="text-align:center">
+          <input type="number" step="0.1" class="input" id="easyDist" placeholder="km" style="text-align:center">
+          <input type="number" class="input" id="easyTime" placeholder="minutes" style="text-align:center">
         </div>
-        <div class="field-hint">E.g., "5 km in 32 min" — what you can do conversationally</div>
+        <div class="field-hint">E.g., "5 km in 32 min" — conversational effort</div>
       </div>
       
       <div class="field">
         <label class="field-label">Your longest run ever</label>
         <div class="two-col">
-          <input type="number" step="0.1" class="input" id="longDist" placeholder="Distance km" style="text-align:center">
-          <input type="number" class="input" id="longTime" placeholder="Time (min)" style="text-align:center">
+          <input type="number" step="0.1" class="input" id="longDist" placeholder="km" style="text-align:center">
+          <input type="number" class="input" id="longTime" placeholder="minutes" style="text-align:center">
         </div>
-        <div class="field-hint">Never really "ran distance"? Put longest walk-run combo</div>
       </div>
       
       <div class="field">
@@ -522,16 +571,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div class="rec-box hidden" id="baselineFeedback"></div>
     </div>
     <div class="step-nav">
-      <button class="btn btn-ghost" onclick="prevStep(3)">← Back</button>
-      <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+      <button class="btn btn-ghost" onclick="prevStep(5)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(5)">Continue →</button>
     </div>
   </div>
   
-  <!-- Step 4 -->
-  <div id="step4" class="setup-step hidden">
+  <!-- Step 6: Focus + Activities + Summary -->
+  <div id="step6" class="setup-step hidden">
     <div class="card">
       <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">Focus &amp; extras</h3>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">All optional. Skip anything.</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">All optional.</div>
       
       <div class="field">
         <label class="field-label">Gym focus (max 2)</label>
@@ -561,25 +610,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
           <div class="pill" data-val="none" onclick="toggleInjury(this)">None</div>
         </div>
       </div>
-    </div>
-    <div class="step-nav">
-      <button class="btn btn-ghost" onclick="prevStep(4)">← Back</button>
-      <button class="btn btn-primary" onclick="nextStep(4)">Continue →</button>
-    </div>
-  </div>
-  
-  <!-- Step 5 -->
-  <div id="step5" class="setup-step hidden">
-    <div class="card">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:14px">Your personalized plan</h3>
-      <div id="summaryContent"></div>
+      
       <div class="coach-note" style="margin-top:14px;margin-bottom:0">
         <div class="coach-note-label">Coach's first note</div>
-        <div class="coach-note-text" id="coachIntro"></div>
+        <div class="coach-note-text" id="coachIntro">Setting up your plan...</div>
       </div>
     </div>
     <div class="step-nav">
-      <button class="btn btn-ghost" onclick="prevStep(5)">← Back</button>
+      <button class="btn btn-ghost" onclick="prevStep(6)">← Back</button>
       <button class="btn btn-primary" onclick="finishSetup(false)">Start Training →</button>
     </div>
     <button class="btn btn-ghost btn-full mt-2" onclick="finishSetup(true)">Explore with sample data</button>
@@ -600,12 +638,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   
   <div class="container">
     
+    <div class="conflict-banner hidden" id="conflictBanner">
+      <div class="cb-icon">!</div>
+      <div class="cb-content">
+        <div class="cb-title">This week: Schedule overflow</div>
+        <div class="cb-body" id="conflictText"></div>
+        <button class="btn btn-primary btn-sm" onclick="openConflictModal()">Choose Option</button>
+      </div>
+    </div>
+    
     <div class="improvement-banner hidden" id="improvementBanner">
       <div class="imp-icon">↑</div>
       <div class="imp-content">
-        <div class="imp-title" id="impTitle"></div>
+        <div class="imp-title">You've improved!</div>
         <div class="imp-body" id="impBody"></div>
-        <div class="imp-actions">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-primary btn-sm" onclick="acceptBaselineUpdate()">Update Baseline</button>
           <button class="btn btn-ghost btn-sm" onclick="dismissImprovement()">Keep As Is</button>
         </div>
@@ -623,9 +670,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div class="hero-detail" id="heroDetail"></div>
       <div class="hero-reason" id="heroReason"></div>
       <div class="hero-buttons">
-        <button class="btn btn-primary" onclick="openLog('recommended')">Log It</button>
+        <button class="btn btn-primary" onclick="openLog('any')">Log It</button>
         <button class="btn btn-secondary" onclick="openQuickSession()">⚡ Quick</button>
-        <button class="btn btn-secondary" onclick="openLog('any')">Custom</button>
+        <button class="btn btn-secondary" onclick="openSkipModal()">Not Today</button>
       </div>
     </div>
     
@@ -650,9 +697,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         <div class="legend-item"><div class="legend-dot" style="background:var(--easy)"></div>Easy</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--moderate)"></div>Mod</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--hard)"></div>Hard</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--upper)"></div>Upper</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--lower)"></div>Lower</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--upper)"></div>Upper/Push/Pull</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--lower)"></div>Lower/Legs</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--full)"></div>Full</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--mobility)"></div>Mobility</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--activity)"></div>Activity</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--rest)"></div>Rest</div>
       </div>
@@ -673,7 +721,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="card">
       <div class="card-header"><div class="card-title">Your Pace Zones</div></div>
       <div class="zones-grid" id="paceZones"></div>
-      <div style="font-size:11px;color:var(--text-faint);margin-top:10px">Tap ⓘ on any zone to learn more. Zones update as you improve.</div>
+      <div style="font-size:11px;color:var(--text-faint);margin-top:10px;line-height:1.5">Zones based on your baseline. Trust how it feels over the math — paces vary with sleep, stress, weather.</div>
     </div>
     
     <div class="card">
@@ -691,6 +739,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         </div>
       </div>
       <div class="ring-detail" id="ringDetail"></div>
+      <div style="font-size:11px;color:var(--text-faint);margin-top:8px;text-align:center;line-height:1.5">Weekly targets are goals, not mandates. Trends matter more than any single week.</div>
     </div>
     
     <div class="card">
@@ -716,7 +765,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="card">
       <div class="card-header">
         <div class="card-title">Recent Sessions</div>
-        <div class="card-sub" id="sessionCount"></div>
       </div>
       <div class="session-list" id="sessionList"></div>
     </div>
@@ -738,7 +786,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div class="card-header">
         <div>
           <div class="card-title">Weekly Recap</div>
-          <div class="card-sub">Sunday summary</div>
         </div>
         <button class="btn btn-secondary btn-sm" onclick="openWeeklyRecap()">View</button>
       </div>
@@ -751,11 +798,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       </div>
       <div id="eduContent" class="hidden">
         <div class="edu"><div class="edu-title">The 10% Rule</div>Weekly distance grows max 10% per week. Prevents #1 cause of running injuries.</div>
-        <div class="edu"><div class="edu-title">The 80/20 Rule</div>80% easy, 20% hard. The pattern elite runners actually use.</div>
+        <div class="edu"><div class="edu-title">The 80/20 Rule</div>80% easy, 20% hard. Elite pattern.</div>
+        <div class="edu"><div class="edu-title">The Frequency Rule</div>Muscles grow best when trained 2x per week. Same volume, better distribution = more muscle.</div>
+        <div class="edu"><div class="edu-title">The Compound Rule</div>Pick your main lifts and progress on them over months. Don't rotate exercises weekly.</div>
+        <div class="edu"><div class="edu-title">The Enjoyment Principle</div>Best exercise is the one you'll actually keep doing. Substitute freely.</div>
+        <div class="edu"><div class="edu-title">The Progress Rule</div>Track your main compound lifts. That's your progress marker. Same lift + more weight over time = real progress.</div>
+        <div class="edu"><div class="edu-title">The Autonomy Note</div>Goal is you shouldn't need me eventually. Learn your body. Program yourself. I'm training wheels.</div>
         <div class="edu"><div class="edu-title">Interference Effect</div>Heavy leg day + hard run within 48hrs hurts both. Kept apart.</div>
-        <div class="edu"><div class="edu-title">Grace Over Guilt</div>Missed sessions get redistributed, not judged.</div>
-        <div class="edu"><div class="edu-title">Baseline-Driven</div>Your pace zones scale from YOUR easy run, not generic paces.</div>
-        <div class="edu"><div class="edu-title">Baseline Evolution</div>As you improve, coach detects it and asks to update your baseline.</div>
+        <div class="edu"><div class="edu-title">Grace Over Guilt</div>Missed sessions redistributed, not judged.</div>
       </div>
     </div>
     
@@ -764,11 +814,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <button class="btn btn-secondary btn-sm" onclick="openSettings()">Preferences</button>
         <button class="btn btn-secondary btn-sm" onclick="openBaselineUpdate()">Update Baseline</button>
-        <button class="btn btn-secondary btn-sm" onclick="exportData()">Export</button>
-        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">Import</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportData()">Export Backup</button>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">Import Backup</button>
         <button class="btn btn-danger btn-sm" style="grid-column:1/-1" onclick="clearAll()">Clear All Data</button>
       </div>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+      <div style="font-size:10px;color:var(--text-faint);margin-top:12px;text-align:center">Version 5.2 · Data schema v52</div>
     </div>
     
   </div>
@@ -812,7 +863,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         <select class="select" id="gymType">
           <option value="upper">Upper Body</option>
           <option value="lower">Lower Body</option>
+          <option value="push">Push Day</option>
+          <option value="pull">Pull Day</option>
+          <option value="legs">Legs Day</option>
           <option value="full">Full Body</option>
+          <option value="mobility">Mobility Session</option>
           <option value="cardio">Cardio Machine</option>
         </select>
       </div>
@@ -824,7 +879,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         </div>
         <input type="hidden" id="gymIntensity" value="moderate">
       </div>
-      <div id="focusTip" class="preview" style="display:none"></div>
+      <div class="preview" id="repReminderTip" style="display:none">
+        <strong>Real Talk About Reps:</strong> 8-12 is a reference. Muscles grow when pushed to failure. If 12 was easy, add weight. I can't see you — you know.
+      </div>
       <div class="field"><label class="field-label">Notes (optional)</label><input type="text" class="input" id="gymNotes" placeholder="e.g., squats 3x8"></div>
       <button class="btn btn-primary btn-full" onclick="saveGym()">Save Session</button>
     </div>
@@ -845,12 +902,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   </div>
 </div>
 
+<!-- Skip Modal -->
+<div class="modal-bg" id="skipModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-title">Not Today, huh?</div><button class="modal-close" onclick="closeModal('skipModal')">×</button></div>
+    <div class="modal-desc" id="skipModalDesc">Alright. Life happens. Once in a while is fine. What's the situation?</div>
+    <div id="skipOptions" style="display:grid;gap:8px">
+      <div class="option-item" onclick="handleSkip('cant')">
+        <div class="option-info">
+          <div class="option-title">Genuinely can't today</div>
+          <div class="option-desc">Work, family, illness — real stuff. Smart redistribution.</div>
+        </div>
+        <div style="color:var(--accent);font-size:20px">→</div>
+      </div>
+      <div class="option-item" onclick="handleSkip('dont')">
+        <div class="option-info">
+          <div class="option-title">Just don't feel like it</div>
+          <div class="option-desc">Also valid sometimes. Redistribute + light nagging.</div>
+        </div>
+        <div style="color:var(--warn);font-size:20px">→</div>
+      </div>
+      <div class="option-item" onclick="handleSkip('sick')">
+        <div class="option-info">
+          <div class="option-title">Feeling sick/exhausted</div>
+          <div class="option-desc">Listen to your body. Take proper rest. No adjustment.</div>
+        </div>
+        <div style="color:var(--danger);font-size:20px">→</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('skipModal')">Actually, I'll do it</button>
+  </div>
+</div>
+
+<!-- Conflict Modal -->
+<div class="modal-bg" id="conflictModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-title">Handle This Week's Overflow</div><button class="modal-close" onclick="closeModal('conflictModal')">×</button></div>
+    <div class="modal-desc" id="conflictModalDesc"></div>
+    <div id="conflictOptions" style="display:grid;gap:8px"></div>
+  </div>
+</div>
+
 <!-- Quick Session Modal -->
 <div class="modal-bg" id="quickModal">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title">⚡ Quick Session</div><button class="modal-close" onclick="closeModal('quickModal')">×</button></div>
-    <div class="modal-desc">Life happens. Pick what fits — coach adjusts the week.</div>
+    <div class="modal-desc">Life happens. Pick what fits.</div>
     <div id="quickOptions"></div>
   </div>
 </div>
@@ -927,7 +1027,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 
 <!-- Glossary Modal -->
 <div class="modal-bg" id="glossaryModal">
-  <div class="modal glossary-modal">
+  <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title" id="glossTitle">Term</div><button class="modal-close" onclick="closeModal('glossaryModal')">×</button></div>
     <div id="glossaryContent"></div>
@@ -939,23 +1039,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title">Update Baseline</div><button class="modal-close" onclick="closeModal('baselineModal')">×</button></div>
-    <div class="modal-desc">Your fitness evolves. Keep the coach up to date.</div>
-    <div class="field">
-      <label class="field-label">Easy run distance (km)</label>
-      <input type="number" step="0.1" class="input" id="blEasyDist">
-    </div>
-    <div class="field">
-      <label class="field-label">Easy run time (min)</label>
-      <input type="number" class="input" id="blEasyTime">
-    </div>
-    <div class="field">
-      <label class="field-label">Longest run distance (km)</label>
-      <input type="number" step="0.1" class="input" id="blLongDist">
-    </div>
-    <div class="field">
-      <label class="field-label">Longest run time (min)</label>
-      <input type="number" class="input" id="blLongTime">
-    </div>
+    <div class="modal-desc">Your fitness evolves. Keep me updated.</div>
+    <div class="field"><label class="field-label">Easy run distance (km)</label><input type="number" step="0.1" class="input" id="blEasyDist"></div>
+    <div class="field"><label class="field-label">Easy run time (min)</label><input type="number" class="input" id="blEasyTime"></div>
+    <div class="field"><label class="field-label">Longest run distance (km)</label><input type="number" step="0.1" class="input" id="blLongDist"></div>
+    <div class="field"><label class="field-label">Longest run time (min)</label><input type="number" class="input" id="blLongTime"></div>
     <button class="btn btn-primary btn-full" onclick="saveBaselineUpdate()">Save Baseline</button>
   </div>
 </div>
@@ -965,14 +1053,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title">Preferences</div><button class="modal-close" onclick="closeModal('settingsModal')">×</button></div>
+    <div class="field"><label class="field-label">Your name</label><input type="text" class="input" id="setName" placeholder="Optional" maxlength="20"></div>
     <div class="field"><label class="field-label">Runs per week</label>
       <select class="select" id="setRunD"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
     </div>
     <div class="field"><label class="field-label">Gym per week</label>
-      <select class="select" id="setGymD"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      <select class="select" id="setGymD"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
     </div>
     <div class="field"><label class="field-label">Rest per week</label>
       <select class="select" id="setRestD"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+    </div>
+    <div class="field"><label class="field-label">Gym split</label>
+      <select class="select" id="setSplit">
+        <option value="ul">Upper/Lower</option>
+        <option value="ppl">Push/Pull/Legs</option>
+        <option value="auto">Coach decides</option>
+      </select>
     </div>
     <div class="field"><label class="field-label">Work day time (min)</label>
       <select class="select" id="setWorkTime"><option>30</option><option>45</option><option>60</option><option>75</option><option>90</option></select>
@@ -1002,162 +1098,335 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 </div>
 
 <script>
-// ==================== STATE ====================
-let state = {
-  prefs: {
-    goal: null, runDays: null, gymDays: null, restDays: null,
-    workDays: [], workTime: null, offTime: null,
-    level: null, baseline: null, gymExp: null,
-    focus: [], injuries: [], activities: []
-  },
-  runs: [], gyms: [], activities: [],
-  lockedRestDays: {},
-  compensations: [], dismissedComps: [],
-  milestones: {}, feedbacks: [],
-  pendingFeedback: null,
-  pendingBaselineUpdate: null,
-  dismissedBaselineUpdates: [],
-  lastBaselineCheck: null,
-  cmp: 'week',
-  version: 51
+// ==================== MIGRATION ARCHITECTURE ====================
+// Storage key uses version number for clean migration paths
+const CURRENT_VERSION = 52;
+const KEY = 'notstrava_v' + CURRENT_VERSION;
+
+// Migration registry: each entry knows how to upgrade from version N to N+1
+const migrations = {
+  // Example future migration: 52 → 53
+  // 52: function(oldData) {
+  //   return { ...oldData, version: 53, newField: defaultValue };
+  // }
 };
-const KEY = 'notstrava_v51';
+
+function runMigrations(data) {
+  let current = data;
+  while (current.version < CURRENT_VERSION && migrations[current.version]) {
+    console.log(`Migrating from v${current.version} to v${current.version + 1}`);
+    current = migrations[current.version](current);
+  }
+  return current;
+}
+
+function loadState() {
+  // Try current version first
+  let saved = localStorage.getItem(KEY);
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) { console.error('Parse failed:', e); }
+  }
+  
+  // Try older versions for migration
+  for (let v = CURRENT_VERSION - 1; v >= 50; v--) {
+    saved = localStorage.getItem('notstrava_v' + v);
+    if (saved) {
+      try {
+        let data = JSON.parse(saved);
+        data = runMigrations(data);
+        // Save as current version
+        localStorage.setItem(KEY, JSON.stringify(data));
+        console.log(`Migrated from v${v} successfully`);
+        return data;
+      } catch(e) { console.error('Migration failed:', e); }
+    }
+  }
+  
+  return null;
+}
+
+// ==================== DEFAULT STATE ====================
+function defaultState() {
+  return {
+    version: CURRENT_VERSION,
+    prefs: {
+      name: '',
+      goal: null,
+      runDays: null, gymDays: null, restDays: null,
+      workDays: [], workTime: null, offTime: null,
+      split: 'auto',
+      overflow: 'ask',
+      level: null, baseline: null, gymExp: null,
+      focus: [], injuries: [], activities: [],
+      stepTarget: null,
+      bodyweight: null,
+      raceGoal: null
+    },
+    runs: [], gyms: [], activities: [],
+    lockedRestDays: {},
+    weeklyOverflowChoice: {},
+    compensations: [], dismissedComps: [],
+    milestones: {}, feedbacks: [],
+    skipHistory: [],
+    pendingFeedback: null,
+    pendingBaselineUpdate: null,
+    dismissedBaselineUpdates: [],
+    lastBaselineCheck: null,
+    seenWelcome: false,
+    cmp: 'week'
+  };
+}
+
+let state = defaultState();
 let setupState = { activities: [] };
 
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-function load(){
-  const s = localStorage.getItem(KEY);
-  if(s){ const p = JSON.parse(s); if(p.version === 51){ state = p; return true; } }
-  return false;
-}
 
 // ==================== GLOSSARY ====================
 const glossary = {
-  easy: {
-    title: 'Easy Run',
-    what: 'A comfortable, conversational-pace run where you could chat with a friend.',
-    effort: '5/10 · Nose breathing possible · Full sentences',
-    purpose: 'Builds aerobic base, promotes recovery, improves fat metabolism. The foundation of all endurance training.',
-    frequency: 'Should be ~80% of your runs',
-    pace: null
-  },
-  moderate: {
-    title: 'Moderate Run',
-    what: 'Somewhat hard but sustainable. Faster than easy, slower than tempo.',
-    effort: '6-7/10 · Short sentences only',
-    purpose: 'Builds aerobic capacity. Good middle-ground effort. Sometimes called "steady state".',
-    frequency: '10-15% of your runs',
-    pace: null
-  },
-  hard: {
-    title: 'Hard Run',
-    what: 'Uncomfortable, high-effort running. Only single words possible while running.',
-    effort: '8-9/10 · One-word answers only',
-    purpose: 'Builds VO2 max and speed. Used for intervals and race-pace work.',
-    frequency: 'Max 5-10% of your runs',
-    pace: null
-  },
-  long: {
-    title: 'Long Run',
-    what: 'Extended distance run at easy or moderate pace. The weekly cornerstone.',
-    effort: '5-6/10 · Should stay conversational',
-    purpose: 'Builds aerobic endurance, teaches body to use fat as fuel, mental toughness.',
-    frequency: 'Once per week (typically weekend)',
-    pace: null
-  },
-  tempo: {
-    title: 'Tempo Run',
-    what: '"Comfortably hard" sustained effort. Between moderate and hard.',
-    effort: '7-8/10 · Short phrases only · Sustainable 20-40 min',
-    purpose: 'Builds lactate threshold — your ability to sustain hard efforts. Makes race pace feel easier.',
-    frequency: 'Once per week or every other week',
-    pace: null
-  },
-  intervals: {
-    title: 'Intervals',
-    what: 'Short bursts of hard effort alternating with recovery periods.',
-    effort: '9/10 during work · Very easy during rest',
-    purpose: 'Builds speed and VO2 max. Improves running economy at all paces.',
-    frequency: 'Once per week max',
-    pace: 'Hard zone pace during work intervals'
-  },
+  easy: {title:'Easy Run', what:'Comfortable, conversational pace. You could chat while running.', effort:'5/10 · Nose breathing possible · Full sentences', purpose:'Builds aerobic base, promotes recovery, improves fat metabolism. Foundation of all endurance training.', frequency:'~80% of your runs'},
+  moderate: {title:'Moderate Run', what:'Somewhat hard but sustainable. Between easy and tempo.', effort:'6-7/10 · Short sentences only', purpose:'Builds aerobic capacity. Good middle-ground effort.', frequency:'10-15% of your runs'},
+  hard: {title:'Hard Run', what:'Uncomfortable, high-effort. Single words only while running.', effort:'8-9/10 · One-word answers', purpose:'Builds VO2 max and speed.', frequency:'Max 5-10% of your runs'},
+  long: {title:'Long Run', what:'Extended distance at easy or moderate pace. Weekly cornerstone.', effort:'5-6/10', purpose:'Builds aerobic endurance, teaches fat metabolism, mental toughness.', frequency:'Once per week (weekend typically)'},
+  tempo: {title:'Tempo Run', what:'"Comfortably hard" sustained effort. Between moderate and hard.', effort:'7-8/10 · Short phrases only', purpose:'Builds lactate threshold. Makes race pace feel easier.', frequency:'Once per week'},
+  intervals: {title:'Intervals', what:'Hard efforts alternating with recovery periods.', effort:'9/10 during work · Easy during rest', purpose:'Builds speed and VO2 max.', frequency:'Once per week max'},
+  upper: {title:'Upper Body', what:'Chest, back, shoulders, arms — everything above waist.', purpose:'Builds upper body strength without interfering with running.', frequency:'2x per week ideal', structure: 'upper'},
+  lower: {title:'Lower Body', what:'Legs and glutes — squats, deadlifts, lunges, hip work.', purpose:'Power and injury resistance. Runners: 1x heavy + mobility.', frequency:'1-2x per week · Space 48hrs from hard runs', structure: 'lower'},
+  push: {title:'Push Day', what:'Chest, shoulders, triceps — everything that pushes.', purpose:'PPL split day. Frequency-focused muscle growth.', frequency:'1-2x per week', structure: 'push'},
+  pull: {title:'Pull Day', what:'Back, biceps, rear delts — everything that pulls.', purpose:'PPL split day. Frequency-focused muscle growth.', frequency:'1-2x per week', structure: 'pull'},
+  legs: {title:'Legs Day', what:'Squats, hip hinges, single-leg work, calves.', purpose:'PPL legs day. Full leg session.', frequency:'1x per week for runners', structure: 'legs'},
+  full: {title:'Full Body', what:'Whole body in one session. Compounds dominant.', purpose:'Time-efficient. Perfect for low-frequency (1-2x/week).', frequency:'Standalone or supplement', structure: 'full'},
+  mobility: {title:'Mobility + Strength Session', what:'Running-focused strength + mobility work. Not just stretching.', purpose:'Injury prevention + running economy. Targets what running underdevelops.', frequency:'1-2x per week for runners', structure: 'mobility'},
+  cardio: {title:'Cardio Machine', what:'Treadmill, bike, rower, elliptical.', purpose:'Cross-training, active recovery.', frequency:'As substitute for running'}
+};
+
+const structures = {
   upper: {
-    title: 'Upper Body',
-    what: 'Chest, back, shoulders, arms — everything above the waist.',
-    effort: null,
-    purpose: 'Builds upper body strength without interfering with running. Best paired with high-volume run weeks.',
-    frequency: '1-3 times per week',
-    pace: null
+    title: 'Upper Body Structure',
+    duration: '60-75 min',
+    sections: [
+      {name:'CHEST', items:[
+        {ex:'Incline press', sets:'4 sets', note:'Dumbbell, barbell, or Smith machine. Pick what feels good on your joints. Stick to it. Progress on it.'},
+        {ex:'Chest fly', sets:'3 sets', note:'Pec deck, cable, or dumbbell — your favorite.'}
+      ]},
+      {name:'BACK', items:[
+        {ex:'Lat pulldown or pull-ups', sets:'4 sets', note:'If you can do pull-ups, do them. Otherwise pulldowns.'},
+        {ex:'Rows', sets:'3 sets', note:'Barbell, dumbbell, cable, T-bar — whatever your gym has.'}
+      ]},
+      {name:'SHOULDERS', items:[
+        {ex:'Lateral raises', sets:'4 sets', note:'Non-negotiable for shoulder width.'},
+        {ex:'Rear delts', sets:'3 sets', note:'Face pulls, reverse flys.'},
+        {ex:'Overhead press', sets:'2-3 sets (optional)', note:'Skip unless shoulders is your focus. Incline press already hits front delts.'}
+      ]},
+      {name:'ARMS', items:[
+        {ex:'Triceps', sets:'4 sets total', note:'2×2 exercises or 4×1 — your call.'},
+        {ex:'Biceps', sets:'4 sets total', note:'Same — pick what you enjoy.'}
+      ]}
+    ],
+    total: '~22-25 working sets',
+    notes: [
+      'The Compound Rule: Pick your incline press variation, row variation — and STICK WITH THEM. Progress there over months.',
+      'Real Talk About Reps: 8-12 is reference only. Muscles grow at failure, not at random numbers. If 12 was easy, add weight.'
+    ]
   },
   lower: {
-    title: 'Lower Body',
-    what: 'Legs and glutes — squats, deadlifts, lunges, hip work.',
-    effort: null,
-    purpose: 'Builds power and injury resistance. Critical for runners (glutes, hips) but interferes with hard runs if heavy.',
-    frequency: '1-2 times per week · Space 48hrs from hard runs',
-    pace: null
+    title: 'Lower Body Structure',
+    duration: '60-75 min',
+    sections: [
+      {name:'MAIN COMPOUND', items:[
+        {ex:'Squat variation', sets:'4 sets', note:'Barbell back squat, front squat, goblet, hack — 100 types. Pick what feels good on YOUR joints. Stick with it.'}
+      ]},
+      {name:'QUADS', items:[
+        {ex:'Leg extension or quad-focused', sets:'3 sets', note:'Any isolated quad movement.'}
+      ]},
+      {name:'HAMSTRINGS/GLUTES', items:[
+        {ex:'Hamstring work', sets:'4 sets', note:'Leg curls, RDLs, glute-ham raises.'},
+        {ex:'Deadlifts (advanced only)', sets:'optional', note:'High risk if form breaks. Rather RDLs well than deadlifts poorly.'}
+      ]},
+      {name:'CALVES', items:[
+        {ex:'Calf raises', sets:'3-4 sets', note:"Don't skip. You'll regret it. Standing or seated — both fine."}
+      ]},
+      {name:'SHINS (RUNNERS)', items:[
+        {ex:'Tibialis raises', sets:'2-3 sets', note:'Non-negotiable for runners. Prevents shin splints.'}
+      ]}
+    ],
+    total: '~15-18 working sets',
+    notes: [
+      'The Progress Rule: Track your squat weight monthly. That\'s your main progress marker. Everything else supports it.',
+      'Note: If you also ran hard yesterday, back off intensity. Legs recover slower.'
+    ]
+  },
+  push: {
+    title: 'Push Day Structure',
+    duration: '60-75 min',
+    sections: [
+      {name:'CHEST (PRIMARY)', items:[
+        {ex:'Incline press', sets:'4 sets', note:'Your main lift. Progress on this.'},
+        {ex:'Chest fly variation', sets:'3 sets', note:'Pec deck, cable, or dumbbell.'}
+      ]},
+      {name:'SHOULDERS', items:[
+        {ex:'Overhead press', sets:'3 sets', note:'If incline was heavy, drop to 2 sets. Front delts cooked.'},
+        {ex:'Lateral raises', sets:'4 sets', note:'The shoulder-width builder.'}
+      ]},
+      {name:'TRICEPS', items:[
+        {ex:'Compound tricep', sets:'3 sets', note:'Close-grip bench, dips, overhead extension.'},
+        {ex:'Isolation tricep', sets:'3 sets', note:'Pushdowns, kickbacks — your choice.'}
+      ]}
+    ],
+    total: '~20 working sets',
+    notes: [
+      'Note: Rear delts get hit on Pull Day. Don\'t add them here.'
+    ]
+  },
+  pull: {
+    title: 'Pull Day Structure',
+    duration: '60-75 min',
+    sections: [
+      {name:'VERTICAL PULL', items:[
+        {ex:'Pull-ups or lat pulldowns', sets:'4 sets', note:'Pull-ups if you can, otherwise pulldowns.'}
+      ]},
+      {name:'HORIZONTAL PULL', items:[
+        {ex:'Rows', sets:'4 sets', note:'Barbell, dumbbell, cable, T-bar. Pick your favorite.'}
+      ]},
+      {name:'BACK ISOLATION', items:[
+        {ex:'Pullover or straight-arm pulldown', sets:'3 sets (optional)', note:'Some love it, some skip.'}
+      ]},
+      {name:'REAR DELTS', items:[
+        {ex:'Face pulls or reverse flys', sets:'3 sets', note:'Non-negotiable. Prevents shoulder problems.'}
+      ]},
+      {name:'BICEPS', items:[
+        {ex:'Curl variation 1', sets:'3 sets', note:'Barbell, dumbbell, cable.'},
+        {ex:'Curl variation 2', sets:'3 sets', note:'Different angle — hammer, preacher, incline.'}
+      ]}
+    ],
+    total: '~20 working sets',
+    notes: [
+      'Progress marker: Your main row weight. Track it. Beat it monthly.'
+    ]
+  },
+  legs: {
+    title: 'Legs Day Structure',
+    duration: '60-90 min',
+    sections: [
+      {name:'MAIN SQUAT', items:[
+        {ex:'Squat variation', sets:'4-5 sets', note:'Your main progress lift. Whatever type your body likes.'}
+      ]},
+      {name:'POSTERIOR CHAIN', items:[
+        {ex:'RDL or hip thrust', sets:'3-4 sets', note:'Hamstrings and glutes.'}
+      ]},
+      {name:'UNILATERAL', items:[
+        {ex:'Bulgarian splits or lunges', sets:'3 sets', note:'Critical for runners. Fixes imbalances.'}
+      ]},
+      {name:'ISOLATION', items:[
+        {ex:'Leg extensions', sets:'3 sets', note:'Quad isolation.'},
+        {ex:'Leg curls', sets:'3 sets', note:'Hamstring isolation.'}
+      ]},
+      {name:'CALVES & SHINS', items:[
+        {ex:'Calf raises', sets:'3-4 sets', note:'Standing OR seated (different emphasis).'},
+        {ex:'Tibialis raises', sets:'2-3 sets', note:'Runners: this is non-negotiable.'}
+      ]}
+    ],
+    total: '20-25 working sets',
+    notes: [
+      'Runners: This is heavy enough. Don\'t do a second heavy leg day this week — use mobility instead.',
+      'This is your longest gym day. Fuel properly beforehand.'
+    ]
   },
   full: {
-    title: 'Full Body',
-    what: 'Whole body worked in one session. Compound movements dominant.',
-    effort: null,
-    purpose: 'Time-efficient. Good for lower gym volume (1-2 sessions/week).',
-    frequency: 'Standalone or supplement to split routine',
-    pace: null
+    title: 'Full Body Structure',
+    duration: '45-60 min',
+    sections: [
+      {name:'LOWER COMPOUND', items:[
+        {ex:'Squat or deadlift', sets:'3 sets'}
+      ]},
+      {name:'PUSH', items:[
+        {ex:'Incline or overhead press', sets:'3 sets'}
+      ]},
+      {name:'PULL', items:[
+        {ex:'Row or lat pulldown', sets:'3 sets'}
+      ]},
+      {name:'POSTERIOR CHAIN', items:[
+        {ex:'RDL or hip thrust', sets:'3 sets'}
+      ]},
+      {name:'ACCESSORY', items:[
+        {ex:'Focus area exercise', sets:'3 sets', note:'Your focus if you have one.'}
+      ]},
+      {name:'CORE', items:[
+        {ex:'Core movement', sets:'2-3 sets', note:'Planks, hanging leg raises.'}
+      ]}
+    ],
+    total: '17-18 working sets',
+    notes: ['Efficient. Effective. In and out. Perfect for 2-3x per week if short on time.']
   },
-  cardio: {
-    title: 'Cardio Machine',
-    what: 'Treadmill, bike, rower, elliptical, stair climber.',
-    effort: null,
-    purpose: 'Cross-training, active recovery, cardio when weather is bad.',
-    frequency: 'As substitute for run days or added recovery',
-    pace: null
+  mobility: {
+    title: 'Mobility + Strength Session',
+    duration: '30-40 min',
+    sections: [
+      {name:'WARM-UP (5 min)', items:[
+        {ex:'Dynamic movement', sets:'', note:'Leg swings, walking lunges, easy movement to raise body temp.'}
+      ]},
+      {name:'STRENGTH (10-15 min)', items:[
+        {ex:'Pick 1-2 exercises', sets:'2-3 sets × 8-12 reps', note:'Bulgarian split squats, reverse lunges, goblet squats, step-ups, RDLs (light), single-leg deadlifts, glute bridges.'}
+      ]},
+      {name:'MOBILITY (10-15 min)', items:[
+        {ex:'Hip mobility', sets:'', note:'90/90s, hip openers, pigeon pose.'},
+        {ex:'Ankle mobility', sets:'', note:'Calf stretches, ankle circles.'},
+        {ex:'Glute activation', sets:'', note:'Clamshells, monster walks, bridges.'},
+        {ex:'Core stability', sets:'', note:'Planks, dead bugs, bird dogs.'}
+      ]},
+      {name:'COOL-DOWN (5 min)', items:[
+        {ex:'Static stretching', sets:'', note:'Foam rolling if you have one.'}
+      ]}
+    ],
+    total: '~20-30 total sets between strength + mobility',
+    notes: [
+      'Real Talk About Reps: 8-12 is reference. Muscles grow at failure. If 12 was easy, add weight. I can\'t see you — you know.',
+      'Why this matters: Running trains legs one-dimensionally. This adds single-leg strength, stabilizer work, mobility in what running underdevelops.',
+      'Runners who do this consistently have fewer injuries, better running economy, stronger glutes.'
+    ]
   }
 };
 
-function showGlossary(termKey){
-  const term = glossary[termKey];
-  if(!term) return;
-  document.getElementById('glossTitle').textContent = term.title;
-  const zones = getPaceZones();
-  let paceInfo = '';
-  if(zones){
-    if(termKey === 'easy') paceInfo = zones.easy.label + '/km';
-    else if(termKey === 'moderate') paceInfo = zones.moderate.label + '/km';
-    else if(termKey === 'hard' || termKey === 'intervals') paceInfo = zones.hard.label + '/km';
-    else if(termKey === 'long') paceInfo = zones.long.label + '/km';
-    else if(termKey === 'tempo') paceInfo = zones.moderate.label + '/km (harder end)';
-  }
-  
-  let html = `<div class="gloss-section" style="font-size:14px;line-height:1.6;margin-bottom:14px">${term.what}</div>`;
-  html += '<div class="gloss-section">';
-  if(term.effort) html += `<div class="gloss-row"><span class="gloss-row-label">Effort</span><span class="gloss-row-val">${term.effort}</span></div>`;
-  if(paceInfo) html += `<div class="gloss-row"><span class="gloss-row-label">Your pace</span><span class="gloss-row-val">${paceInfo}</span></div>`;
-  if(term.frequency) html += `<div class="gloss-row"><span class="gloss-row-label">Frequency</span><span class="gloss-row-val">${term.frequency}</span></div>`;
-  html += '</div>';
-  html += `<div class="gloss-purpose"><strong>Why it matters:</strong> ${term.purpose}</div>`;
-  html += `<button class="btn btn-primary btn-full mt-3" onclick="closeModal('glossaryModal')">Got it</button>`;
-  document.getElementById('glossaryContent').innerHTML = html;
-  document.getElementById('glossaryModal').classList.add('active');
-}
-
-// ==================== GOAL RECOMMENDATIONS ====================
+// ==================== GOAL CONFIGS ====================
 const goalConfigs = {
-  weightloss: { label: '🔥 Weight Loss', runDays: 4, gymDays: 2, restDays: 1, reason: "Cardio-heavy for calorie burn, enough strength to preserve muscle." },
-  muscle: { label: '💪 Build Muscle', runDays: 2, gymDays: 4, restDays: 1, reason: "Gym-focused with each muscle 2x/week. Runs kept easy." },
-  running: { label: '🏃 Faster Running', runDays: 5, gymDays: 2, restDays: 0, reason: "Frequency drives adaptation. Gym for injury prevention." },
-  balance: { label: '⚖️ Balance Both', runDays: 3, gymDays: 3, restDays: 1, reason: "Equal emphasis. Sustainable long-term." },
-  fitness: { label: '🌟 General Fitness', runDays: 2, gymDays: 2, restDays: 3, reason: "Consistency > intensity. 4 sustainable days > 6 unsustainable." }
+  weightloss: {label:'🔥 Weight Loss', runDays:4, gymDays:2, restDays:1, reason:"Cardio-heavy for calorie burn, enough strength to preserve muscle."},
+  muscle: {label:'💪 Build Muscle', runDays:2, gymDays:4, restDays:1, reason:"Gym-focused with each muscle 2x/week. Runs kept easy."},
+  running: {label:'🏃 Faster Running', runDays:5, gymDays:2, restDays:0, reason:"Frequency drives adaptation. Gym for injury prevention."},
+  balance: {label:'⚖️ Balance Both', runDays:3, gymDays:3, restDays:1, reason:"Equal emphasis. Sustainable long-term."},
+  fitness: {label:'🌟 General Fitness', runDays:2, gymDays:2, restDays:3, reason:"Consistency > intensity."}
 };
 
 // ==================== PERSONALITY ====================
-const easyRunPraise = ["Nice easy pace. Future you thanks you.","Textbook easy run. Base miles are gold.","80/20 in action. Well done.","Boring is beautiful. This is beautiful."];
-const hardRunPraise = ["That's the work. Recovery starts now.","The good kind of uncomfortable.","That's how you get faster. Now eat.","Iron effort. Legs will thank you tomorrow (probably)."];
-const gymPraise = ["Iron work done.","One rep at a time.","Strong days make everything easier.","Effort deposited. Interest accruing."];
-const missedMessages = ["Life got in the way? No stress. Redistributing.","One skip doesn't undo weeks of work.","Bonus rest day claimed. Coach approves.","Consistency > perfection."];
+const coachNotesByGoal = {
+  weightloss: ["Move more today. Walks count.","The walks matter as much as runs.","Focus on the deficit, not the workout.","Rest doesn't mean sedentary.","Consistency compounds. Show up."],
+  muscle: ["One rep at a time. Adaptations are patient.","Eat enough? Sleep enough? Those matter.","Progressive overload is the whole game.","Recovery IS the growth. Don't skimp.","Muscle takes months. Show up daily."],
+  running: ["Miles today, speed later.","Easy runs build the engine.","Slow to get faster.","80/20 pattern activated.","Trust the base building."],
+  balance: ["Best of both. Slow and sustainable.","Neither runner nor lifter. Just fit.","Well-rounded beats specialized.","Long game, not short sprints."],
+  fitness: ["You showed up. That's the win.","Moved today? Good.","Consistency > perfection.","Small daily wins compound.","The habit is the goal."]
+};
+
+const easyRunPraise = ["Nice easy pace{name}. Future you thanks you.","Textbook easy run{name}. Base miles are gold.","80/20 in action{name}. Well done.","Easy today{name}, fast on race day.","Boring is beautiful. This is beautiful."];
+const hardRunPraise = ["That's the work{name}. Recovery starts now.","The good kind of uncomfortable{name}. Well done.","That's how you get faster{name}. Now eat.","Iron effort{name}. Legs will thank you tomorrow (probably)."];
+const gymPraise = ["Iron work done{name}.","One rep at a time.","Strong days make everything easier.","Effort deposited{name}. Interest accruing."];
+const mobilityPraise = ["Mobility done{name}. Injury prevention in action.","This is what pros do{name}. Boring, essential.","Future you thanks past you for this session."];
+const missedMessages = ["Life got in the way? No stress. Redistributing.","One skip doesn't undo weeks of work.","Bonus rest day claimed. Coach approves.","Consistency > perfection.","Alright{name}. Life happens. Moving on."];
 const loaderPhrases = ["Not warming up. Just loading.","Definitely not certified.","Reading your training notes...","Putting on the (imaginary) whistle...","Loading uncertified wisdom..."];
 
-function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function nameStr() {
+  return state.prefs.name ? ', ' + state.prefs.name : '';
+}
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function formatMessage(template) {
+  return template.replace('{name}', nameStr());
+}
+
+function shouldUseName() {
+  return state.prefs.name && Math.random() < 0.35;
+}
 
 function getCoachNote(){
   const today = new Date();
@@ -1165,20 +1434,22 @@ function getCoachNote(){
   const all = allSess();
   const last7 = sessRange(7);
   const streak = countWeekStreak();
+  const name = shouldUseName() ? state.prefs.name : '';
+  const namePart = name ? ' ' + name : '';
   
   if(day === 0 && last7.length >= 3){
     const km = last7.filter(s => s.kind==='run').reduce((a,r)=>a+r.distance,0);
-    return `Sunday. ${km.toFixed(1)}km across ${last7.length} sessions. Not bad. Not certified — but not bad.`;
+    return `Sunday${namePart}. ${km.toFixed(1)}km across ${last7.length} sessions. Not bad. Not certified — but not bad.`;
   }
   if(streak >= 4 && !state.milestones['streak4']){
     state.milestones['streak4'] = todayKey(); save();
-    return `Four weeks straight. Impressive.`;
+    return `Four weeks straight${namePart}. Impressive.`;
   }
-  if(all.length === 1) return `First one logged. Hardest one. Now show up again.`;
-  if(all.length === 0) return `Ready when you are. No pressure. Actually — some pressure. Show up.`;
+  if(all.length === 1) return `First one logged${namePart}. Hardest one done. Now show up again.`;
+  if(all.length === 0) return `Ready when you are${namePart}. No pressure. Actually — some pressure. Show up.`;
   
   const yHard = allSess().filter(s => daysSince(s.date) === 1).some(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy'));
-  if(yHard) return `Yesterday was rough. Today, ease off. That's actual coaching.`;
+  if(yHard) return `Yesterday was rough${namePart}. Today, ease off.`;
   
   const runs30 = sessRange(30).filter(s => s.kind==='run');
   if(runs30.length >= 5){
@@ -1187,13 +1458,14 @@ function getCoachNote(){
     if(easyPct < 60) return `${easyPct}% easy runs. Too much intensity. Slow down to get faster.`;
   }
   
-  return pickRandom([
-    `Show up today. That's most of it.`,
-    `Not fancy. Just consistent. That's the secret.`,
-    `Uncertified but not unwise.`,
-    `Get up. Do it. Simple. Not easy.`,
-    `Trust the process. Made it up but based on real science.`
-  ]);
+  // Goal-specific notes
+  if(state.prefs.goal && coachNotesByGoal[state.prefs.goal]) {
+    const goalNote = pickRandom(coachNotesByGoal[state.prefs.goal]);
+    if(namePart) return goalNote.replace('.', namePart + '.');
+    return goalNote;
+  }
+  
+  return pickRandom([`Show up today${namePart}. That's most of it.`,`Not fancy. Just consistent. That's the secret.`,`Uncertified but not unwise.`]);
 }
 
 function countWeekStreak(){
@@ -1209,10 +1481,7 @@ function countWeekStreak(){
 }
 
 // ==================== UTILS ====================
-function localDateKey(d){
-  const dt = d instanceof Date ? d : new Date(d);
-  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
-}
+function localDateKey(d){const dt = d instanceof Date ? d : new Date(d);return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
 function todayKey(){ return localDateKey(new Date()); }
 function fmtDate(iso){ return new Date(iso).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}); }
 function fmtTime(s){ const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=s%60; return h>0?`${h}h ${m}m`:`${m}:${ss.toString().padStart(2,'0')}`; }
@@ -1229,7 +1498,7 @@ function sessLoad(s){
   return 0;
 }
 function allSess(){
-  const a = [];
+  const a=[];
   state.runs.forEach(r => a.push({...r,kind:'run'}));
   state.gyms.forEach(g => a.push({...g,kind:'gym'}));
   state.activities.forEach(x => a.push({...x,kind:'activity'}));
@@ -1245,6 +1514,9 @@ function weekHasSession(weekStartDate, dayIdx){
 }
 function isWorkDay(dayIdx){ return state.prefs.workDays.includes(dayIdx); }
 function timeBudgetForDay(dayIdx){ return isWorkDay(dayIdx) ? state.prefs.workTime : state.prefs.offTime; }
+function totalTrainingDaysPref(){ return state.prefs.runDays + state.prefs.gymDays + state.prefs.restDays; }
+function hasOverflow(){ return totalTrainingDaysPref() > 7; }
+function overflowCount(){ return Math.max(0, totalTrainingDaysPref() - 7); }
 
 // ==================== PACE ZONES ====================
 function getPaceZones(){
@@ -1252,10 +1524,10 @@ function getPaceZones(){
   if(!bl || !bl.easyDist || !bl.easyTime) return null;
   const easySecPerKm = (bl.easyTime * 60) / bl.easyDist;
   return {
-    easy: {label: paceSec(easySecPerKm)},
-    moderate: {label: paceSec(easySecPerKm - 25)},
-    hard: {label: paceSec(easySecPerKm - 55)},
-    long: {label: paceSec(easySecPerKm + 15)}
+    easy: {label: paceSec(easySecPerKm), sec: easySecPerKm},
+    moderate: {label: paceSec(easySecPerKm - 25), sec: easySecPerKm - 25},
+    hard: {label: paceSec(easySecPerKm - 55), sec: easySecPerKm - 55},
+    long: {label: paceSec(easySecPerKm + 15), sec: easySecPerKm + 15}
   };
 }
 
@@ -1274,57 +1546,32 @@ function getDistanceRecommendation(type){
 
 // ==================== BASELINE EVOLUTION ====================
 function checkBaselineImprovement(){
-  // Only check every 3 days to avoid annoyance
-  if(state.lastBaselineCheck){
-    const daysSinceCheck = daysSince(state.lastBaselineCheck);
-    if(daysSinceCheck < 3) return null;
-  }
-  
+  if(state.lastBaselineCheck && daysSince(state.lastBaselineCheck) < 3) return null;
   if(!state.prefs.baseline) return null;
   const easyRuns = state.runs.filter(r => r.type === 'easy').sort((a,b) => new Date(b.date)-new Date(a.date));
   if(easyRuns.length < 6) return null;
-  
   const recent6 = easyRuns.slice(0, 6);
   const oldestOfRecent = new Date(recent6[5].date);
   const daysSinceOldest = Math.floor((new Date() - oldestOfRecent) / 86400000);
-  if(daysSinceOldest < 14) return null; // Need 2+ weeks of data
-  
+  if(daysSinceOldest < 14) return null;
   const avgPace = recent6.reduce((sum, r) => sum + (r.seconds / r.distance), 0) / 6;
   const baselinePace = (state.prefs.baseline.easyTime * 60) / state.prefs.baseline.easyDist;
   const improvement = baselinePace - avgPace;
-  
-  // Need 20+ sec/km faster consistently
   if(improvement < 20) return null;
-  
-  // Check if we already asked about this
   const improvementKey = Math.round(avgPace);
   if(state.dismissedBaselineUpdates.includes(improvementKey)) return null;
-  
   state.lastBaselineCheck = todayKey();
   save();
-  
   const suggestedDist = state.prefs.baseline.easyDist;
   const suggestedTime = Math.round((avgPace * suggestedDist) / 60);
-  
-  return {
-    key: improvementKey,
-    oldPace: paceSec(baselinePace),
-    newPace: paceSec(avgPace),
-    improvement: Math.round(improvement),
-    suggestedEasyDist: suggestedDist,
-    suggestedEasyTime: suggestedTime
-  };
+  return {key: improvementKey, oldPace: paceSec(baselinePace), newPace: paceSec(avgPace), improvement: Math.round(improvement), suggestedEasyDist: suggestedDist, suggestedEasyTime: suggestedTime};
 }
 
 function renderImprovementBanner(){
   const imp = state.pendingBaselineUpdate;
-  if(!imp){
-    document.getElementById('improvementBanner').classList.add('hidden');
-    return;
-  }
+  if(!imp){ document.getElementById('improvementBanner').classList.add('hidden'); return; }
   document.getElementById('improvementBanner').classList.remove('hidden');
-  document.getElementById('impTitle').textContent = "You've improved!";
-  document.getElementById('impBody').innerHTML = `Your easy pace has averaged <strong>${imp.newPace}/km</strong> lately — <strong>${imp.improvement} sec/km faster</strong> than your baseline of ${imp.oldPace}/km. Update baseline so future recommendations match your current fitness?`;
+  document.getElementById('impBody').innerHTML = `Easy pace averaged <strong>${imp.newPace}/km</strong> lately — <strong>${imp.improvement} sec/km faster</strong> than baseline of ${imp.oldPace}/km. Update?`;
 }
 
 function acceptBaselineUpdate(){
@@ -1383,7 +1630,7 @@ function makeSample(){
   runs.push({id:'r4',date:ago(13),distance:5.0,seconds:1800,type:'easy'});
   gyms.push({id:'g3',date:ago(12),duration:45,type:'upper',intensity:'moderate'});
   runs.push({id:'r5',date:ago(11),distance:6.5,seconds:2250,type:'moderate'});
-  gyms.push({id:'g4',date:ago(10),duration:50,type:'lower',intensity:'heavy'});
+  gyms.push({id:'g4',date:ago(10),duration:30,type:'mobility',intensity:'light'});
   runs.push({id:'r6',date:ago(8),distance:9.0,seconds:3000,type:'moderate'});
   runs.push({id:'r7',date:ago(6),distance:5.5,seconds:1900,type:'easy'});
   gyms.push({id:'g5',date:ago(5),duration:45,type:'upper',intensity:'moderate'});
@@ -1396,29 +1643,61 @@ function makeSample(){
 // ==================== WEEKLY PLAN GENERATOR ====================
 function generateWeeklyPlan(weekStartDate){
   const plan = new Array(7).fill(null);
+  
+  // 1. Place activities
   state.prefs.activities.forEach(act => {
     plan[act.day] = {type:'activity',subtype:'activity',name:act.name,duration:act.duration,intensity:act.intensity,label:act.name,shortLabel:act.name.substring(0,6).toUpperCase()};
   });
+  
+  // 2. Place rest days
   const restDays = getRestDaysForWeek(weekStartDate);
   restDays.forEach(idx => { if(!plan[idx]) plan[idx] = {type:'rest',subtype:'rest',label:'Rest',shortLabel:'REST'}; });
+  
+  // 3. Determine placements
   const availableDays = [];
   for(let i=0; i<7; i++){ if(!plan[i]) availableDays.push(i); }
   
-  const hasHardActivity = plan.some(p => p && p.type === 'activity' && p.intensity === 'hard');
   let neededRuns = state.prefs.runDays;
   let neededGyms = state.prefs.gymDays;
+  const hasHardActivity = plan.some(p => p && p.type === 'activity' && p.intensity === 'hard');
   if(hasHardActivity) neededRuns = Math.max(1, neededRuns - 1);
+  
+  // Handle overflow with user's preference
+  const totalNeeded = neededRuns + neededGyms;
+  const overflow = totalNeeded - availableDays.length;
+  let combinedDays = [];
+  let mobilityReplacements = [];
+  
+  if(overflow > 0) {
+    const wsKey = localDateKey(weekStartDate);
+    const weeklyChoice = state.weeklyOverflowChoice[wsKey] || state.prefs.overflow || 'combine';
+    
+    if(weeklyChoice === 'combine') {
+      // Will create combined days later
+      combinedDays = new Array(overflow);
+    } else if(weeklyChoice === 'mobility') {
+      // Reduce lower/gym days and add mobility
+      mobilityReplacements = new Array(overflow);
+      neededGyms = Math.max(0, neededGyms - overflow);
+    } else if(weeklyChoice === 'single') {
+      // Reduce sessions but make them harder
+      neededGyms = Math.max(0, neededGyms - overflow);
+    }
+    // 'ask' means we don't auto-resolve, banner will show
+  }
   
   const runPlacements = [];
   const gymPlacements = [];
   
+  // Long run on Saturday if off day
   if(availableDays.includes(5) && !isWorkDay(5) && neededRuns > 0){
     runPlacements.push({day:5, type:'moderate', label:'Long Run', isLong:true});
     neededRuns--;
     availableDays.splice(availableDays.indexOf(5), 1);
   }
   
-  if(!hasHardActivity && neededRuns > 0){
+  // Hard run mid-week
+  if(!hasHardActivity && neededRuns > 0 && state.prefs.runDays >= 3){
     const midDays = [2, 1, 3].filter(d => availableDays.includes(d));
     if(midDays.length > 0){
       const hardDay = midDays[0];
@@ -1428,35 +1707,50 @@ function generateWeeklyPlan(weekStartDate){
     }
   }
   
-  const gymSplit = getGymSplit(state.prefs.gymDays, state.prefs.runDays);
+  // Gym split logic
+  const gymSplit = getGymSplit(state.prefs.gymDays, state.prefs.runDays, state.prefs.split);
   const hardRunDays = runPlacements.filter(r => r.type === 'hard').map(r => r.day);
   
-  gymSplit.forEach(gymType => {
-    if(neededGyms <= 0) return;
-    const isLower = gymType === 'lower';
+  let gymIdx = 0;
+  while(neededGyms > 0 && availableDays.length > 0 && gymIdx < gymSplit.length){
+    const gymType = gymSplit[gymIdx];
+    const isLower = gymType === 'lower' || gymType === 'legs';
     const validDays = availableDays.filter(d => {
       if(isLower) return !hardRunDays.some(hd => Math.abs(d - hd) < 2);
       return true;
     });
     if(validDays.length > 0){
       const day = validDays[0];
-      gymPlacements.push({day, type:gymType, intensity: 'moderate', label: getGymLabel(gymType)});
+      gymPlacements.push({day, type:gymType, intensity:'moderate', label:getGymLabel(gymType)});
       neededGyms--;
       availableDays.splice(availableDays.indexOf(day), 1);
     }
+    gymIdx++;
+  }
+  
+  // Add mobility replacements
+  mobilityReplacements.forEach(() => {
+    if(availableDays.length > 0) {
+      const day = availableDays.shift();
+      gymPlacements.push({day, type:'mobility', intensity:'light', label:'Mobility'});
+    }
   });
   
+  // Fill remaining with easy runs
   while(neededRuns > 0 && availableDays.length > 0){
     const day = availableDays.shift();
     runPlacements.push({day, type:'easy', label:'Easy Run'});
     neededRuns--;
   }
+  
+  // Fill any remaining gyms
   while(neededGyms > 0 && availableDays.length > 0){
     const day = availableDays.shift();
     gymPlacements.push({day, type:'upper', intensity:'moderate', label:'Upper Body'});
     neededGyms--;
   }
   
+  // Populate plan
   runPlacements.forEach(r => {
     const day = r.day;
     const timeBudget = timeBudgetForDay(day);
@@ -1466,52 +1760,57 @@ function generateWeeklyPlan(weekStartDate){
     else distance = r.isLong ? getDistanceRecommendation('long') : getDistanceRecommendation('moderate');
     
     const zones = getPaceZones();
-    const pacSec = zones ? (r.type === 'easy' ? 390 : r.type === 'hard' ? 300 : 360) : 360;
+    const pacSec = zones ? (r.type === 'easy' ? zones.easy.sec : r.type === 'hard' ? zones.hard.sec : (r.isLong ? zones.long.sec : zones.moderate.sec)) : 360;
     const paceForType = zones ? (r.type === 'easy' ? zones.easy.label : r.type === 'hard' ? zones.hard.label : (r.isLong ? zones.long.label : zones.moderate.label)) : '6:00';
     const maxDistByTime = (timeBudget * 60) / pacSec;
     distance = Math.min(distance, maxDistByTime);
     distance = Math.max(2, Math.round(distance * 10) / 10);
     
     const shortLabels = {easy:'EASY', moderate: r.isLong ? 'LONG' : 'MOD', hard:'HARD'};
-    plan[day] = {
-      type:'run', subtype:r.type, label:r.label,
-      shortLabel: shortLabels[r.type], distance,
-      duration: Math.round((distance * pacSec) / 60),
-      pace: paceForType, isLong: r.isLong
-    };
+    plan[day] = {type:'run', subtype:r.type, label:r.label, shortLabel: shortLabels[r.type], distance, duration: Math.round((distance * pacSec) / 60), pace: paceForType, isLong: r.isLong};
   });
   
   gymPlacements.forEach(g => {
     const day = g.day;
     const timeBudget = timeBudgetForDay(day);
-    const shortLabels = {upper:'UPR', lower:'LWR', full:'FULL', cardio:'CARD'};
-    plan[day] = {
-      type:'gym', subtype:g.type, label:g.label,
-      shortLabel: shortLabels[g.type] || g.type.toUpperCase(),
-      duration: Math.min(60, timeBudget),
-      intensity: g.intensity
-    };
+    const shortLabels = {upper:'UPR', lower:'LWR', push:'PUSH', pull:'PULL', legs:'LEGS', full:'FULL', cardio:'CARD', mobility:'MOB'};
+    plan[day] = {type:'gym', subtype:g.type, label:g.label, shortLabel: shortLabels[g.type] || g.type.toUpperCase(), duration: g.type === 'mobility' ? 35 : Math.min(75, timeBudget), intensity: g.intensity};
   });
   
+  // Fill any empty slots as rest
   for(let i=0; i<7; i++){ if(!plan[i]) plan[i] = {type:'rest',subtype:'rest',label:'Rest',shortLabel:'REST'}; }
   return plan;
 }
 
-function getGymSplit(numGyms, numRuns){
+function getGymSplit(numGyms, numRuns, preference){
   const highRunVolume = numRuns >= 4;
+  const usePPL = preference === 'ppl' || (preference === 'auto' && numGyms >= 4);
+  const useUL = preference === 'ul' || (preference === 'auto' && numGyms < 4);
+  
   if(numGyms === 1) return ['full'];
-  if(numGyms === 2) return highRunVolume ? ['upper', 'full'] : ['upper', 'lower'];
-  if(numGyms === 3) return highRunVolume ? ['upper', 'lower', 'upper'] : ['upper', 'lower', 'full'];
-  if(numGyms === 4) return highRunVolume ? ['upper', 'lower', 'upper', 'full'] : ['upper', 'lower', 'upper', 'lower'];
-  if(numGyms === 5) return highRunVolume ? ['upper', 'lower', 'upper', 'full', 'upper'] : ['upper', 'lower', 'upper', 'lower', 'full'];
+  if(numGyms === 2) return highRunVolume ? ['upper', 'mobility'] : ['upper', 'lower'];
+  if(numGyms === 3){
+    if(usePPL) return ['push', 'pull', 'legs'];
+    return highRunVolume ? ['upper', 'lower', 'upper'] : ['upper', 'lower', 'full'];
+  }
+  if(numGyms === 4){
+    if(usePPL) return highRunVolume ? ['push', 'pull', 'legs', 'mobility'] : ['push', 'pull', 'legs', 'upper'];
+    return highRunVolume ? ['upper', 'lower', 'upper', 'mobility'] : ['upper', 'lower', 'upper', 'lower'];
+  }
+  if(numGyms === 5){
+    if(usePPL) return highRunVolume ? ['push', 'pull', 'legs', 'mobility', 'push'] : ['push', 'pull', 'legs', 'push', 'pull'];
+    return highRunVolume ? ['upper', 'lower', 'upper', 'mobility', 'full'] : ['upper', 'lower', 'upper', 'lower', 'full'];
+  }
+  if(numGyms >= 6){
+    if(usePPL) return highRunVolume ? ['push', 'pull', 'legs', 'mobility', 'push', 'pull'] : ['push', 'pull', 'legs', 'push', 'pull', 'upper'];
+    return highRunVolume ? ['upper', 'lower', 'upper', 'mobility', 'full', 'upper'] : ['upper', 'lower', 'upper', 'lower', 'full', 'upper'];
+  }
   return ['upper', 'lower'];
 }
 
 function getGymLabel(type){
-  if(type === 'upper') return 'Upper Body';
-  if(type === 'lower') return 'Lower Body';
-  if(type === 'full') return 'Full Body';
-  return 'Gym';
+  const labels = {upper:'Upper Body', lower:'Lower Body', push:'Push Day', pull:'Pull Day', legs:'Legs Day', full:'Full Body', mobility:'Mobility', cardio:'Cardio'};
+  return labels[type] || type;
 }
 
 function getRestDaysForWeek(weekStartDate){
@@ -1543,10 +1842,12 @@ function getRecommendation(){
   const yesterday = all.filter(s => daysSince(s.date) === 1);
   const last3 = all.filter(s => daysSince(s.date) <= 3 && daysSince(s.date) >= 0);
   const today = all.filter(s => daysSince(s.date) === 0);
+  
   const yHard = yesterday.some(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy'));
-  const yLeg = yesterday.some(s => s.kind==='gym' && s.type==='lower');
-  const yHeavyLeg = yesterday.some(s => s.kind==='gym' && s.type==='lower' && s.intensity==='heavy');
+  const yLeg = yesterday.some(s => s.kind==='gym' && (s.type==='lower' || s.type==='legs'));
+  const yHeavyLeg = yesterday.some(s => s.kind==='gym' && (s.type==='lower' || s.type==='legs') && s.intensity==='heavy');
   const hardCount = last3.filter(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy')).length;
+  
   let consec = 0;
   for(let i=1; i<=10; i++){ if(all.some(s => daysSince(s.date)===i)) consec++; else break; }
   
@@ -1556,6 +1857,7 @@ function getRecommendation(){
   const timeBudget = timeBudgetForDay(todayIdx);
   const plan = generateWeeklyPlan(ws);
   const todayPlan = plan[todayIdx];
+  const nameP = shouldUseName() ? ', ' + state.prefs.name : '';
   
   const activeComp = state.compensations.find(c => !state.dismissedComps.includes(c.id) && c.remaining > 0);
   let compBonus = 0, compText = '';
@@ -1567,20 +1869,21 @@ function getRecommendation(){
   let cls='', activity='', detail='', reason='', termKey=null;
   
   if(today.length > 0){
-    activity = 'Session Complete'; detail = 'Recovery mode';
-    reason = "Done for today. Hydrate, protein, sleep. Tomorrow's already planned.";
+    activity = 'Session Complete';
+    detail = 'Recovery mode';
+    reason = `Done for today${nameP}. Hydrate, protein, sleep. Tomorrow's already planned.`;
     cls = 'rest';
   } else if(todayPlan && todayPlan.type === 'activity'){
     activity = todayPlan.name; detail = `${todayPlan.duration} min · ${todayPlan.intensity} intensity`;
     reason = `Today's your ${todayPlan.name} day. That's your training.`;
     cls = 'activity';
   } else if(isRestPlanned){
-    activity = 'Rest Day'; detail = 'Scheduled recovery';
-    reason = "Rest is scheduled. Feel energetic? Train anyway — I'll move rest to another day.";
+    activity = 'Rest Day'; detail = getRestDetailByGoal();
+    reason = getRestReasonByGoal(nameP);
     cls = 'rest';
   } else if(consec >= 6){
     activity = 'Rest Required'; detail = `${consec} days in a row`;
-    reason = "Your body's asking. Push through and invite injury.";
+    reason = `Your body's asking${nameP}. Push through and invite injury.`;
     cls = 'warn';
   } else if(hardCount >= 2){
     activity = 'Easy or Rest'; detail = 'Easy 3-5km, or take today off';
@@ -1600,32 +1903,49 @@ function getRecommendation(){
     termKey = todayPlan.isLong ? 'long' : todayPlan.subtype;
     const km = todayPlan.distance + compBonus;
     detail = `${km.toFixed(1)}km at ${todayPlan.pace}/km · ~${Math.round(todayPlan.duration)} min${compText}`;
-    reason = generateSessionReason(todayPlan, isWorkDay(todayIdx), timeBudget);
+    reason = generateSessionReason(todayPlan, isWorkDay(todayIdx), timeBudget, nameP);
   } else if(todayPlan && todayPlan.type === 'gym'){
     activity = todayPlan.label;
     termKey = todayPlan.subtype;
     detail = `${todayPlan.duration} min · ${todayPlan.intensity} intensity`;
-    reason = generateSessionReason(todayPlan, isWorkDay(todayIdx), timeBudget);
+    reason = generateSessionReason(todayPlan, isWorkDay(todayIdx), timeBudget, nameP);
     if(state.prefs.focus && state.prefs.focus.length > 0) reason += ` Focus: ${state.prefs.focus.join(', ')}.`;
   } else {
     activity = 'Your Choice';
     detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Full Body Gym · ${timeBudget} min`;
-    reason = "Fully recovered. Pick what you trained least recently.";
+    reason = `Fully recovered${nameP}. Pick what you trained least recently.`;
   }
   
   return { activity, detail, reason, cls, plan: todayPlan, termKey };
 }
 
-function generateSessionReason(planItem, isWork, timeBudget){
+function getRestDetailByGoal(){
+  const goal = state.prefs.goal;
+  if(goal === 'weightloss') return 'Recovery + walk (8k steps)';
+  if(goal === 'muscle') return 'Recovery + protein + sleep';
+  if(goal === 'running') return 'Legs recover, foam roll';
+  return 'Scheduled recovery';
+}
+
+function getRestReasonByGoal(nameP){
+  const goal = state.prefs.goal;
+  if(goal === 'weightloss') return `Rest is scheduled${nameP}. Doesn't mean sedentary. Aim for a walk today — 8k+ steps counts as active recovery.`;
+  if(goal === 'muscle') return `Rest is scheduled${nameP}. Growth happens NOW, not during training. Prioritize protein (aim for 0.8g per lb bodyweight) and 7-8 hours sleep.`;
+  if(goal === 'running') return `Rest day${nameP}. Legs recover. Foam rolling and stretching help. Save intensity for tomorrow.`;
+  return `Rest day but feeling great? Move if you want. Rest day but feeling terrible? Take it seriously. Not every day requires optimization.`;
+}
+
+function generateSessionReason(planItem, isWork, timeBudget, nameP){
   if(planItem.type === 'run'){
-    if(planItem.subtype === 'easy') return isWork ? `${timeBudget} min window. Easy conversational pace.` : `Off day. Easy pace, enjoy it.`;
-    if(planItem.subtype === 'hard') return `Time for intensity. 10-min warm-up, then push. The 20% that makes you faster.`;
-    if(planItem.subtype === 'moderate') return planItem.isLong ? `Weekend long run. Moderate effort. Builds the aerobic engine.` : `Comfortably hard, sustainable. Good tempo work.`;
+    if(planItem.subtype === 'easy') return isWork ? `${timeBudget} min window${nameP}. Easy conversational pace. Nothing heroic.` : `Off day${nameP}. Easy pace, enjoy it.`;
+    if(planItem.subtype === 'hard') return `Time for intensity${nameP}. 10-min warm-up, then push. The 20% that makes you faster.`;
+    if(planItem.subtype === 'moderate') return planItem.isLong ? `Weekend long run${nameP}. Moderate effort. Builds the aerobic engine.` : `Comfortably hard, sustainable${nameP}. Good tempo work.`;
   }
   if(planItem.type === 'gym'){
-    if(planItem.subtype === 'upper') return `Upper body doesn't interfere with running. Great pairing.`;
-    if(planItem.subtype === 'lower') return `Legs get worked. Keep intensity in check.`;
+    if(planItem.subtype === 'upper' || planItem.subtype === 'push' || planItem.subtype === 'pull') return `Upper body doesn't interfere with running. Great pairing.`;
+    if(planItem.subtype === 'lower' || planItem.subtype === 'legs') return `Legs get worked${nameP}. Keep intensity in check.`;
     if(planItem.subtype === 'full') return `Full body. Efficient use of ${timeBudget} min.`;
+    if(planItem.subtype === 'mobility') return `Mobility session${nameP}. Injury prevention + running economy. This is what pros do.`;
   }
   return "Session scheduled based on your week's balance.";
 }
@@ -1634,7 +1954,7 @@ function getRecovery(){
   const all = allSess();
   const y = all.filter(s => daysSince(s.date)===1);
   const l3 = all.filter(s => daysSince(s.date)<=3);
-  const yHeavyLeg = y.some(s => s.kind==='gym' && s.type==='lower' && s.intensity==='heavy');
+  const yHeavyLeg = y.some(s => s.kind==='gym' && (s.type==='lower' || s.type==='legs') && s.intensity==='heavy');
   const yHard = y.some(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy'));
   const hardCount = l3.filter(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy')).length;
   let consec = 0;
@@ -1669,10 +1989,16 @@ function getInsights(){
   const weeks = new Set();
   last30.forEach(s => weeks.add(localDateKey(weekStart(new Date(s.date)))));
   if(weeks.size >= 4) out.push({t:'success', i:'✓', text:`<strong>${weeks.size} consistent weeks</strong>.`});
+  
+  // Skip pattern warning
+  const recentSkips = state.skipHistory.filter(s => daysSince(s.date) <= 14).length;
+  if(recentSkips >= 5) out.push({t:'warn', i:'!', text:`<strong>${recentSkips} skips in 2 weeks</strong>. Plan might be too ambitious — consider reducing volume.`});
+  
   if(out.length === 0) out.push({t:'info', i:'i', text:'On track. Not certified but observant.'});
   return out.slice(0, 4);
 }
 
+// ==================== COMPENSATION ====================
 function checkForCompensation(loggedRun){
   const dayIdx = dayOfWeekMonStart(new Date(loggedRun.date));
   const ws = weekStart(new Date(loggedRun.date));
@@ -1686,6 +2012,93 @@ function checkForCompensation(loggedRun){
     state.compensations.push({id:'comp_'+Date.now(),created:new Date().toISOString(),targetKm,actualKm:loggedRun.distance,deficit,remaining:deficit,perSessionBoost,sessionsApplied:0});
     setTimeout(() => showToast(`Short of target? Adding +${perSessionBoost.toFixed(1)}km to next runs.`, 'info', 4000), 500);
   }
+}
+
+// ==================== CONFLICT/OVERFLOW HANDLING ====================
+function renderConflictBanner(){
+  const banner = document.getElementById('conflictBanner');
+  if(!hasOverflow() || state.prefs.overflow !== 'ask') { banner.classList.add('hidden'); return; }
+  const wsKey = localDateKey(weekStart(new Date()));
+  if(state.weeklyOverflowChoice[wsKey]) { banner.classList.add('hidden'); return; }
+  banner.classList.remove('hidden');
+  document.getElementById('conflictText').innerHTML = `You want ${totalTrainingDaysPref()} training days but the week only has 7. Choose how to handle the ${overflowCount()} extra session${overflowCount()>1?'s':''}.`;
+}
+
+function openConflictModal(){
+  const goal = state.prefs.goal;
+  document.getElementById('conflictModalDesc').innerHTML = `Your training days exceed 7. Pick how to handle the overflow this week.`;
+  
+  const options = [
+    {val:'combine', title:'🔀 Easy Run + Upper Body Combined', desc:'Safest combo. Merge onto one day. Best for maximum sessions.', rec: goal==='weightloss'},
+    {val:'mobility', title:'🧘 Replace with Mobility Session', desc:'Swap redundant heavy lower for mobility. Runner-smart choice.', rec: goal==='running'},
+    {val:'single', title:'💪 One Harder Session Instead', desc:'Skip splitting. Do fewer sessions with more intensity.', rec: goal==='muscle'},
+    {val:'skip_run', title:'⏭️ Skip 1 Easy Run This Week', desc:'Simple. Drop lowest priority run. Redistribute distance.', rec: false},
+    {val:'skip_gym', title:'⏭️ Skip 1 Gym Session This Week', desc:'Simple. Drop one gym day this week only.', rec: false}
+  ];
+  
+  document.getElementById('conflictOptions').innerHTML = options.map(o => `
+    <div class="option-item${o.rec ? ' recommended' : ''}" onclick="pickConflictOption('${o.val}')">
+      <div class="option-info">
+        <div class="option-title">${o.title} ${o.rec ? '<span class="recommended-badge">Recommended</span>' : ''}</div>
+        <div class="option-desc">${o.desc}</div>
+      </div>
+      <div style="color:var(--accent);font-size:20px">→</div>
+    </div>
+  `).join('');
+  
+  document.getElementById('conflictModal').classList.add('active');
+}
+
+function pickConflictOption(val){
+  const wsKey = localDateKey(weekStart(new Date()));
+  state.weeklyOverflowChoice[wsKey] = val;
+  save();
+  closeModal('conflictModal');
+  showToast('Week adjusted', 'info');
+  renderAll();
+}
+
+// ==================== SKIP HANDLING ====================
+function openSkipModal(){
+  const todayIdx = dayOfWeekMonStart(new Date());
+  const remainingDays = 6 - todayIdx;
+  const skipCount = state.skipHistory.filter(s => daysSince(s.date) <= 14).length;
+  
+  let desc = "Alright. Life happens. Once in a while is fine. What's the situation?";
+  
+  if(skipCount >= 5) {
+    desc = `That's your ${skipCount+1}th skip in 2 weeks. I'm noticing a pattern. Not judging — just being honest. Consider reducing your weekly plan in settings.`;
+  } else if(remainingDays <= 1) {
+    desc = "End of week skip. Not much room to redistribute. Sometimes just accepting the miss is the right move.";
+  }
+  
+  document.getElementById('skipModalDesc').textContent = desc;
+  document.getElementById('skipModal').classList.add('active');
+}
+
+function handleSkip(reason){
+  const today = new Date();
+  const todayIdx = dayOfWeekMonStart(today);
+  const ws = weekStart(today);
+  const remainingDaysInWeek = 6 - todayIdx;
+  
+  state.skipHistory.push({date: today.toISOString(), reason});
+  
+  let message = '';
+  if(reason === 'sick') {
+    message = `Rest properly${nameStr()}. Health first. No adjustment.`;
+  } else if(remainingDaysInWeek <= 0) {
+    message = "Last day of week — nothing to shift. Fresh start Monday.";
+  } else if(reason === 'cant') {
+    message = pickRandom(missedMessages).replace('{name}', nameStr());
+  } else {
+    message = "Skipped and redistributing. But don't make this a habit — I mean it.";
+  }
+  
+  save();
+  closeModal('skipModal');
+  showToast(message, 'info', 4500);
+  renderAll();
 }
 
 // ==================== RENDERING ====================
@@ -1760,19 +2173,14 @@ function renderWeekGrid(containerId, weekStartDate){
       } else {
         const s = sessions[0];
         let cls, typeCode, amt;
-        if(s.kind === 'run'){
+        if(s.kind === 'run'){ cls = 'done-'+s.type; typeCode = s.type === 'easy' ? 'EASY' : s.type === 'moderate' ? 'MOD' : 'HARD'; amt = s.distance.toFixed(1)+'km'; }
+        else if(s.kind === 'gym'){ 
           cls = 'done-'+s.type;
-          typeCode = s.type === 'easy' ? 'EASY' : s.type === 'moderate' ? 'MOD' : 'HARD';
-          amt = s.distance.toFixed(1)+'km';
-        } else if(s.kind === 'gym'){
-          cls = 'done-'+s.type;
-          typeCode = s.type === 'upper' ? 'UPR' : s.type === 'lower' ? 'LWR' : s.type === 'full' ? 'FULL' : 'CARD';
-          amt = s.duration+'m';
-        } else {
-          cls = 'done-activity';
-          typeCode = s.name.substring(0,6).toUpperCase();
+          const codes = {upper:'UPR', lower:'LWR', push:'PUSH', pull:'PULL', legs:'LEGS', full:'FULL', mobility:'MOB', cardio:'CARD'};
+          typeCode = codes[s.type] || s.type.toUpperCase();
           amt = s.duration+'m';
         }
+        else { cls = 'done-activity'; typeCode = s.name.substring(0,5).toUpperCase(); amt = s.duration+'m'; }
         cell.classList.add(cls);
         cell.innerHTML = `<div class="day-name">${dayNames[i]}</div><div class="day-num">${d.getDate()}</div><div class="day-type">${typeCode}</div><div class="day-amt">${amt}</div>`;
       }
@@ -1809,44 +2217,46 @@ function showDayDetail(sessions, planItem, dayIdx, weekStartDate){
   
   if(sessions.length > 0){
     body += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">Logged Sessions</div>';
-    body += sessions.map(s => {
-      if(s.kind === 'run'){
-        return `<div class="session" style="cursor:default">
-          <div class="session-marker mk-${s.type}"><div class="m-day">RUN</div><div class="m-date">${s.distance.toFixed(1)}</div></div>
-          <div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>Run <button class="info-btn inline" onclick="showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${fmtTime(s.seconds)}</span><span>${pace(s.distance,s.seconds)}</span></div></div>
-          <div class="session-metric">${s.distance}<span class="unit">km</span></div>
-        </div>`;
-      }
-      if(s.kind === 'gym'){
-        return `<div class="session" style="cursor:default">
-          <div class="session-marker mk-${s.type}"><div class="m-day">GYM</div><div class="m-date">${s.duration}</div></div>
-          <div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>${getGymLabel(s.type)} <button class="info-btn inline" onclick="showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${s.intensity} intensity</span></div></div>
-          <div class="session-metric">${s.duration}<span class="unit">min</span></div>
-        </div>`;
-      }
-      return `<div class="session" style="cursor:default">
-        <div class="session-marker mk-activity"><div class="m-day">ACT</div><div class="m-date">${s.duration}</div></div>
-        <div class="session-info"><div class="session-name"><span class="session-badge bg-activity">activity</span>${s.name}</div><div class="session-meta"><span>${s.intensity} intensity</span></div></div>
-        <div class="session-metric">${s.duration}<span class="unit">min</span></div>
-      </div>`;
-    }).join('');
+    body += sessions.map(s => renderSessionRow(s)).join('');
   } else if(planItem.type === 'rest'){
-    body += `<div class="rec-box"><div class="rec-box-title">😴 Rest Day</div><div class="rec-box-content">Recovery day. Adaptation happens now.<br><br><em>Feel energetic? Log a session — coach will move rest to another day.</em></div></div>
+    body += `<div class="rec-box"><div class="rec-box-title">😴 Rest Day</div><div class="rec-box-content">${getRestReasonByGoal('')}</div></div>
       ${!isPast ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('any')">Train Instead</button>` : ''}`;
   } else if(planItem.type === 'activity'){
     body += `<div class="rec-box"><div class="rec-box-title">🎯 ${planItem.name}</div><div class="rec-box-content"><strong>${planItem.duration} min</strong> at ${planItem.intensity} intensity<br><br>This is your primary training today. Coach planned around it.</div></div>
       ${!isPast ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('activity')">Log This</button>` : ''}`;
   } else if(planItem.type === 'run'){
     const termKey = planItem.isLong ? 'long' : planItem.subtype;
-    body += `<div class="rec-box"><div class="rec-box-title">🏃 ${planItem.label} <button class="info-btn" onclick="showGlossary('${termKey}')">ⓘ</button></div><div class="rec-box-content"><strong>${planItem.distance}km</strong> at <strong>${planItem.pace}/km</strong> pace<br>Approx. ${planItem.duration} min<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx))}</div></div>
+    body += `<div class="rec-box"><div class="rec-box-title">🏃 ${planItem.label} <button class="info-btn" onclick="showGlossary('${termKey}')">ⓘ</button></div><div class="rec-box-content"><strong>${planItem.distance}km</strong> at <strong>${planItem.pace}/km</strong> pace<br>Approx. ${planItem.duration} min<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx), '')}</div></div>
       ${!isPast && (isToday || new Date(localDateKey(d)) > new Date(todayKey())) ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('run')">Log Run</button>` : ''}`;
   } else if(planItem.type === 'gym'){
-    body += `<div class="rec-box"><div class="rec-box-title">💪 ${planItem.label} <button class="info-btn" onclick="showGlossary('${planItem.subtype}')">ⓘ</button></div><div class="rec-box-content"><strong>${planItem.duration} min</strong> at ${planItem.intensity} intensity<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx))}${state.prefs.focus && state.prefs.focus.length > 0 ? `<br><br><strong>Focus:</strong> ${state.prefs.focus.join(', ')}` : ''}</div></div>
+    body += `<div class="rec-box"><div class="rec-box-title">💪 ${planItem.label} <button class="info-btn" onclick="showGlossary('${planItem.subtype}')">ⓘ</button></div><div class="rec-box-content"><strong>${planItem.duration} min</strong> at ${planItem.intensity} intensity<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx), '')}${state.prefs.focus && state.prefs.focus.length > 0 ? `<br><br><strong>Focus:</strong> ${state.prefs.focus.join(', ')}` : ''}</div></div>
       ${!isPast && (isToday || new Date(localDateKey(d)) > new Date(todayKey())) ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('gym')">Log Gym</button>` : ''}`;
   }
   
   document.getElementById('detailBody').innerHTML = body;
   document.getElementById('detailModal').classList.add('active');
+}
+
+function renderSessionRow(s){
+  if(s.kind === 'run'){
+    return `<div class="session" style="cursor:default">
+      <div class="session-marker mk-${s.type}"><div class="m-day">RUN</div><div class="m-date">${s.distance.toFixed(1)}</div></div>
+      <div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>Run <button class="info-btn inline" onclick="showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${fmtTime(s.seconds)}</span><span>${pace(s.distance,s.seconds)}</span></div></div>
+      <div class="session-metric">${s.distance}<span class="unit">km</span></div>
+    </div>`;
+  }
+  if(s.kind === 'gym'){
+    return `<div class="session" style="cursor:default">
+      <div class="session-marker mk-${s.type}"><div class="m-day">GYM</div><div class="m-date">${s.duration}</div></div>
+      <div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>${getGymLabel(s.type)} <button class="info-btn inline" onclick="showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${s.intensity} intensity</span></div></div>
+      <div class="session-metric">${s.duration}<span class="unit">min</span></div>
+    </div>`;
+  }
+  return `<div class="session" style="cursor:default">
+    <div class="session-marker mk-activity"><div class="m-day">ACT</div><div class="m-date">${s.duration}</div></div>
+    <div class="session-info"><div class="session-name"><span class="session-badge bg-activity">activity</span>${s.name}</div><div class="session-meta"><span>${s.intensity} intensity</span></div></div>
+    <div class="session-metric">${s.duration}<span class="unit">min</span></div>
+  </div>`;
 }
 
 function renderWeek(){
@@ -1913,7 +2323,6 @@ function renderLoadChart(){
   if(change > 20){ chEl.className = 'chart-change change-down'; chEl.textContent = `+${Math.round(change)}%`; }
   else if(change > 5){ chEl.className = 'chart-change change-up'; chEl.textContent = `+${Math.round(change)}%`; }
   else{ chEl.className = 'chart-change change-neutral'; chEl.textContent = `${change>=0?'+':''}${Math.round(change)}%`; }
-  
   if(window.loadC) window.loadC.destroy();
   Chart.defaults.color = '#9AA0A6';
   Chart.defaults.borderColor = '#2D3440';
@@ -1952,11 +2361,9 @@ function renderPaceChart(){
 
 function renderSessions(){
   const recent = allSess().slice(0, 8);
-  const total = state.runs.length + state.gyms.length + state.activities.length;
-  document.getElementById('sessionCount').textContent = total > 8 ? `${total} total` : '';
   const container = document.getElementById('sessionList');
   if(recent.length === 0){
-    container.innerHTML = '<div class="empty"><div class="empty-icon">◇</div>No sessions yet. Log your first — hardest one.</div>';
+    container.innerHTML = '<div class="empty"><div style="font-size:24px;margin-bottom:8px;opacity:0.4">◇</div>No sessions yet. Log your first — hardest one.</div>';
     return;
   }
   container.innerHTML = recent.map(s => {
@@ -1998,13 +2405,13 @@ function showSession(id, kind){
       <div><div class="pb-label">Pace</div><div class="pb-value">${pace(s.distance, s.seconds)}</div></div>
       <div><div class="pb-label">Speed</div><div class="pb-value">${speed(s.distance, s.seconds)} <span style="font-size:12px;color:var(--text-faint)">km/h</span></div></div>
     </div>
-    <div class="insight ${s.type==='easy'?'success':s.type==='moderate'?'warn':'danger'}"><div class="insight-icon">●</div><div><strong>${s.type.charAt(0).toUpperCase()+s.type.slice(1)} Run</strong> on ${fmtDate(s.date)} <button class="info-btn inline" onclick="showGlossary('${s.type}')">ⓘ</button></div></div>`;
+    <div class="insight ${s.type==='easy'?'success':s.type==='moderate'?'warn':'danger'}"><div class="insight-icon">●</div><div><strong>${s.type.charAt(0).toUpperCase()+s.type.slice(1)} Run</strong> on ${fmtDate(s.date)}</div></div>`;
   } else if(kind === 'gym'){
     body = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div><div class="pb-label">Duration</div><div class="pb-value">${s.duration} <span style="font-size:12px;color:var(--text-faint)">min</span></div></div>
       <div><div class="pb-label">Intensity</div><div class="pb-value">${s.intensity.charAt(0).toUpperCase()+s.intensity.slice(1)}</div></div>
     </div>
-    <div class="insight info"><div class="insight-icon">●</div><div><strong>${getGymLabel(s.type)}</strong> on ${fmtDate(s.date)} <button class="info-btn inline" onclick="showGlossary('${s.type}')">ⓘ</button>${s.notes?`<br><span style="color:var(--text-dim)">${s.notes}</span>`:''}</div></div>`;
+    <div class="insight info"><div class="insight-icon">●</div><div><strong>${getGymLabel(s.type)}</strong> on ${fmtDate(s.date)}${s.notes?`<br><span style="color:var(--text-dim)">${s.notes}</span>`:''}</div></div>`;
   } else {
     body = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div><div class="pb-label">Duration</div><div class="pb-value">${s.duration} <span style="font-size:12px;color:var(--text-faint)">min</span></div></div>
@@ -2091,6 +2498,15 @@ function openWeeklyRecap(){
   else if(easyPct >= 75) coachMsg = `Textbook ${easyPct}% easy. Elite pattern.`;
   else if(easyPct < 60) coachMsg = `${easyPct}% easy. Slow down next week.`;
   else coachMsg = `Solid work. ${last7.length} sessions.`;
+  
+  // Goal-specific recap addon
+  const goal = state.prefs.goal;
+  let goalAddon = '';
+  if(goal === 'weightloss') {
+    const estCal = Math.round(km * 60 + last7.filter(s=>s.kind==='gym').reduce((a,g)=>a+g.duration*5, 0));
+    goalAddon = `<div class="recap-stat"><div class="recap-stat-num">~${estCal}</div><div class="recap-stat-label">Est. Calories Burned</div></div>`;
+  }
+  
   document.getElementById('recapContent').innerHTML = `
     <div class="recap-hero"><div class="recap-num">${km.toFixed(1)}</div><div class="recap-label">Kilometers this week</div></div>
     <div class="recap-stats">
@@ -2098,6 +2514,7 @@ function openWeeklyRecap(){
       <div class="recap-stat"><div class="recap-stat-num">${last7.filter(s=>s.kind==='gym').length}</div><div class="recap-stat-label">Gym</div></div>
       <div class="recap-stat"><div class="recap-stat-num">${last7.filter(s=>s.kind==='activity').length}</div><div class="recap-stat-label">Activities</div></div>
       <div class="recap-stat"><div class="recap-stat-num">${easyPct}%</div><div class="recap-stat-label">Easy</div></div>
+      ${goalAddon}
     </div>
     <div class="coach-note" style="margin-bottom:0"><div class="coach-note-label">Coach says</div><div class="coach-note-text">${coachMsg}</div></div>
   `;
@@ -2111,6 +2528,55 @@ function toggleEdu(){
   t.textContent = c.classList.contains('hidden') ? 'Show' : 'Hide';
 }
 
+// ==================== GLOSSARY ====================
+function showGlossary(termKey){
+  const term = glossary[termKey];
+  if(!term) return;
+  document.getElementById('glossTitle').textContent = term.title;
+  const zones = getPaceZones();
+  let paceInfo = '';
+  if(zones){
+    if(termKey === 'easy') paceInfo = zones.easy.label + '/km';
+    else if(termKey === 'moderate') paceInfo = zones.moderate.label + '/km';
+    else if(termKey === 'hard' || termKey === 'intervals') paceInfo = zones.hard.label + '/km';
+    else if(termKey === 'long') paceInfo = zones.long.label + '/km';
+    else if(termKey === 'tempo') paceInfo = zones.moderate.label + '/km (harder end)';
+  }
+  
+  let html = `<div style="font-size:14px;line-height:1.6;margin-bottom:14px">${term.what}</div>`;
+  html += '<div>';
+  if(term.effort) html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-dim)">Effort</span><span style="font-weight:700">${term.effort}</span></div>`;
+  if(paceInfo) html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-dim)">Your pace</span><span style="font-weight:700">${paceInfo}</span></div>`;
+  if(term.frequency) html += `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px"><span style="color:var(--text-dim)">Frequency</span><span style="font-weight:700">${term.frequency}</span></div>`;
+  html += '</div>';
+  html += `<div style="background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;margin-top:10px"><strong style="color:var(--accent)">Why it matters:</strong> ${term.purpose}</div>`;
+  
+  // Show detailed structure if available
+  if(term.structure && structures[term.structure]) {
+    const s = structures[term.structure];
+    html += `<div style="margin-top:16px"><div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">Session Structure</div>`;
+    html += `<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px"><strong>Duration:</strong> ${s.duration} · <strong>Total:</strong> ${s.total}</div>`;
+    s.sections.forEach(section => {
+      html += `<div class="structure-section"><div class="structure-heading">${section.name}</div>`;
+      section.items.forEach(item => {
+        html += `<div class="structure-item"><strong>${item.ex}</strong>${item.sets ? ' · ' + item.sets : ''}${item.note ? '<div class="structure-note">' + item.note + '</div>' : ''}</div>`;
+      });
+      html += `</div>`;
+    });
+    if(s.notes) {
+      s.notes.forEach(note => {
+        html += `<div style="background:rgba(0,212,170,0.08);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;font-size:12px;line-height:1.5;margin-top:10px;font-style:italic">${note}</div>`;
+      });
+    }
+    html += `</div>`;
+  }
+  
+  html += `<button class="btn btn-primary btn-full mt-3" onclick="closeModal('glossaryModal')">Got it</button>`;
+  document.getElementById('glossaryContent').innerHTML = html;
+  document.getElementById('glossaryModal').classList.add('active');
+}
+
+// ==================== REST PICKER ====================
 let currentRestWeek = 'current';
 function openRestPicker(which){
   currentRestWeek = which;
@@ -2134,7 +2600,7 @@ function openRestPicker(which){
     if(disabled) cls += ' disabled';
     return `<div class="${cls}" data-day="${i}" ${!disabled?`onclick="toggleRestDay(${i})"`:''}>${n}<br><span style="font-size:9px;opacity:0.7">${d.getDate()}</span></div>`;
   }).join('');
-  document.getElementById('restHelp').innerHTML = `Target: ${state.prefs.restDays} rest days · Activity days and logged sessions can't be rest`;
+  document.getElementById('restHelp').innerHTML = `Target: ${state.prefs.restDays} rest days`;
   document.getElementById('restModal').classList.add('active');
 }
 
@@ -2157,20 +2623,17 @@ function autoScheduleRest(){
   renderAll();
 }
 
+// ==================== LOG MODAL ====================
 function openLog(type){
   document.getElementById('logModal').classList.add('active');
-  if(type === 'gym'){ switchTab('gym'); showFocusTip(); }
+  if(type === 'gym'){ switchTab('gym'); showRepReminder(); }
   else if(type === 'activity') switchTab('activity');
   else switchTab('run');
 }
 
-function showFocusTip(){
-  if(state.prefs.focus && state.prefs.focus.length > 0){
-    const tip = document.getElementById('focusTip');
-    tip.style.display = 'block';
-    const tips = {shoulders:'Overhead press first.',chest:'Bench press as main lift.',back:'Pull-ups or rows early.',arms:'Compounds first, isolation last.',legs:'Squats or deadlifts as main.',core:'Add 5-10 min core at end.'};
-    tip.innerHTML = `<strong>Focus:</strong> ${state.prefs.focus.map(f => tips[f] || '').filter(t=>t).join(' ')}`;
-  }
+function showRepReminder(){
+  const el = document.getElementById('repReminderTip');
+  if(el) el.style.display = 'block';
 }
 
 function closeModal(id){
@@ -2249,12 +2712,10 @@ function saveRun(){
   state.pendingFeedback = newRun.id;
   save();
   closeModal('logModal');
-  showToast(type === 'easy' ? pickRandom(easyRunPraise) : type === 'hard' ? pickRandom(hardRunPraise) : `${d}km ${type} saved`, 'success');
-  
-  // Check for baseline improvement
+  const msg = type === 'easy' ? formatMessage(pickRandom(easyRunPraise)) : type === 'hard' ? formatMessage(pickRandom(hardRunPraise)) : `${d}km ${type} saved`;
+  showToast(msg, 'success');
   const imp = checkBaselineImprovement();
   if(imp){ state.pendingBaselineUpdate = imp; save(); }
-  
   renderAll();
   checkMilestones();
   setTimeout(() => document.getElementById('feedbackModal').classList.add('active'), 1500);
@@ -2272,7 +2733,8 @@ function saveGym(){
   state.pendingFeedback = newGym.id;
   save();
   closeModal('logModal');
-  showToast(pickRandom(gymPraise), 'success');
+  const msg = type === 'mobility' ? formatMessage(pickRandom(mobilityPraise)) : formatMessage(pickRandom(gymPraise));
+  showToast(msg, 'success');
   renderAll();
   checkMilestones();
   setTimeout(() => document.getElementById('feedbackModal').classList.add('active'), 1500);
@@ -2309,11 +2771,11 @@ function openQuickSession(){
     {name:'Quick Run', desc:'20-min run — 3km moderate', action:'quickRun'},
     {name:'Quick Gym', desc:'20-min focused — one muscle group', action:'quickGym'},
     {name:'Recovery Walk', desc:'20-min easy walk', action:'quickWalk'},
-    {name:'Skip Today', desc:'Life happens. Coach redistributes.', action:'skip'}
+    {name:'Mobility Session', desc:'30-min strength + mobility work', action:'quickMobility'}
   ];
   document.getElementById('quickOptions').innerHTML = options.map(o => `
-    <div class="activity-item" style="cursor:pointer" onclick="handleQuick('${o.action}')">
-      <div class="activity-info"><div class="activity-name">${o.name}</div><div class="activity-detail">${o.desc}</div></div>
+    <div class="option-item" onclick="handleQuick('${o.action}')">
+      <div class="option-info"><div class="option-title">${o.name}</div><div class="option-desc">${o.desc}</div></div>
       <div style="color:var(--accent);font-size:20px">→</div>
     </div>`).join('');
   document.getElementById('quickModal').classList.add('active');
@@ -2335,20 +2797,24 @@ function handleQuick(action){
     document.getElementById('actName').value = 'Recovery Walk';
     document.getElementById('actDur').value = '20';
     pickPill(document.querySelector('#activityForm .pill[data-val="light"]'), 'actIntensity');
-  } else if(action === 'skip'){
-    setTimeout(() => showToast(pickRandom(missedMessages), 'info', 4000), 300);
+  } else if(action === 'quickMobility'){
+    openLog('gym');
+    document.getElementById('gymDur').value = '30';
+    document.getElementById('gymType').value = 'mobility';
+    pickPill(document.querySelector('#gymForm .pill[data-val="light"]'), 'gymIntensity');
   }
 }
 
 function checkMilestones(){
   const total = state.runs.length + state.gyms.length + state.activities.length;
   const totalKm = state.runs.reduce((a,r)=>a+r.distance, 0);
+  const nameP = state.prefs.name ? ', ' + state.prefs.name : '';
   const milestones = [
-    {key:'first', condition: total === 1, msg:'First session. Hardest one done.'},
-    {key:'ten', condition: total === 10, msg:'10 sessions. Habit forming.'},
-    {key:'twentyfive', condition: total === 25, msg:'25 sessions. This is who you are now.'},
-    {key:'fifty', condition: total === 50, msg:'50 sessions. Serious mode: activated.'},
-    {key:'hundred', condition: total === 100, msg:'100 sessions. Elite consistency.'},
+    {key:'first', condition: total === 1, msg:`First session. Hardest one done${nameP}.`},
+    {key:'ten', condition: total === 10, msg:`10 sessions${nameP}. Habit forming.`},
+    {key:'twentyfive', condition: total === 25, msg:`25 sessions${nameP}. This is who you are now.`},
+    {key:'fifty', condition: total === 50, msg:`50 sessions${nameP}. You could probably coach yourself now.`},
+    {key:'hundred', condition: total === 100, msg:`100. At this point I'm just watching you train${nameP}.`},
     {key:'50km', condition: totalKm >= 50 && !state.milestones['50km'], msg:'50 km total. Base is real.'},
     {key:'100km', condition: totalKm >= 100 && !state.milestones['100km'], msg:'100 km. Many half-marathons.'},
     {key:'250km', condition: totalKm >= 250 && !state.milestones['250km'], msg:'250 km. Several marathons.'},
@@ -2374,9 +2840,11 @@ function showToast(text, type='success', duration=3000){
 }
 
 function openSettings(){
+  document.getElementById('setName').value = state.prefs.name || '';
   document.getElementById('setRunD').value = state.prefs.runDays;
   document.getElementById('setGymD').value = state.prefs.gymDays;
   document.getElementById('setRestD').value = state.prefs.restDays;
+  document.getElementById('setSplit').value = state.prefs.split || 'auto';
   document.getElementById('setWorkTime').value = state.prefs.workTime;
   document.getElementById('setOffTime').value = state.prefs.offTime;
   document.getElementById('setGoalS').value = state.prefs.goal;
@@ -2384,9 +2852,11 @@ function openSettings(){
 }
 
 function saveSettings(){
+  state.prefs.name = document.getElementById('setName').value.trim();
   state.prefs.runDays = parseInt(document.getElementById('setRunD').value);
   state.prefs.gymDays = parseInt(document.getElementById('setGymD').value);
   state.prefs.restDays = parseInt(document.getElementById('setRestD').value);
+  state.prefs.split = document.getElementById('setSplit').value;
   state.prefs.workTime = parseInt(document.getElementById('setWorkTime').value);
   state.prefs.offTime = parseInt(document.getElementById('setOffTime').value);
   state.prefs.goal = document.getElementById('setGoalS').value;
@@ -2414,12 +2884,7 @@ function importData(e){
       const im = JSON.parse(ev.target.result);
       if(im.runs !== undefined){
         if(confirm('Replace all current data?')){
-          state = im;
-          if(!state.lockedRestDays) state.lockedRestDays = {};
-          if(!state.compensations) state.compensations = [];
-          if(!state.milestones) state.milestones = {};
-          if(!state.feedbacks) state.feedbacks = [];
-          if(!state.dismissedBaselineUpdates) state.dismissedBaselineUpdates = [];
+          state = { ...defaultState(), ...im, version: CURRENT_VERSION };
           save();
           showToast('Restored', 'success');
           renderAll();
@@ -2444,7 +2909,6 @@ function pickGoal(el){
   const goal = el.dataset.val;
   const config = goalConfigs[goal];
   
-  // Only auto-fill if user hasn't manually selected
   const runsActive = document.querySelector('#setupRunDays .pill.active');
   const gymActive = document.querySelector('#setupGymDays .pill.active');
   const restActive = document.querySelector('#setupRestDays .pill.active');
@@ -2461,10 +2925,7 @@ function pickGoal(el){
   
   const box = document.getElementById('goalRecommendation');
   box.classList.remove('hidden');
-  box.innerHTML = `
-    <div class="rec-box-title">Coach suggests for ${config.label}</div>
-    <div class="rec-box-content"><strong>${config.runDays} runs · ${config.gymDays} gym · ${config.restDays} rest</strong><br>${config.reason}<br><br><em>Applied below. Adjust anytime.</em></div>
-  `;
+  box.innerHTML = `<div class="rec-box-title">Coach suggests for ${config.label}</div><div class="rec-box-content"><strong>${config.runDays} runs · ${config.gymDays} gym · ${config.restDays} rest</strong><br>${config.reason}<br><br><em>Applied below. Adjust anytime.</em></div>`;
   checkSetupWarning();
 }
 
@@ -2501,19 +2962,36 @@ function toggleInjury(el){
 }
 
 function checkSetupWarning(){
-  const r = parseInt(document.querySelector('#setupRunDays .active')?.dataset.val || 0);
-  const g = parseInt(document.querySelector('#setupGymDays .active')?.dataset.val || 0);
-  const rest = parseInt(document.querySelector('#setupRestDays .active')?.dataset.val || 0);
+  const r = parseInt(document.querySelector('#setupRunDays .pill.active')?.dataset.val || 0);
+  const g = parseInt(document.querySelector('#setupGymDays .pill.active')?.dataset.val || 0);
+  const rest = parseInt(document.querySelector('#setupRestDays .pill.active')?.dataset.val || 0);
   const total = r + g + rest;
   const box = document.getElementById('setupWarning');
+  const overBox = document.getElementById('setupOvertrainingWarning');
+  
   if(total > 7){
     box.classList.remove('hidden');
-    box.innerHTML = `<strong>Note:</strong> ${r} + ${g} + ${rest} = ${total} days. Week has 7. On ${total-7} day(s), coach will suggest combined sessions.`;
+    box.innerHTML = `<strong>Note:</strong> ${r} + ${g} + ${rest} = ${total} days. Week has 7. On ${total-7} day(s), I'll help you handle overflow (next step).`;
   } else box.classList.add('hidden');
+  
+  if(g >= 6 && r >= 3){
+    overBox.classList.remove('hidden');
+    overBox.innerHTML = `<strong>Ambition Check:</strong> 6 gym + ${r} runs is a lot. Marathon, not sprint. Body needs rest to grow. Suggested: 5 gym + ${r} runs + 1-2 rest. But I'll build what you want.`;
+  } else overBox.classList.add('hidden');
 }
 
 function nextStep(from){
   if(from === 1){
+    // Name is optional, always proceed
+    document.getElementById('step'+from).classList.add('hidden');
+    document.getElementById('step'+(from+1)).classList.remove('hidden');
+    document.getElementById('dot'+from).classList.add('done');
+    document.getElementById('dot'+from).classList.remove('active');
+    document.getElementById('dot'+(from+1)).classList.add('active');
+    return;
+  }
+  
+  if(from === 2){
     const goal = document.querySelector('#setupGoal .pill.active');
     const runs = document.querySelector('#setupRunDays .pill.active');
     const gym = document.querySelector('#setupGymDays .pill.active');
@@ -2522,20 +3000,58 @@ function nextStep(from){
     if(!runs){ showToast('Pick runs per week', 'warn'); return; }
     if(!gym){ showToast('Pick gym per week', 'warn'); return; }
     if(!rest){ showToast('Pick rest days', 'warn'); return; }
-  }
-  
-  if(from === 2){
-    const workTime = document.querySelector('#setupWorkTime .pill.active');
-    const offTime = document.querySelector('#setupOffTime .pill.active');
-    if(!workTime){ showToast('Pick work day training time', 'warn'); return; }
-    if(!offTime){ showToast('Pick off day training time', 'warn'); return; }
+    
+    // Check if overflow step needed
+    const r = parseInt(runs.dataset.val);
+    const g = parseInt(gym.dataset.val);
+    const re = parseInt(rest.dataset.val);
+    const needsOverflow = (r + g + re) > 7;
+    
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('dot2').classList.add('done');
+    document.getElementById('dot2').classList.remove('active');
+    
+    if(needsOverflow) {
+      document.getElementById('step3').classList.remove('hidden');
+      document.getElementById('dot3').classList.add('active');
+    } else {
+      document.getElementById('step4').classList.remove('hidden');
+      document.getElementById('dot3').classList.add('done');
+      document.getElementById('dot4').classList.add('active');
+    }
+    return;
   }
   
   if(from === 3){
+    const overflow = document.querySelector('#setupOverflow .pill.active');
+    if(!overflow){ showToast('Pick how to handle overflow', 'warn'); return; }
+    document.getElementById('step3').classList.add('hidden');
+    document.getElementById('step4').classList.remove('hidden');
+    document.getElementById('dot3').classList.add('done');
+    document.getElementById('dot3').classList.remove('active');
+    document.getElementById('dot4').classList.add('active');
+    return;
+  }
+  
+  if(from === 4){
+    const workTime = document.querySelector('#setupWorkTime .pill.active');
+    const offTime = document.querySelector('#setupOffTime .pill.active');
+    if(!workTime){ showToast('Pick work day time', 'warn'); return; }
+    if(!offTime){ showToast('Pick off day time', 'warn'); return; }
+    
+    document.getElementById('step4').classList.add('hidden');
+    document.getElementById('step5').classList.remove('hidden');
+    document.getElementById('dot4').classList.add('done');
+    document.getElementById('dot4').classList.remove('active');
+    document.getElementById('dot5').classList.add('active');
+    return;
+  }
+  
+  if(from === 5){
     const level = document.getElementById('setupLevelVal').value;
     const gymExp = document.getElementById('setupGymExpVal').value;
-    if(!level){ showToast('Pick your overall level', 'warn'); return; }
-    if(!gymExp){ showToast('Pick your gym experience', 'warn'); return; }
+    if(!level){ showToast('Pick your level', 'warn'); return; }
+    if(!gymExp){ showToast('Pick gym experience', 'warn'); return; }
     const easyD = parseFloat(document.getElementById('easyDist').value);
     const easyT = parseInt(document.getElementById('easyTime').value);
     const longD = parseFloat(document.getElementById('longDist').value);
@@ -2547,31 +3063,40 @@ function nextStep(from){
     const secPerKm = (easyT * 60) / easyD;
     const fb = document.getElementById('baselineFeedback');
     fb.classList.remove('hidden');
-    fb.innerHTML = `
-      <div class="rec-box-title">Your baseline captured</div>
-      <div class="rec-box-content">Easy pace: <strong>${paceSec(secPerKm)}/km</strong> · Longest run: <strong>${longD}km</strong><br>Coach will build recommendations from this.</div>
-    `;
+    fb.innerHTML = `<div class="rec-box-title">Baseline captured</div><div class="rec-box-content">Easy pace: <strong>${paceSec(secPerKm)}/km</strong> · Longest: <strong>${longD}km</strong><br>Coach will build recommendations from this.</div>`;
     setTimeout(() => {
-      document.getElementById('step'+from).classList.add('hidden');
-      document.getElementById('step'+(from+1)).classList.remove('hidden');
-      document.getElementById('dot'+from).classList.add('done');
-      document.getElementById('dot'+from).classList.remove('active');
-      document.getElementById('dot'+(from+1)).classList.add('active');
+      document.getElementById('step5').classList.add('hidden');
+      document.getElementById('step6').classList.remove('hidden');
+      document.getElementById('dot5').classList.add('done');
+      document.getElementById('dot5').classList.remove('active');
+      document.getElementById('dot6').classList.add('active');
+      buildIntro();
     }, 1200);
     return;
-  }
-  
-  if(from < 5){
-    document.getElementById('step'+from).classList.add('hidden');
-    document.getElementById('step'+(from+1)).classList.remove('hidden');
-    document.getElementById('dot'+from).classList.add('done');
-    document.getElementById('dot'+from).classList.remove('active');
-    document.getElementById('dot'+(from+1)).classList.add('active');
-    if(from === 4) buildSummary();
   }
 }
 
 function prevStep(from){
+  if(from === 4) {
+    // Check if step 3 was shown
+    const r = parseInt(document.querySelector('#setupRunDays .pill.active')?.dataset.val || 0);
+    const g = parseInt(document.querySelector('#setupGymDays .pill.active')?.dataset.val || 0);
+    const re = parseInt(document.querySelector('#setupRestDays .pill.active')?.dataset.val || 0);
+    const needsOverflow = (r + g + re) > 7;
+    document.getElementById('step4').classList.add('hidden');
+    document.getElementById('dot4').classList.remove('active');
+    if(needsOverflow) {
+      document.getElementById('step3').classList.remove('hidden');
+      document.getElementById('dot3').classList.remove('done');
+      document.getElementById('dot3').classList.add('active');
+    } else {
+      document.getElementById('step2').classList.remove('hidden');
+      document.getElementById('dot3').classList.remove('done');
+      document.getElementById('dot2').classList.remove('done');
+      document.getElementById('dot2').classList.add('active');
+    }
+    return;
+  }
   if(from > 1){
     document.getElementById('step'+from).classList.add('hidden');
     document.getElementById('step'+(from-1)).classList.remove('hidden');
@@ -2614,48 +3139,31 @@ function removeSetupActivity(idx){
   renderActivitiesSetup();
 }
 
-function buildSummary(){
+function buildIntro(){
   const goal = document.querySelector('#setupGoal .pill.active').dataset.val;
-  const runDays = parseInt(document.querySelector('#setupRunDays .active').dataset.val);
-  const gymDays = parseInt(document.querySelector('#setupGymDays .active').dataset.val);
-  const restDays = parseInt(document.querySelector('#setupRestDays .active').dataset.val);
-  const workDays = Array.from(document.querySelectorAll('#setupWorkDays .active')).map(b => parseInt(b.dataset.val));
-  const workTime = parseInt(document.querySelector('#setupWorkTime .active').dataset.val);
-  const offTime = parseInt(document.querySelector('#setupOffTime .active').dataset.val);
-  const level = document.getElementById('setupLevelVal').value;
-  const focus = Array.from(document.querySelectorAll('#setupFocus .pill.active')).map(b => b.dataset.val);
-  const injuries = Array.from(document.querySelectorAll('#setupInjuries .pill.active')).map(b => b.dataset.val).filter(i => i !== 'none');
-  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const workDayNames = workDays.map(d => dayNames[d]).join(', ') || 'None';
-  document.getElementById('summaryContent').innerHTML = `
-    <div style="font-size:13px;line-height:1.8">
-      <div><strong>Goal:</strong> ${goalConfigs[goal].label}</div>
-      <div><strong>Volume:</strong> ${runDays} runs · ${gymDays} gym · ${restDays} rest</div>
-      <div><strong>Level:</strong> ${level.charAt(0).toUpperCase()+level.slice(1)}</div>
-      <div><strong>Work days:</strong> ${workDayNames}</div>
-      <div><strong>Time:</strong> ${workTime}m work · ${offTime}m off</div>
-      ${focus.length > 0 ? `<div><strong>Focus:</strong> ${focus.join(', ')}</div>` : ''}
-      ${setupState.activities.length > 0 ? `<div><strong>Activities:</strong> ${setupState.activities.map(a => `${a.name} (${dayNames[a.day]})`).join(', ')}</div>` : ''}
-      ${injuries.length > 0 ? `<div><strong>Limitations:</strong> ${injuries.join(', ')}</div>` : ''}
-    </div>`;
+  const name = document.getElementById('setupName').value.trim();
+  const namePart = name ? ' ' + name : '';
   const intros = {
-    weightloss: "Weight loss mode. Cardio-heavy, muscle-preserving.",
-    muscle: "Muscle building. Frequency + recovery + protein + sleep.",
-    running: "Running goal. Miles today, speed later.",
-    balance: "Balanced approach. Best of both. Sustainable.",
-    fitness: "General fitness. Consistency > intensity."
+    weightloss: `Alright${namePart}, weight loss mode. Cardio-heavy, muscle-preserving. Sustainable is the whole game.`,
+    muscle: `Muscle building${namePart}. Frequency + recovery + protein + sleep. Slow game, big rewards.`,
+    running: `Running goal${namePart}. Miles today, speed later. Trust the base building.`,
+    balance: `Balanced approach${namePart}. Best of both. Slow and sustainable wins.`,
+    fitness: `General fitness${namePart}. Consistency > intensity. You've got this.`
   };
   document.getElementById('coachIntro').textContent = intros[goal] || "Plan set. Let's go.";
 }
 
 function finishSetup(withSample){
+  const name = document.getElementById('setupName').value.trim();
   const goal = document.querySelector('#setupGoal .pill.active').dataset.val;
-  const runDays = parseInt(document.querySelector('#setupRunDays .active').dataset.val);
-  const gymDays = parseInt(document.querySelector('#setupGymDays .active').dataset.val);
-  const restDays = parseInt(document.querySelector('#setupRestDays .active').dataset.val);
-  const workDays = Array.from(document.querySelectorAll('#setupWorkDays .active')).map(b => parseInt(b.dataset.val));
-  const workTime = parseInt(document.querySelector('#setupWorkTime .active').dataset.val);
-  const offTime = parseInt(document.querySelector('#setupOffTime .active').dataset.val);
+  const runDays = parseInt(document.querySelector('#setupRunDays .pill.active').dataset.val);
+  const gymDays = parseInt(document.querySelector('#setupGymDays .pill.active').dataset.val);
+  const restDays = parseInt(document.querySelector('#setupRestDays .pill.active').dataset.val);
+  const overflow = document.querySelector('#setupOverflow .pill.active')?.dataset.val || 'combine';
+  const workDays = Array.from(document.querySelectorAll('#setupWorkDays .pill.active')).map(b => parseInt(b.dataset.val));
+  const workTime = parseInt(document.querySelector('#setupWorkTime .pill.active').dataset.val);
+  const offTime = parseInt(document.querySelector('#setupOffTime .pill.active').dataset.val);
+  const split = document.getElementById('setupSplitVal').value || 'auto';
   const level = document.getElementById('setupLevelVal').value;
   const gymExp = document.getElementById('setupGymExpVal').value;
   const focus = Array.from(document.querySelectorAll('#setupFocus .pill.active')).map(b => b.dataset.val);
@@ -2666,19 +3174,29 @@ function finishSetup(withSample){
     longDist: parseFloat(document.getElementById('longDist').value),
     longTime: parseInt(document.getElementById('longTime').value)
   };
-  state.prefs = { goal, runDays, gymDays, restDays, workDays, workTime, offTime, level, baseline, gymExp, focus, injuries, activities: setupState.activities.slice() };
-  if(withSample){ const s = makeSample(); state.runs = s.runs; state.gyms = s.gyms; }
-  state.lockedRestDays = {}; state.compensations = []; state.dismissedComps = []; state.milestones = {}; state.feedbacks = []; state.dismissedBaselineUpdates = [];
+  
+  state = defaultState();
+  state.prefs = { name, goal, runDays, gymDays, restDays, workDays, workTime, offTime, split, overflow, level, baseline, gymExp, focus, injuries, activities: setupState.activities.slice() };
+  state.seenWelcome = true;
+  
+  if(withSample){
+    const s = makeSample();
+    state.runs = s.runs;
+    state.gyms = s.gyms;
+  }
+  
   save();
   document.getElementById('setupWizard').classList.add('hidden');
   document.getElementById('mainApp').classList.remove('hidden');
   renderAll();
-  setTimeout(() => showToast('Not Strava ready. Uncertified but here to help.', 'success', 4000), 500);
+  const welcomeMsg = name ? `Welcome ${name}. Uncertified but here to help.` : 'Not Strava ready. Uncertified but here to help.';
+  setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
 
 function renderAll(){
   const today = new Date();
   document.getElementById('headerDate').textContent = today.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}).toUpperCase();
+  renderConflictBanner();
   renderImprovementBanner();
   renderCoachNote();
   renderHero();
@@ -2700,13 +3218,13 @@ window.addEventListener('DOMContentLoaded', () => {
   setupBindings();
   setTimeout(() => {
     document.getElementById('loader').classList.add('hidden');
-    if(load() && (state.runs.length > 0 || state.gyms.length > 0 || state.activities.length > 0)){
-      if(!state.lockedRestDays) state.lockedRestDays = {};
-      if(!state.compensations) state.compensations = [];
-      if(!state.dismissedComps) state.dismissedComps = [];
-      if(!state.milestones) state.milestones = {};
-      if(!state.feedbacks) state.feedbacks = [];
-      if(!state.dismissedBaselineUpdates) state.dismissedBaselineUpdates = [];
+    const loaded = loadState();
+    if(loaded){
+      state = { ...defaultState(), ...loaded, version: CURRENT_VERSION };
+      // Fill in any missing default fields
+      state.prefs = { ...defaultState().prefs, ...state.prefs };
+    }
+    if(loaded && (state.runs.length > 0 || state.gyms.length > 0 || state.activities.length > 0 || state.prefs.goal)){
       document.getElementById('setupWizard').classList.add('hidden');
       document.getElementById('mainApp').classList.remove('hidden');
       renderAll();
