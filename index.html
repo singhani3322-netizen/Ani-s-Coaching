@@ -2463,6 +2463,7 @@ function renderSessions(){
     const dayNum = d.getDate();
     if(s.kind === 'run'){
       return `<div class="session" onclick="showSession('${s.id}','run')"><div class="session-marker mk-${s.type}"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>Run · ${pace(s.distance,s.seconds)} <button class="info-btn inline" onclick="event.stopPropagation();showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${fmtTime(s.seconds)}</span><span>${speed(s.distance,s.seconds)} km/h</span></div></div><div class="session-metric">${s.distance}<span class="unit">km</span></div></div>`;
+    }
     if(s.kind === 'gym'){
       return `<div class="session" onclick="showSession('${s.id}','gym')"><div class="session-marker mk-${s.type}"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>${getGymLabel(s.type)} <button class="info-btn inline" onclick="event.stopPropagation();showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${s.intensity} intensity</span></div></div><div class="session-metric">${s.duration}<span class="unit">min</span></div></div>`;
     }
