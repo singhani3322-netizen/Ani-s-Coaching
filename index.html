@@ -337,6 +337,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .viz-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit}
 .viz-btn:hover{border-color:var(--text-faint)}
 #export-html-btn{background:var(--accent);border-color:var(--accent);color:#001210}
+.info-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--text-dim);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;padding:0;line-height:1;vertical-align:middle}
+.info-btn:hover{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
+.info-btn.inline{font-size:9px;width:16px;height:16px;margin-left:4px}
+.day-info-badge{position:absolute;top:3px;right:5px;background:rgba(0,212,170,0.2);color:var(--accent);font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;line-height:1}
+.day-info-badge:hover{background:var(--accent);color:#001210}
+.workout-structure{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:8px}
+.workout-title{font-size:16px;font-weight:800;margin-bottom:2px}
+.workout-duration{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:14px}
+.workout-section{margin-bottom:14px}
+.workout-section:last-child{margin-bottom:0}
+.workout-section-name{font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.workout-exercise{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.workout-exercise:last-child{border-bottom:none}
+.workout-ex-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:3px}
+.workout-ex-name{font-size:13px;font-weight:700;color:var(--text);flex:1}
+.workout-ex-sets{font-size:11px;font-weight:700;color:var(--accent);white-space:nowrap;background:var(--accent-glow);padding:2px 7px;border-radius:5px}
+.workout-ex-note{font-size:11px;color:var(--text-dim);line-height:1.5;font-style:italic}
+.workout-total{background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);border-radius:8px;padding:8px 10px;text-align:center;font-size:12px;font-weight:700;color:var(--accent);margin-top:10px}
+.workout-notes{background:rgba(255,176,32,0.06);border:1px solid rgba(255,176,32,0.2);border-radius:8px;padding:10px;margin-top:10px}
+.workout-note-item{font-size:11px;line-height:1.6;color:var(--text-dim);margin-bottom:6px}
+.workout-note-item:last-child{margin-bottom:0}
+.workout-note-item strong{color:var(--warn);font-weight:700}
+.reps-reminder{background:linear-gradient(135deg,rgba(180,124,255,0.08),rgba(0,212,170,0.05));border:1px solid rgba(180,124,255,0.2);border-radius:10px;padding:12px;margin-top:10px;font-size:11px;line-height:1.6;color:var(--text-dim)}
+.reps-reminder strong{color:var(--upper);font-weight:700}
+.glossary-header{background:linear-gradient(135deg,var(--accent-glow),rgba(180,124,255,0.05));border-radius:12px;padding:14px;margin-bottom:14px}
+.glossary-header-title{font-size:20px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
+.glossary-header-sub{font-size:12px;color:var(--text-dim)}
+.glossary-section{margin-bottom:16px}
+.glossary-section-label{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px}
+.glossary-section-content{font-size:13px;line-height:1.6;color:var(--text)}
 </style>
 </head>
 <body>
@@ -830,7 +860,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <button class="btn btn-primary btn-full" onclick="saveBaselineUpdate()">Save Baseline</button>
   </div>
 </div>
-
+<!-- Glossary Modal (V5.4 ADD) -->
+<div class="modal-bg" id="glossaryModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-title" id="glossaryTitle">Session Info</div><button class="modal-close" onclick="closeModal('glossaryModal')">×</button></div>
+    <div id="glossaryBody"></div>
+  </div>
+</div>
 <!-- Settings Modal -->
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
@@ -2036,7 +2073,88 @@ function getCoachNote(){
   }
   return pickRandom([`Show up today${namePart}.`,`Not fancy. Just consistent.`,`Uncertified but not unwise.`]);
 }
+// ==================== GLOSSARY & WORKOUT STRUCTURE (V5.4 ADD) ====================
+function showGlossary(termKey){
+  const term = glossary[termKey];
+  if(!term){
+    if(workoutStructures[termKey]){ showWorkoutStructure(termKey); return; }
+    return;
+  }
+  const zones = getPaceZones();
+  let paceInfo = '';
+  if(zones && term.zone) paceInfo = zones[term.zone].label + '/km';
+  document.getElementById('glossaryTitle').textContent = 'Session Info';
+  let html = '<div class="glossary-header">' +
+    '<div class="glossary-header-title">' + term.name + '</div>' +
+    '<div class="glossary-header-sub">Tap details below or scroll for full workout structure</div>' +
+    '</div>' +
+    '<div class="glossary-section">' +
+    '<div class="glossary-section-label">What it is</div>' +
+    '<div class="glossary-section-content">' + term.description + '</div>' +
+    '</div>';
+  if(term.effort){
+    html += '<div class="glossary-section">' +
+      '<div class="glossary-section-label">Effort Level</div>' +
+      '<div class="glossary-section-content">' + term.effort + '</div>' +
+      '</div>';
+  }
+  if(paceInfo){
+    html += '<div class="glossary-section">' +
+      '<div class="glossary-section-label">Your Target Pace</div>' +
+      '<div class="glossary-section-content" style="font-size:18px;font-weight:800;color:var(--accent)">' + paceInfo + '</div>' +
+      '</div>';
+  }
+  if(term.frequency){
+    html += '<div class="glossary-section">' +
+      '<div class="glossary-section-label">Frequency</div>' +
+      '<div class="glossary-section-content">' + term.frequency + '</div>' +
+      '</div>';
+  }
+  if(term.workout && workoutStructures[term.workout]){
+    html += renderWorkoutStructureHTML(workoutStructures[term.workout]);
+  }
+  document.getElementById('glossaryBody').innerHTML = html;
+  document.getElementById('glossaryModal').classList.add('active');
+}
 
+function showWorkoutStructure(structKey){
+  const struct = workoutStructures[structKey];
+  if(!struct) return;
+  document.getElementById('glossaryTitle').textContent = struct.title;
+  document.getElementById('glossaryBody').innerHTML = renderWorkoutStructureHTML(struct);
+  document.getElementById('glossaryModal').classList.add('active');
+}
+
+function renderWorkoutStructureHTML(struct){
+  let html = '<div class="workout-structure">' +
+    '<div class="workout-title">' + struct.title + '</div>' +
+    '<div class="workout-duration">' + struct.duration + '</div>';
+  struct.sections.forEach(function(section){
+    html += '<div class="workout-section">' +
+      '<div class="workout-section-name">' + section.name + '</div>';
+    section.items.forEach(function(item){
+      html += '<div class="workout-exercise">' +
+        '<div class="workout-ex-row">' +
+        '<div class="workout-ex-name">' + item.ex + '</div>' +
+        (item.sets ? '<div class="workout-ex-sets">' + item.sets + '</div>' : '') +
+        '</div>' +
+        (item.note ? '<div class="workout-ex-note">' + item.note + '</div>' : '') +
+        '</div>';
+    });
+    html += '</div>';
+  });
+  html += '<div class="workout-total">' + struct.total + '</div>';
+  if(struct.notes && struct.notes.length > 0){
+    html += '<div class="workout-notes">';
+    struct.notes.forEach(function(note){
+      html += '<div class="workout-note-item">' + note + '</div>';
+    });
+    html += '</div>';
+  }
+  html += '<div class="reps-reminder">' + REPS_REMINDER + '</div>' +
+    '</div>';
+  return html;
+}
 // ==================== RENDERING ====================
 function renderCoachNote(){ document.getElementById('coachNoteText').textContent = getCoachNote(); }
 
@@ -2045,6 +2163,7 @@ function renderHero(){
   const card = document.getElementById('heroCard');
   card.className = 'hero ' + r.cls;
   let activityHTML = r.activity;
+ if(r.termKey && (glossary[r.termKey] || workoutStructures[r.termKey])) { activityHTML += ' <button class="info-btn" onclick="showGlossary(\'' + r.termKey + '\')" title="Show workout details">ⓘ</button>'; }
   document.getElementById('heroActivity').innerHTML = activityHTML;
   document.getElementById('heroDetail').textContent = r.detail;
   document.getElementById('heroReason').textContent = r.reason;
@@ -2140,7 +2259,25 @@ function renderWeekGrid(containerId, weekStartDate, week){
     }
     
     if(isWorkDay(i)) cell.innerHTML += `<div class="day-work-marker">•</div>`;
-    
+    let badgeKey = null;
+    if(p && p.type === 'logged' && p.sessions && p.sessions.length === 1) {
+      const s = p.sessions[0];
+      if(s.kind === 'run') badgeKey = s.type;
+      else if(s.kind === 'gym') badgeKey = s.type;
+    } else if(p && p.type === 'run') {
+      badgeKey = p.isLong ? 'long' : p.subtype;
+    } else if(p && p.type === 'gym') {
+      badgeKey = p.subtype;
+    } else if(p && p.type === 'combined' && p.gymPart) {
+      badgeKey = p.gymPart.subtype;
+    }
+    if(badgeKey && (glossary[badgeKey] || workoutStructures[badgeKey])) {
+      const badge = document.createElement('div');
+      badge.className = 'day-info-badge';
+      badge.textContent = 'ⓘ';
+      badge.onclick = function(e) { e.stopPropagation(); showGlossary(badgeKey); };
+      cell.appendChild(badge);
+    }
     // Swap mode styling
     if(swapState.active && swapState.week === week) {
       const isLocked = p && (p.type === 'logged' || p.type === 'activity');
@@ -2196,10 +2333,10 @@ function showDayDetail(planItem, dayIdx, weekStartDate){
     body += `<div class="rec-box"><div class="rec-box-title">🔀 Combined Day</div><div class="rec-box-content"><strong>${planItem.runPart.distance}km ${planItem.runPart.label}</strong><br>+ <strong>${planItem.gymPart.duration}min ${planItem.gymPart.label}</strong><br><br><em>Do these separately (morning + evening ideal). Log each one.</em></div></div>
       ${!isPast && (isToday || new Date(localDateKey(d)) > new Date(todayKey())) ? `<div style="display:grid;gap:8px"><button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('run')">Log Run Part</button><button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('gym')">Log Gym Part</button></div>` : ''}`;
   } else if(planItem.type === 'run'){
-    body += `<div class="rec-box"><div class="rec-box-title">🏃 ${planItem.label}</div><div class="rec-box-content"><strong>${planItem.distance}km</strong> at <strong>${planItem.pace}/km</strong> pace<br>Approx. ${planItem.duration} min<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx), '')}</div></div>
+    const _runKey = planItem.isLong ? 'long' : planItem.subtype; body += `<div class="rec-box"><div class="rec-box-title">🏃 ${planItem.label} <button class="info-btn inline" onclick="showGlossary('${_runKey}')">ⓘ</button></div><div class="rec-box-content"><strong>${planItem.distance}km</strong> at <strong>${planItem.pace}/km</strong> pace<br>Approx. ${planItem.duration} min<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx), '')}</div></div>
       ${!isPast && (isToday || new Date(localDateKey(d)) > new Date(todayKey())) ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('run')">Log Run</button>` : ''}`;
   } else if(planItem.type === 'gym'){
-    body += `<div class="rec-box"><div class="rec-box-title">💪 ${planItem.label}</div><div class="rec-box-content"><strong>${planItem.duration} min</strong> at ${planItem.intensity} intensity<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx), '')}</div></div>
+    body += `<div class="rec-box"><div class="rec-box-title">💪 ${planItem.label} <button class="info-btn inline" onclick="showGlossary('${planItem.subtype}')">ⓘ Full Structure</button></div><div class="rec-box-content"><strong>${planItem.duration} min</strong> at ${planItem.intensity} intensity<br><br>${generateSessionReason(planItem, isWorkDay(dayIdx), timeBudgetForDay(dayIdx), '')}<br><br><em>Tap "ⓘ Full Structure" above for complete exercise list.</em></div></div>
       ${!isPast && (isToday || new Date(localDateKey(d)) > new Date(todayKey())) ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('gym')">Log Gym</button>` : ''}`;
   }
   
@@ -2325,10 +2462,9 @@ function renderSessions(){
     const dayName = d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase();
     const dayNum = d.getDate();
     if(s.kind === 'run'){
-      return `<div class="session" onclick="showSession('${s.id}','run')"><div class="session-marker mk-${s.type}"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>Run · ${pace(s.distance,s.seconds)}</div><div class="session-meta"><span>${fmtTime(s.seconds)}</span><span>${speed(s.distance,s.seconds)} km/h</span></div></div><div class="session-metric">${s.distance}<span class="unit">km</span></div></div>`;
-    }
+      return `<div class="session" onclick="showSession('${s.id}','run')"><div class="session-marker mk-${s.type}"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>Run · ${pace(s.distance,s.seconds)} <button class="info-btn inline" onclick="event.stopPropagation();showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${fmtTime(s.seconds)}</span><span>${speed(s.distance,s.seconds)} km/h</span></div></div><div class="session-metric">${s.distance}<span class="unit">km</span></div></div>`;
     if(s.kind === 'gym'){
-      return `<div class="session" onclick="showSession('${s.id}','gym')"><div class="session-marker mk-${s.type}"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>${getGymLabel(s.type)}</div><div class="session-meta"><span>${s.intensity} intensity</span></div></div><div class="session-metric">${s.duration}<span class="unit">min</span></div></div>`;
+      return `<div class="session" onclick="showSession('${s.id}','gym')"><div class="session-marker mk-${s.type}"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-${s.type}">${s.type}</span>${getGymLabel(s.type)} <button class="info-btn inline" onclick="event.stopPropagation();showGlossary('${s.type}')">ⓘ</button></div><div class="session-meta"><span>${s.intensity} intensity</span></div></div><div class="session-metric">${s.duration}<span class="unit">min</span></div></div>`;
     }
     return `<div class="session" onclick="showSession('${s.id}','activity')"><div class="session-marker mk-activity"><div class="m-day">${dayName}</div><div class="m-date">${dayNum}</div></div><div class="session-info"><div class="session-name"><span class="session-badge bg-activity">activity</span>${s.name}</div><div class="session-meta"><span>${s.intensity} intensity</span></div></div><div class="session-metric">${s.duration}<span class="unit">min</span></div></div>`;
   }).join('');
