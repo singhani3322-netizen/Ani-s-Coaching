@@ -1422,11 +1422,23 @@ function generateWeeklyPlan(weekStartDate){
       while(gymIdx < remainingSplit.length && neededGyms > 0) {
         const gymType = remainingSplit[gymIdx];
         const isLower = gymType === 'lower' || gymType === 'legs';
+        // V5.4: Build list of already-placed gym days for muscle conflict check
+        const placedGymDays = gymPlacements.map(g => ({day: g.day, type: g.type}));
+        for(let pi = 0; pi < 7; pi++) {
+          if(plan[pi] && plan[pi].type === 'logged') {
+            plan[pi].sessions.forEach(ps => {
+              if(ps.kind === 'gym') placedGymDays.push({day: pi, type: ps.type});
+            });
+          }
+        }
         const validDays = availableDays.filter(d => {
           if(isLower) {
-            // Never adjacent to hard OR long runs
             if(hardRunDays.some(hd => Math.abs(d - hd) < 2)) return false;
             if(longRunDays.some(ld => Math.abs(ld - d) < 2)) return false;
+          }
+          // V5.4: Muscle group conflict check
+          for(const placed of placedGymDays) {
+            if(Math.abs(d - placed.day) < 2 && gymTypesConflict(gymType, placed.type)) return false;
           }
           return true;
         });
@@ -1578,6 +1590,19 @@ function getGymLabel(type){
   const labels = {upper:'Upper Body', lower:'Lower Body', push:'Push Day', pull:'Pull Day', legs:'Legs Day', full:'Full Body', mobility:'Mobility', cardio:'Cardio'};
   return labels[type] || type;
 }
+// V5.4 ADD: Muscle group conflict detection
+    function gymTypesConflict(a, b) {
+      if(!a || !b) return false;
+      if(a === 'mobility' || b === 'mobility') return false;
+      if(a === 'cardio' || b === 'cardio') return false;
+      if(a === b) return true;
+      if(a === 'full' || b === 'full') return true;
+      if(a === 'upper' && (b === 'push' || b === 'pull')) return true;
+      if(b === 'upper' && (a === 'push' || a === 'pull')) return true;
+      const lowerFamily = ['lower', 'legs'];
+      if(lowerFamily.includes(a) && lowerFamily.includes(b)) return true;
+      return false;
+    }
 
 function getRestDaysForWeek(weekStartDate){
   const wsKey = localDateKey(weekStartDate);
@@ -1639,12 +1664,22 @@ function validateSequence(plan) {
       warnings.push({
         day1: dayNames[i], day2: dayNames[i+1],
         type: 'consecutive-hard',
-        message: `Two hard sessions consecutive days. Body needs recovery.`
-      });
-    }
-  }
-  return warnings;
-}
+       message: `Two hard sessions consecutive days. Body needs recovery.`
+          });
+        }
+        // V5.4 ADD: Muscle group conflict warning
+        const gymTypesList = ['upper','lower','push','pull','legs','full','mobility'];
+        if(today && tomorrow && gymTypesList.includes(today) && gymTypesList.includes(tomorrow) && gymTypesConflict(today, tomorrow)) {
+          const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+          warnings.push({
+            day1: dayNames[i], day2: dayNames[i+1],
+            type: 'muscle-overlap',
+            message: `${today.charAt(0).toUpperCase()+today.slice(1)} then ${tomorrow.charAt(0).toUpperCase()+tomorrow.slice(1)} — muscle groups overlap. 48hr gap recommended.`
+          });
+        }
+      }
+      return warnings;
+    } 
 
 function getPlanType(planItem) {
   if(!planItem) return null;
@@ -2875,23 +2910,86 @@ function saveBaselineUpdate(){
   showToast('Baseline updated', 'success');
   renderAll();
 }
-
 function openSkipModal(){
-  const skipCount = state.skipHistory.filter(s => daysSince(s.date) <= 14).length;
-  let desc = "Alright. Life happens. Once in a while is fine. What's the situation?";
-  if(skipCount >= 5) desc = `That's your ${skipCount+1}th skip in 2 weeks. Consider reducing your weekly plan.`;
-  document.getElementById('skipModalDesc').textContent = desc;
-  document.getElementById('skipModal').classList.add('active');
-}
+      const ws = weekStart(new Date());
+      const todayIdx = dayOfWeekMonStart(new Date());
+      const plan = generateWeeklyPlan(ws);
+      const todayPlan = plan[todayIdx];
+      // Guard clauses
+      if(todayPlan && todayPlan.type === 'logged'){
+        showToast('Already logged today. Nice.', 'info', 3000);
+        return;
+      }
+      if(todayPlan && todayPlan.type === 'rest'){
+        showToast('Today is already a rest day.', 'info', 3000);
+        return;
+      }
+      if(todayPlan && todayPlan.type === 'activity'){
+        showToast("Today is your activity day. Just don't do it if you can't.", 'info', 3500);
+        return;
+      }
+      // Find next rest day this week to offer as swap target
+      const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+      let targetRestDay = -1;
+      for(let i = todayIdx + 1; i < 7; i++){
+        if(plan[i] && plan[i].type === 'rest'){ targetRestDay = i; break; }
+      }
+      // Build dynamic options
+      let optionsHtml = '';
+      if(targetRestDay < 0){
+        optionsHtml += '<div style="background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--text-dim);margin-bottom:10px">⚠️ No rest days remaining this week to swap with. You can still skip entirely.</div>';
+      } else {
+        optionsHtml += '<div class="option-item" onclick="handleSkip(\'move\')"><div class="option-info"><div class="option-title">🔀 Move to ' + dayNames[targetRestDay] + '</div><div class="option-desc">Today becomes rest. ' + dayNames[targetRestDay] + ' becomes a training day. Week stays balanced.</div></div><div style="color:var(--accent);font-size:20px">→</div></div>';
+      }
+      optionsHtml += '<div class="option-item" onclick="handleSkip(\'skip\')"><div class="option-info"><div class="option-title">⏭️ Skip this session entirely</div><div class="option-desc">Today becomes rest. Session gone. Week has one less.</div></div><div style="color:var(--warn);font-size:20px">→</div></div>';
+      document.getElementById('skipOptions').innerHTML = optionsHtml;
+      // Description with skip count check
+      const skipCount = state.skipHistory.filter(s => daysSince(s.date) <= 14).length;
+      let desc = "Life happens. What's the plan?";
+      if(skipCount >= 5) desc = `${skipCount+1} skips in 2 weeks. Consider reducing your weekly plan.`;
+      document.getElementById('skipModalDesc').textContent = desc;
+      document.getElementById('skipModal').classList.add('active');
+    }
 
-function handleSkip(reason){
-  state.skipHistory.push({date: new Date().toISOString(), reason});
-  save();
-  closeModal('skipModal');
-  const msg = reason === 'sick' ? "Rest properly. Health first." : formatMessage(pickRandom(missedMessages));
-  showToast(msg, 'info', 4500);
-  renderAll();
-}
+function handleSkip(action){
+      const ws = weekStart(new Date());
+      const wsKey = localDateKey(ws);
+      const todayIdx = dayOfWeekMonStart(new Date());
+      const plan = generateWeeklyPlan(ws);
+      const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+      state.skipHistory.push({date: new Date().toISOString(), action: action});
+      if(action === 'move'){
+        // Find target rest day
+        let targetRestDay = -1;
+        for(let i = todayIdx + 1; i < 7; i++){
+          if(plan[i] && plan[i].type === 'rest'){ targetRestDay = i; break; }
+        }
+        if(targetRestDay >= 0){
+          const currentRest = state.lockedRestDays[wsKey] ? [...state.lockedRestDays[wsKey]] : getRestDaysForWeek(ws);
+          const newRest = currentRest.filter(i => i !== targetRestDay);
+          if(!newRest.includes(todayIdx)) newRest.push(todayIdx);
+          state.lockedRestDays[wsKey] = newRest.sort();
+          delete state.weeklyPlanOverrides[wsKey];
+          save();
+          closeModal('skipModal');
+          showToast('Moved to ' + dayNames[targetRestDay] + '. Do it then.', 'info', 4500);
+          renderAll();
+          return;
+        }
+      }
+      if(action === 'skip'){
+        const currentRest = state.lockedRestDays[wsKey] ? [...state.lockedRestDays[wsKey]] : getRestDaysForWeek(ws);
+        if(!currentRest.includes(todayIdx)) currentRest.push(todayIdx);
+        state.lockedRestDays[wsKey] = currentRest.sort();
+        delete state.weeklyPlanOverrides[wsKey];
+        save();
+        closeModal('skipModal');
+        showToast('Skipped. Fresh start tomorrow.', 'info', 4500);
+        renderAll();
+        return;
+      }
+    }
+
 
 function openQuickSession(){
   const options = [
