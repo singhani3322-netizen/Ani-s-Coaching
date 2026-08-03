@@ -1319,23 +1319,23 @@ function generateWeeklyPlan(weekStartDate){
       });
 
       // 4. Count logged & detect what already happened (FIX: iterate ALL sessions, not just primary)
-      let loggedRuns = 0, loggedGyms = 0;
-      let hasLoggedHardRun = false, hasLoggedLongRun = false;
-      const loggedGymTypes = [];
-      for(let i = 0; i < 7; i++) {
-          if(plan[i] && plan[i].type === 'logged') {
-            plan[i].sessions.forEach(s => {
-              if(s.kind === 'run') {
-                loggedRuns++;
-                if(s.type === 'hard') hasLoggedHardRun = true;
-                if(s.distance >= 8) hasLoggedLongRun = true;
-              } else if(s.kind === 'gym') {
-                loggedGyms++;
-                loggedGymTypes.push(s.type);
-              }
-            });
-          }
-      }
+    let loggedRuns = 0, loggedGyms = 0;
+    let hasLoggedHardRun = false, hasLoggedLongRun = false;
+    const loggedGymTypes = [];
+    for(let i = 0; i < 7; i++) {
+        if(plan[i] && plan[i].type === 'logged') {
+          plan[i].sessions.forEach(s => {
+            if(s.kind === 'run') {
+              loggedRuns++;
+              if(s.type === 'hard') hasLoggedHardRun = true;
+              if(s.distance >= 8) hasLoggedLongRun = true;
+            } else if(s.kind === 'gym') {
+              loggedGyms++;
+              loggedGymTypes.push(s.type);
+            }
+          });
+        }
+    }
 
       // 5. Determine remaining sessions needed
       let neededRuns = Math.max(0, state.prefs.runDays - loggedRuns);
