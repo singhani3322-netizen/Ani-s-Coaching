@@ -1490,6 +1490,16 @@ function generateWeeklyPlan(weekStartDate){
       });
 
       // 14. FIXED COMBINED DAY CREATION — add easy run into existing upper gym day
+      // V5.4 FIX: Reduce willCombine by already-logged combo days (prevents duplicate combos)
+let loggedCombinedDays = 0;
+for(let i = 0; i < 7; i++) {
+  if(plan[i] && plan[i].type === 'logged') {
+    const hasRun = plan[i].sessions.some(s => s.kind === 'run');
+    const hasGym = plan[i].sessions.some(s => s.kind === 'gym');
+    if(hasRun && hasGym) loggedCombinedDays++;
+  }
+}
+willCombine = Math.max(0, willCombine - loggedCombinedDays);
       if(willCombine > 0) {
         const usedCombinedDays = [];
         for(let combos = 0; combos < willCombine; combos++) {
