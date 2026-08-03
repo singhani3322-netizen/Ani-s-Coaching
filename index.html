@@ -506,7 +506,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 <div id="mainApp" class="hidden">
   <div class="header">
     <div class="header-row">
-      <div><div class="header-title">Not Strava</div><div class="header-tag">Your Uncertified Coach</div></div>
+      <div><div class="header-title">Not Strava</div><div class="header-tag">Your Uncertified Coach 🇮🇳</div></div>
       <div class="header-date" id="headerDate"></div>
     </div>
   </div>
@@ -2414,7 +2414,17 @@ function showDayDetail(planItem, dayIdx, weekStartDate){
   if(planItem && planItem.type === 'logged') {
     body += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">Logged Sessions</div>';
     body += planItem.sessions.map(s => renderSessionRow(s)).join('');
-  } else if(!planItem || planItem.type === 'rest'){
+    // V5.4 ADD: Delete buttons for each logged session
+    body += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"><div style="font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:10px">Made a mistake?</div>';
+    planItem.sessions.forEach((s, idx) => {
+      let label;
+      if(s.kind === 'run') label = 'Delete ' + s.type.charAt(0).toUpperCase() + s.type.slice(1) + ' Run';
+      else if(s.kind === 'gym') label = 'Delete ' + getGymLabel(s.type);
+      else label = 'Delete ' + s.name;
+      body += '<button class="btn btn-danger btn-full" style="margin-bottom:6px" onclick="closeModal(\'detailModal\');deleteSession(\'' + s.id + '\',\'' + s.kind + '\')">🗑️ ' + label + '</button>';
+    });
+    body += '</div>';
+  }else if(!planItem || planItem.type === 'rest'){
     body += `<div class="rec-box"><div class="rec-box-title">😴 Rest Day</div><div class="rec-box-content">Recovery day. Adaptation happens now.</div></div>
       ${!isPast ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('any')">Train Instead</button>` : ''}`;
   } else if(planItem.type === 'activity'){
