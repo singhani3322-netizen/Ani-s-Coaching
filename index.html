@@ -23,7 +23,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .loader-bar{width:180px;height:2px;background:var(--surface-2);border-radius:2px;overflow:hidden}
 .loader-fill{width:0%;height:100%;background:var(--accent);animation:loadFill 1.2s ease-out forwards}
 @keyframes loadFill{to{width:100%}}
-.toast{position:fixed;bottom:20px;←:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:14px 20px;color:var(--text);font-size:13px;font-weight:600;z-index:2000;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 8px 32px rgba(0,0,0,0.5);display:flex;align-items:center;gap:10px;max-width:92%;line-height:1.4}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:14px 20px;color:var(--text);font-size:13px;font-weight:600;z-index:2000;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 8px 32px rgba(0,0,0,0.5);display:flex;align-items:center;gap:10px;max-width:92%;line-height:1.4}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast-icon{width:22px;height:22px;background:var(--accent);color:#001210;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:12px}
 .toast.warn .toast-icon{background:var(--warn);color:#3A2600}
@@ -34,24 +34,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .header-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .header-title{font-size:22px;font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,#fff 0%,#9AA0A6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .header-tag{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.2em;font-weight:600;margin-top:2px;font-style:italic}
-.header-date{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;font-weight:600;text-align:→}
+.header-date{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;font-weight:600;text-align:right}
 .container{max-width:900px;margin:0 auto;padding:16px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
 .card-title{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.15em}
 .card-action{font-size:12px;color:var(--accent);cursor:pointer;font-weight:600;background:transparent;border:none;font-family:inherit}
 .hero{background:linear-gradient(135deg,#1E2530 0%,#2A3241 100%);border:1px solid var(--border-2);border-radius:20px;padding:24px 22px;margin-bottom:14px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-50%;→:-20%;width:400px;height:400px;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 60%);pointer-events:none}
+.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 60%);pointer-events:none}
 .hero.rest::before{background:radial-gradient(circle,rgba(92,158,255,0.12) 0%,transparent 60%)}
 .hero.warn::before{background:radial-gradient(circle,rgba(255,176,32,0.12) 0%,transparent 60%)}
 .hero.activity::before{background:radial-gradient(circle,rgba(255,215,0,0.12) 0%,transparent 60%)}
 .hero-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.2em;font-weight:700;margin-bottom:10px;position:relative}
 .hero-activity{font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.2;margin-bottom:6px;position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .hero-detail{font-size:14px;color:var(--text-dim);margin-bottom:14px;position:relative;line-height:1.5}
-.hero-reason{background:rgba(0,0,0,0.3);border-←:3px solid var(--accent);padding:12px 14px;border-radius:6px;font-size:13px;color:var(--text);line-height:1.55;margin-bottom:12px;position:relative;font-style:italic}
-.hero.rest .hero-reason{border-←-color:#5C9EFF}
-.hero.warn .hero-reason{border-←-color:var(--warn)}
-.hero.activity .hero-reason{border-←-color:var(--activity)}
+.hero-reason{background:rgba(0,0,0,0.3);border-left:3px solid var(--accent);padding:12px 14px;border-radius:6px;font-size:13px;color:var(--text);line-height:1.55;margin-bottom:12px;position:relative;font-style:italic}
+.hero.rest .hero-reason{border-left-color:#5C9EFF}
+.hero.warn .hero-reason{border-left-color:var(--warn)}
+.hero.activity .hero-reason{border-left-color:var(--activity)}
 .hero-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;position:relative}
 @media(max-width:400px){.hero-buttons{grid-template-columns:1fr}}
 .info-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--text-dim);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;padding:0;line-height:1}
@@ -72,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .stat-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
 .stat-num{font-size:20px;font-weight:800;letter-spacing:-0.03em;line-height:1}
 .stat-label{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;margin-top:6px;font-weight:600}
-.stat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-→:5px;vertical-align:middle}
+.stat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .dot-green{background:var(--easy);box-shadow:0 0 8px rgba(76,175,80,0.5)}
 .dot-yellow{background:var(--warn);box-shadow:0 0 8px rgba(255,176,32,0.5)}
 .dot-red{background:var(--danger);box-shadow:0 0 8px rgba(239,83,80,0.5)}
@@ -80,7 +80,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .week-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px}
 .week-title{font-size:15px;font-weight:700;letter-spacing:-0.01em}
 .week-subtitle{font-size:11px;color:var(--text-faint);margin-top:3px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600}
-.week-badge{display:inline-block;padding:3px 8px;background:var(--accent-glow);color:var(--accent);border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-←:6px;vertical-align:middle}
+.week-badge{display:inline-block;padding:3px 8px;background:var(--accent-glow);color:var(--accent);border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-left:6px;vertical-align:middle}
 .week-actions{display:flex;gap:8px;flex-wrap:wrap}
 .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .day{aspect-ratio:0.7;border-radius:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.2s;background:var(--surface-2);border:1px solid transparent;color:var(--text-dim);position:relative;min-height:82px;text-align:center;overflow:hidden;user-select:none;-webkit-user-select:none}
@@ -107,8 +107,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .day.done-combined{background:linear-gradient(135deg,rgba(76,175,80,0.15),rgba(180,124,255,0.15));color:var(--text);border-color:var(--border-2)}
 .day.rest-day{background:rgba(74,82,97,0.2);color:var(--text-dim)}
 .day.locked-rest{background:rgba(74,82,97,0.35);border:1px solid var(--border-2);color:var(--text-dim)}
-.day.locked-rest::after{content:'●';position:absolute;top:4px;→:5px;font-size:6px;color:var(--warn);opacity:0.8}
-.day.planned{background:rgba(255,255,255,0.03);border:1px -ed var(--border);opacity:0.85}
+.day.locked-rest::after{content:'●';position:absolute;top:4px;right:5px;font-size:6px;color:var(--warn);opacity:0.8}
+.day.planned{background:rgba(255,255,255,0.03);border:1px dashed var(--border);opacity:0.85}
 .day.planned.plan-easy{color:var(--easy);border-color:rgba(76,175,80,0.4)}
 .day.planned.plan-moderate{color:var(--moderate);border-color:rgba(255,152,0,0.4)}
 .day.planned.plan-hard{color:var(--hard);border-color:rgba(239,83,80,0.4)}
@@ -122,8 +122,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .day.planned.plan-activity{color:var(--activity);border-color:rgba(255,215,0,0.4)}
 .day.planned.plan-combined{background:linear-gradient(135deg,rgba(76,175,80,0.08),rgba(180,124,255,0.08));border-color:var(--border-2);color:var(--text)}
 .day.done-combined,.day.planned.plan-combined{border-style:double}
-.day-work-marker{position:absolute;top:3px;←:4px;font-size:8px;opacity:0.5}
-.day-combined-badge{position:absolute;bottom:3px;→:4px;background:var(--accent);color:#001210;font-size:8px;font-weight:800;padding:1px 4px;border-radius:3px;line-height:1}
+.day-work-marker{position:absolute;top:3px;left:4px;font-size:8px;opacity:0.5}
+.day-combined-badge{position:absolute;bottom:3px;right:4px;background:var(--accent);color:#001210;font-size:8px;font-weight:800;padding:1px 4px;border-radius:3px;line-height:1}
 
 /* Swap mode styles */
 .swap-mode-banner{background:linear-gradient(135deg,rgba(0,212,170,0.15),rgba(180,124,255,0.1));border:1px solid var(--accent);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -133,7 +133,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .day.swap-selectable{cursor:pointer;animation:swapPulse 1.5s infinite}
 .day.swap-selected{background:var(--accent)!important;color:#001210!important;border-color:var(--accent)!important;transform:scale(1.05);box-shadow:0 0 0 3px var(--accent-glow),0 0 20px var(--accent-glow)}
 .day.swap-locked{opacity:0.4;cursor:not-allowed;filter:grayscale(0.5)}
-.day.swap-locked::before{content:'🔒';position:absolute;top:3px;→:5px;font-size:9px;z-index:10}
+.day.swap-locked::before{content:'🔒';position:absolute;top:3px;right:5px;font-size:9px;z-index:10}
 .day.swap-invalid{animation:swapShake 0.4s}
 @keyframes swapPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,212,170,0)}50%{box-shadow:0 0 0 3px rgba(0,212,170,0.3)}}
 @keyframes swapShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -157,11 +157,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .cb-title{font-size:13px;font-weight:700;margin-bottom:4px}
 .cb-body{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
 .reminder-banner{background:linear-gradient(135deg,rgba(92,158,255,0.1),rgba(0,212,170,0.05));border:1px solid rgba(92,158,255,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
-.>-icon{width:28px;height:28px;background:#5C9EFF;color:#001A3A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
-.>-content{flex:1}
-.>-title{font-size:13px;font-weight:700;margin-bottom:4px}
-.>-body{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
-.>-actions{display:flex;gap:6px;flex-wrap:wrap}
+.rb-icon{width:28px;height:28px;background:#5C9EFF;color:#001A3A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+.rb-content{flex:1}
+.rb-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.rb-body{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
+.rb-actions{display:flex;gap:6px;flex-wrap:wrap}
 .improvement-banner{background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(0,212,170,0.05));border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
 .imp-icon{width:28px;height:28px;background:#FFD700;color:#3A2600;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
 .imp-content{flex:1}
@@ -182,7 +182,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .ring{width:130px;height:130px;position:relative}
 .ring svg{transform:rotate(-90deg)}
 .ring-bg{fill:none;stroke:var(--surface-2);stroke-width:8}
-.ring-fill{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;transition:stroke--offset 0.8s ease-out}
+.ring-fill{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 0.8s ease-out}
 .ring-fill.warn{stroke:var(--warn)}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .ring-num{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1}
@@ -213,9 +213,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .session-info{min-width:0}
 .session-name{font-size:14px;font-weight:600;margin-bottom:2px}
 .session-meta{font-size:12px;color:var(--text-dim);display:flex;gap:10px;flex-wrap:wrap}
-.session-metric{font-size:14px;font-weight:800;text-align:→}
-.session-metric .unit{font-size:10px;color:var(--text-faint);font-weight:500;margin-←:2px;text-transform:uppercase}
-.session-badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;text-transform:uppercase;margin-→:6px}
+.session-metric{font-size:14px;font-weight:800;text-align:right}
+.session-metric .unit{font-size:10px;color:var(--text-faint);font-weight:500;margin-left:2px;text-transform:uppercase}
+.session-badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;text-transform:uppercase;margin-right:6px}
 .bg-easy{background:rgba(76,175,80,0.15);color:var(--easy)}
 .bg-moderate{background:rgba(255,152,0,0.15);color:var(--moderate)}
 .bg-hard{background:rgba(239,83,80,0.15);color:var(--hard)}
@@ -232,11 +232,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .pb-value{font-size:20px;font-weight:800;letter-spacing:-0.03em}
 .pb-detail{font-size:11px;color:var(--text-dim);margin-top:3px}
 .zones-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.zone-item{background:var(--surface-2);border-radius:10px;padding:12px;border-←:3px solid}
-.zone-item.z-easy{border-←-color:var(--easy)}
-.zone-item.z-mod{border-←-color:var(--moderate)}
-.zone-item.z-hard{border-←-color:var(--hard)}
-.zone-item.z-long{border-←-color:var(--upper)}
+.zone-item{background:var(--surface-2);border-radius:10px;padding:12px;border-left:3px solid}
+.zone-item.z-easy{border-left-color:var(--easy)}
+.zone-item.z-mod{border-left-color:var(--moderate)}
+.zone-item.z-hard{border-left-color:var(--hard)}
+.zone-item.z-long{border-left-color:var(--upper)}
 .zone-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;font-weight:600;display:flex;align-items:center;justify-content:space-between}
 .zone-value{font-size:16px;font-weight:800;margin-top:4px}
 .zone-detail{font-size:10px;color:var(--text-dim);margin-top:2px}
@@ -274,7 +274,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .pill.active{background:var(--accent);color:#001210;border-color:var(--accent)}
 .pill:not(.active):hover{border-color:var(--text-faint)}
 .pill-day{padding:14px 4px;font-size:10px}
-.pill-goal{padding:16px 12px;text-align:←;line-height:1.4}
+.pill-goal{padding:16px 12px;text-align:left;line-height:1.4}
 .pill-goal .goal-title{font-size:14px;font-weight:700;margin-bottom:2px}
 .pill-goal .goal-sub{font-size:11px;color:var(--text-faint);font-weight:500}
 .pill-goal.active .goal-sub{color:rgba(0,18,16,0.7)}
@@ -297,7 +297,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .activity-name{font-size:14px;font-weight:700;margin-bottom:2px}
 .activity-detail{font-size:12px;color:var(--text-dim)}
 .activity-remove{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:20px;padding:4px 8px;font-family:inherit}
-.add-btn{width:100%;padding:14px;background:var(--surface-2);border:1px -ed var(--border);border-radius:12px;cursor:pointer;color:var(--text-dim);font-size:13px;font-weight:600;font-family:inherit}
+.add-btn{width:100%;padding:14px;background:var(--surface-2);border:1px dashed var(--border);border-radius:12px;cursor:pointer;color:var(--text-dim);font-size:13px;font-weight:600;font-family:inherit}
 .add-btn:hover{border-color:var(--accent);color:var(--accent)}
 .option-item{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .option-item:hover{border-color:var(--accent);background:rgba(0,212,170,0.05)}
@@ -323,7 +323,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .step-dot.done{background:var(--accent-dim)}
 .setup-quote{font-size:12px;color:var(--text-faint);text-align:center;margin-top:14px;font-style:italic;line-height:1.5}
 .step-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.edu{padding:12px 14px;background:var(--surface-2);border-radius:10px;margin-bottom:8px;border-←:3px solid var(--accent);font-size:12px;line-height:1.6}
+.edu{padding:12px 14px;background:var(--surface-2);border-radius:10px;margin-bottom:8px;border-left:3px solid var(--accent);font-size:12px;line-height:1.6}
 .edu-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
 .structure-section{background:var(--surface-2);border-radius:10px;padding:12px 14px;margin-bottom:10px}
 .structure-heading{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
@@ -337,106 +337,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .viz-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit}
 .viz-btn:hover{border-color:var(--text-faint)}
 #export-html-btn{background:var(--accent);border-color:var(--accent);color:#001210}
-/* V5.4 HERO REDESIGN — Whoop-inspired */
-.hero-v2{background:linear-gradient(160deg,#181D25 0%,#22293A 100%);border:1px solid var(--border-2);border-radius:18px;padding:18px 20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.22)}
-.hero-v2::before{content:'';position:absolute;top:-40%;→:-15%;width:340px;height:340px;background:radial-gradient(circle,rgba(0,212,170,0.10) 0%,transparent 60%);pointer-events:none}
-.hero-v2.rest-day::before{background:radial-gradient(circle,rgba(92,158,255,0.12) 0%,transparent 60%)}
-.hero-v2.type-easy::before{background:radial-gradient(circle,rgba(76,175,80,0.14) 0%,transparent 60%)}
-.hero-v2.type-moderate::before{background:radial-gradient(circle,rgba(255,152,0,0.14) 0%,transparent 60%)}
-.hero-v2.type-hard::before{background:radial-gradient(circle,rgba(239,83,80,0.14) 0%,transparent 60%)}
-.hero-v2.type-upper::before,.hero-v2.type-push::before,.hero-v2.type-pull::before{background:radial-gradient(circle,rgba(180,124,255,0.14) 0%,transparent 60%)}
-.hero-v2.type-legs::before,.hero-v2.type-lower::before{background:radial-gradient(circle,rgba(255,138,61,0.14) 0%,transparent 60%)}
-.hero-v2.type-full::before{background:radial-gradient(circle,rgba(255,107,157,0.14) 0%,transparent 60%)}
-.hero-v2.type-mobility::before{background:radial-gradient(circle,rgba(38,217,193,0.14) 0%,transparent 60%)}
-.hero-v2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;position:relative}
-.hero-v2-date{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.22em;font-weight:700}
-.hero-v2-badge{display:inline-block;padding:3px 9px;background:rgba(0,212,170,0.15);color:var(--accent);border-radius:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.15em;margin-←:8px;vertical-align:middle}
-.hero-v2-main{display:block;margin-bottom:16px;position:relative}
-.hero-v2-info{min-width:0}
-.hero-v2-tap-hint{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-top:4px;opacity:0.5}
-.hero-v2-recovery-note{font-size:11px;color:var(--warn);font-weight:600;margin-top:4px;padding:4px 8px;background:rgba(255,176,32,0.08);border-←:2px solid var(--warn);border-radius:4px;display:none}
-.hero-v2-recovery-note.active{display:block}
-/* V5.4 VITALS CARD */
-.vitals-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px 20px;margin-bottom:12px}
-.vitals-title{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.2em;font-weight:700;margin-bottom:14px}
-.vitals-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.vital-item{display:flex;flex-direction:column;align-items:center;text-align:center}
-.vital-ring{width:76px;height:76px;position:relative;margin-bottom:8px}
-.vital-ring svg{transform:rotate(-90deg)}
-.vital-ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:5}
-.vital-ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke--array:220;transition:stroke--offset 0.6s ease-out,stroke 0.3s}
-.vital-ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.vital-ring-num{font-size:20px;font-weight:800;letter-spacing:-0.02em;line-height:1}
-.vital-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.12em;font-weight:700}
-.vital-status{font-size:10px;color:var(--text-faint);margin-top:2px;font-weight:600}
-.vital-ring.green .vital-ring-fill{stroke:#4CAF50}
-.vital-ring.yellow .vital-ring-fill{stroke:#F5C842}
-.vital-ring.orange .vital-ring-fill{stroke:#FF9800}
-.vital-ring.red .vital-ring-fill{stroke:#EF5350}
-.vital-ring.green .vital-ring-num{color:#4CAF50}
-.vital-ring.yellow .vital-ring-num{color:#F5C842}
-.vital-ring.orange .vital-ring-num{color:#FF9800}
-.vital-ring.red .vital-ring-num{color:#EF5350}
-/* V5.4 SWIPEABLE WEEKS */
-.weeks-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:12px;position:relative;overflow:hidden}
-.weeks-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px}
-.weeks-title-wrap{flex:1;min-width:0}
-.weeks-main-title{font-size:15px;font-weight:700;letter-spacing:-0.01em;display:flex;align-items:center;gap:8px}
-.weeks-dots{display:inline-flex;gap:5px;margin-←:8px}
-.weeks-dot{width:6px;height:6px;border-radius:50%;background:var(--border-2);cursor:pointer;transition:all 0.2s}
-.weeks-dot.active{background:var(--accent);width:18px;border-radius:3px}
-.weeks-subtitle{font-size:11px;color:var(--text-faint);margin-top:3px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600}
-.weeks-actions{display:flex;gap:6px;flex-wrap:wrap}
-.weeks-viewport{position:relative;overflow:hidden;touch-action:pan-y}
-.weeks-slider{display:flex;transition:transform 0.3s ease-out;width:200%}
-.weeks-slider.dragging{transition:none}
-.weeks-slide{width:50%;flex-shrink:0;padding-→:0}
-.weeks-nav{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-.weeks-nav-btn{background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);width:36px;height:36px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
-.weeks-nav-btn:hover{color:var(--text);border-color:var(--border-2)}
-.weeks-nav-btn:disabled{opacity:0.3;cursor:not-allowed}
-.weeks-swipe-hint{font-size:10px;color:var(--text-faint);text-align:center;margin-top:8px;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;opacity:0.6}
-.hero-v2-name:hover{opacity:0.85}
-.hero-v2-name .name-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0}
-.hero-v2.type-easy .name-dot{background:var(--easy)}
-.hero-v2.type-moderate .name-dot{background:var(--moderate)}
-.hero-v2.type-hard .name-dot{background:var(--hard)}
-.hero-v2.type-upper .name-dot,.hero-v2.type-push .name-dot,.hero-v2.type-pull .name-dot{background:var(--upper)}
-.hero-v2.type-legs .name-dot,.hero-v2.type-lower .name-dot{background:var(--lower)}
-.hero-v2.type-full .name-dot{background:var(--full)}
-.hero-v2.type-mobility .name-dot{background:var(--mobility)}
-.hero-v2.rest-day .name-dot{background:#5C9EFF}
-.hero-v2-meta{font-size:13px;color:var(--text-dim);font-weight:500}
-.hero-v2-tap-hint{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-top:6px;opacity:0.6}
-.hero-v2-ring{width:100px;height:100px;position:relative;flex-shrink:0}
-.hero-v2-ring svg{transform:rotate(-90deg)}
-.hero-v2-ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:6}
-.hero-v2-ring-fill{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke--array:283;stroke--offset:60;transition:stroke--offset 0.6s ease-out}
-.hero-v2.type-easy .hero-v2-ring-fill{stroke:var(--easy)}
-.hero-v2.type-moderate .hero-v2-ring-fill{stroke:var(--moderate)}
-.hero-v2.type-hard .hero-v2-ring-fill{stroke:var(--hard)}
-.hero-v2.type-upper .hero-v2-ring-fill,.hero-v2.type-push .hero-v2-ring-fill,.hero-v2.type-pull .hero-v2-ring-fill{stroke:var(--upper)}
-.hero-v2.type-legs .hero-v2-ring-fill,.hero-v2.type-lower .hero-v2-ring-fill{stroke:var(--lower)}
-.hero-v2.type-full .hero-v2-ring-fill{stroke:var(--full)}
-.hero-v2.type-mobility .hero-v2-ring-fill{stroke:var(--mobility)}
-.hero-v2.rest-day .hero-v2-ring-fill{stroke:#5C9EFF;stroke--array:4 4}
-.hero-v2-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 4px}
-.hero-v2-ring-num{font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1}
-.hero-v2-ring-unit{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;margin-top:3px;font-weight:700}
-.hero-v2-actions{display:grid;grid-template-columns:1fr 44px 44px;gap:8px;position:relative}
-.hero-v2-primary{background:var(--accent);color:#001210;border:none;padding:14px 20px;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:-0.01em;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.06em;transition:all 0.15s}
-.hero-v2-primary:hover{background:var(--accent-dim);transform:translateY(-1px)}
-.hero-v2-primary:active{transform:scale(0.98)}
-.hero-v2-icon-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text-dim);width:44px;height:44px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
-.hero-v2-icon-btn:hover{color:var(--text);border-color:var(--border-2);background:rgba(255,255,255,0.1)}
-.hero-v2-icon-btn:active{transform:scale(0.94)}
-.hero-v2.rest-day .hero-v2-primary{background:#5C9EFF;color:#001A3A}
-.hero-v2.rest-day .hero-v2-primary:hover{background:#4A8AE8}
-.hero-v2-combo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative}
 .info-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--text-dim);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;padding:0;line-height:1;vertical-align:middle}
 .info-btn:hover{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
-.info-btn.inline{font-size:9px;width:16px;height:16px;margin-←:4px}
-.day-info-badge{position:absolute;top:3px;→:5px;background:rgba(0,212,170,0.2);color:var(--accent);font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;line-height:1}
+.info-btn.inline{font-size:9px;width:16px;height:16px;margin-left:4px}
+.day-info-badge{position:absolute;top:3px;right:5px;background:rgba(0,212,170,0.2);color:var(--accent);font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;line-height:1}
 .day-info-badge:hover{background:var(--accent);color:#001210}
 .workout-structure{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:8px}
 .workout-title{font-size:16px;font-weight:800;margin-bottom:2px}
@@ -524,9 +428,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">How to handle overflow?</h3>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Your training days exceed 7. Choose how to handle it.</div>
       <div id="setupOverflow" style="display:grid;grid-template-columns:1fr;gap:8px">
-        <div class="pill pill-goal" data-val="combine" onclick="pickPill(this,'setupOverflowVal')"><div class="goal-title">🔀 Combine Sessions</div><div class="goal-sub">Merge safe combos (easy run + uppe>ody)</div></div>
+        <div class="pill pill-goal" data-val="combine" onclick="pickPill(this,'setupOverflowVal')"><div class="goal-title">🔀 Combine Sessions</div><div class="goal-sub">Merge safe combos (easy run + upper body)</div></div>
         <div class="pill pill-goal" data-val="mobility" onclick="pickPill(this,'setupOverflowVal')"><div class="goal-title">🧘 Replace with Mobility</div><div class="goal-sub">Swap redundant lower for mobility</div></div>
-        <div class="pill pill-goal" data-val="single" onclick="pickPill(this,'setupOverflowVal')"><div class="goal-title">💪 One Harder Session</div><div class="goal-sub">Fewe>ut harder sessions</div></div>
+        <div class="pill pill-goal" data-val="single" onclick="pickPill(this,'setupOverflowVal')"><div class="goal-title">💪 One Harder Session</div><div class="goal-sub">Fewer but harder sessions</div></div>
         <div class="pill pill-goal" data-val="ask" onclick="pickPill(this,'setupOverflowVal')"><div class="goal-title">🤔 Ask Me Weekly</div><div class="goal-sub">Different choice each week</div></div>
       </div>
       <input type="hidden" id="setupOverflowVal" value="">
@@ -608,12 +512,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   </div>
   
   <div class="container">
-    <div class="reminder-banner hidden" id="reminde>anner">
-      <div class=">-icon">?</div>
-      <div class=">-content">
-        <div class=">-title" id="reminderTitle">Log yesterday?</div>
-        <div class=">-body" id="reminde>ody"></div>
-        <div class=">-actions">
+    <div class="reminder-banner hidden" id="reminderBanner">
+      <div class="rb-icon">?</div>
+      <div class="rb-content">
+        <div class="rb-title" id="reminderTitle">Log yesterday?</div>
+        <div class="rb-body" id="reminderBody"></div>
+        <div class="rb-actions">
           <button class="btn btn-primary btn-sm" onclick="openLogForYesterday()">Yes, log it</button>
           <button class="btn btn-ghost btn-sm" onclick="dismissReminder()">Skip</button>
           <button class="btn btn-ghost btn-sm" onclick="dismissReminderPermanent()">Not today</button>
@@ -642,57 +546,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       </div>
     </div>
     
+    <div class="coach-note"><div class="coach-note-label">Coach says</div><div class="coach-note-text" id="coachNoteText"></div></div>
     
-    <div id="heroCard" class="hero-v2">
-  <div class="hero-v2-top">
-    <div class="hero-v2-date" id="heroV2Date"></div>
-    <div id="heroV2ExtraBadge"></div>
-  </div>
-  <div class="hero-v2-main">
-    <div class="hero-v2-info">
-      <div class="hero-v2-name" id="heroV2Name" onclick="openHeroDetails()">
-        <span class="name-dot"></span>
-        <span id="heroV2NameText">Loading</span>
+    <div id="heroCard" class="hero">
+      <div class="hero-label"><span id="heroDate"></span></div>
+      <div class="hero-activity" id="heroActivity">Loading</div>
+      <div class="hero-detail" id="heroDetail"></div>
+      <div class="hero-reason" id="heroReason"></div>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="openLog('any')">Log It</button>
+        <button class="btn btn-secondary" onclick="openQuickSession()">⚡ Quick</button>
+        <button class="btn btn-secondary" onclick="openSkipModal()">Not Today</button>
       </div>
-      <div class="hero-v2-meta" id="heroV2Meta"></div>
-      <div class="hero-v2-tap-hint" id="heroV2Hint">Tap name for details</div>
-<div class="hero-v2-recovery-note" id="heroV2RecoveryNote"></div>
     </div>
-</div>
-<div id="heroV2Actions" class="hero-v2-actions">
-  <button class="hero-v2-primary" onclick="openLog('any')">Log Session</button>
-  <button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button>
-  <button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Not today">✕</button>
-</div>
-<div class="vitals-card" >
-  <div class="vitals-title" > YOUR VITALS </div >
-  <div class="vitals-grid" >
-    <div class="vital-item" >
-      <div class="vital-ring" id="vitalRecovery" >
-        <svg width="76" height="76" viewBox="0 0 76 76" > <circle class="vital-ring-bg" cx="38" cy="38" r="35" > </circle > <circle class="vital-ring-fill" id="vitalRecoveryFill" cx="38" cy="38" r="35" > </circle > </svg >
-        <div class="vital-ring-center" > <div class="vital-ring-num" id="vitalRecoveryNum" > - </div > </div >
-      </div >
-      <div class="vital-label" > RECOVERY </div >
-      <div class="vital-status" id="vitalRecoveryStatus" > - </div >
-    </div >
-    <div class="vital-item" >
-      <div class="vital-ring" id="vitalWeek" >
-        <svg width="76" height="76" viewBox="0 0 76 76" > <circle class="vital-ring-bg" cx="38" cy="38" r="35" > </circle > <circle class="vital-ring-fill" id="vitalWeekFill" cx="38" cy="38" r="35" > </circle > </svg >
-        <div class="vital-ring-center" > <div class="vital-ring-num" id="vitalWeekNum" > - </div > </div >
-      </div >
-      <div class="vital-label" > WEEK </div >
-      <div class="vital-status" id="vitalWeekStatus" > - </div >
-    </div >
-    <div class="vital-item" >
-      <div class="vital-ring" id="vitalToday" >
-        <svg width="76" height="76" viewBox="0 0 76 76" > <circle class="vital-ring-bg" cx="38" cy="38" r="35" > </circle > <circle class="vital-ring-fill" id="vitalTodayFill" cx="38" cy="38" r="35" > </circle > </svg >
-        <div class="vital-ring-center" > <div class="vital-ring-num" id="vitalTodayNum" > - </div > </div >
-      </div >
-      <div class="vital-label" > TODAY </div >
-      <div class="vital-status" id="vitalTodayStatus" > - </div >
-    </div >
-  </div >
-</div >
+    
+    <div class="stats-strip">
+      <div class="stat-item"><div class="stat-num" id="statWeekKm">0</div><div class="stat-label">Week KM</div></div>
+      <div class="stat-item"><div class="stat-num" id="statSessions">0</div><div class="stat-label">Sessions</div></div>
+      <div class="stat-item"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Week Streak</div></div>
+      <div class="stat-item"><div class="stat-num" style="font-size:15px;line-height:20px"><span class="stat-dot" id="statRecoveryDot"></span><span id="statRecoveryText">Ready</span></div><div class="stat-label">Recovery</div></div>
     </div>
     
     <div class="swap-mode-banner hidden" id="swapModeBanner">
@@ -703,56 +575,51 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <button class="btn btn-primary btn-sm" onclick="exitSwapMode()">Done</button>
     </div>
     
-    < div class="weeks-card" >
-  < div class="weeks-header" >
-    < div class="weeks-title-wrap" >
-      < div class="weeks-main-title" >
-        < span id="weeksTitle" > This Week < /span >
-        < span class="weeks-dots" >
-          < span class="weeks-dot active" data-idx="0" onclick="switchWeek(0)" > < /span >
-          < span class="weeks-dot" data-idx="1" onclick="switchWeek(1)" > < /span >
-        < /span >
-      < /div >
-      < div class="weeks-subtitle" id="weeksSubtitle" > < /div >
-    < /div >
-    < div class="weeks-actions" >
-      < button class="card-action" onclick="openRestPickerFromSlider()" > Rest < /button >
-      < button class="card-action" onclick="enterSwapModeFromSlider()" > Rearrange < /button >
-    < /div >
-  < /div >
-  < div class="weeks-viewport" id="weeksViewport" >
-    < div class="weeks-slider" id="weeksSlider" >
-      < div class="weeks-slide" >
-        < div class="week-grid" id="weekGrid" > < /div >
-        < div class="week-progress" > < div class="wp-bars" id="weekProgress" > < /div > < /div >
-      < /div >
-      < div class="weeks-slide" >
-        < div class="week-grid" id="nextWeekGrid" > < /div >
-      < /div >
-    < /div >
-  < /div >
-  < div class="weeks-nav" >
-    < button class="weeks-nav-btn" id="weeksPrev" onclick="switchWeek(0)" > ← < /button >
-    < div class="weeks-swipe-hint" id="weeksHint" > Swipe or tap arrows < /div >
-    < button class="weeks-nav-btn" id="weeksNext" onclick="switchWeek(1)" > → < /button >
-  < /div >
-  < div class="week-legend" >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--easy)" > < /div > Easy < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--moderate)" > < /div > Mod < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--hard)" > < /div > Hard < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--upper)" > < /div > Upr/Psh/Pll < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--lower)" > < /div > Lwr/Legs < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--full)" > < /div > Full < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--mobility)" > < /div > Mobility < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--activity)" > < /div > Activity < /div >
-    < div class="legend-item" > < div class="legend-dot" style="background:var(--rest)" > < /div > Rest < /div >
-  < /div >
-< /div >
+    <div class="card">
+      <div class="week-header">
+        <div>
+          <div class="week-title">This Week <span class="week-badge">Current</span></div>
+          <div class="week-subtitle" id="weekRange"></div>
+        </div>
+        <div class="week-actions">
+          <button class="card-action" onclick="openRestPicker('current')">Rest</button>
+          <button class="card-action" onclick="enterSwapMode('current')">↔ Rearrange</button>
+        </div>
+      </div>
+      <div class="week-grid" id="weekGrid"></div>
+      <div class="week-progress"><div class="wp-bars" id="weekProgress"></div></div>
+      <div class="week-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--easy)"></div>Easy</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--moderate)"></div>Mod</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--hard)"></div>Hard</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--upper)"></div>Upr/Psh/Pll</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--lower)"></div>Lwr/Legs</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--full)"></div>Full</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--mobility)"></div>Mobility</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--activity)"></div>Activity</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--rest)"></div>Rest</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="week-header">
+        <div>
+          <div class="week-title">Next Week</div>
+          <div class="week-subtitle" id="nextWeekRange"></div>
+        </div>
+        <div class="week-actions">
+          <button class="card-action" onclick="openRestPicker('next')">Rest</button>
+          <button class="card-action" onclick="enterSwapMode('next')">↔ Rearrange</button>
+        </div>
+      </div>
+      <div class="week-grid" id="nextWeekGrid"></div>
+      <div style="font-size:11px;color:var(--text-faint);margin-top:10px;text-align:center">Tap any day to see session. Long-press to rearrange.</div>
+    </div>
     
     <div class="card">
       <div class="card-header"><div class="card-title">Your Pace Zones</div></div>
       <div class="zones-grid" id="paceZones"></div>
-      <div style="font-size:11px;color:var(--text-faint);margin-top:10px;line-height:1.5">Zones based on you>aseline. Trust how it feels over the math.</div>
+      <div style="font-size:11px;color:var(--text-faint);margin-top:10px;line-height:1.5">Zones based on your baseline. Trust how it feels over the math.</div>
     </div>
     
     <div class="card">
@@ -761,7 +628,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         <div class="ring">
           <svg width="130" height="130" viewBox="0 0 130 130">
             <circle class="ring-bg" cx="65" cy="65" r="56"></circle>
-            <circle class="ring-fill" id="ringFill" cx="65" cy="65" r="56" stroke--array="351.86" stroke--offset="351.86"></circle>
+            <circle class="ring-fill" id="ringFill" cx="65" cy="65" r="56" stroke-dasharray="351.86" stroke-dashoffset="351.86"></circle>
           </svg>
           <div class="ring-center"><div class="ring-num" id="ringNum">0</div><div class="ring-unit">of <span id="ringTarget">10</span> km</div></div>
         </div>
@@ -778,12 +645,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     
     <div class="card"><div class="card-header"><div class="card-title">Pace Progression</div></div><div class="chart-wrap"><canvas id="paceChart"></canvas></div></div>
     
-<div class="stats-strip">
-      <div class="stat-item"><div class="stat-num" id="statWeekKm">0</div><div class="stat-label">Week KM</div></div>
-      <div class="stat-item"><div class="stat-num" id="statSessions">0</div><div class="stat-label">Sessions</div></div>
-      <div class="stat-item"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Week Streak</div></div>
-      <div class="stat-item"><div class="stat-num" style="font-size:15px;line-height:20px"><span class="stat-dot" id="statRecoveryDot"></span><span id="statRecoveryText">Ready</span></div><div class="stat-label">Recovery</div></div>
-    </div>
     <div class="card"><div class="card-header"><div class="card-title">Recent Sessions</div></div><div class="session-list" id="sessionList"></div></div>
     
     <div class="card"><div class="card-header"><div class="card-title">Personal Records</div></div><div class="pb-grid" id="pbGrid"></div></div>
@@ -814,7 +675,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         <button class="btn btn-secondary btn-sm" onclick="openBaselineUpdate()">Update Baseline</button>
         <button class="btn btn-secondary btn-sm" onclick="exportData()">Export Backup</button>
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">Import Backup</button>
-        <button class="btn btn-dange>tn-sm" style="grid-column:1/-1" onclick="clearAll()">Clear All Data</button>
+        <button class="btn btn-danger btn-sm" style="grid-column:1/-1" onclick="clearAll()">Clear All Data</button>
       </div>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
       <div style="font-size:10px;color:var(--text-faint);margin-top:12px;text-align:center">Version 5.3 · Data schema v53</div>
@@ -851,7 +712,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div class="field"><label class="field-label">Duration (min)</label><input type="number" class="input" id="gymDur" placeholder="45"></div>
       <div class="field"><label class="field-label">Type</label>
         <select class="select" id="gymType">
-          <option value="upper">Uppe>ody</option><option value="lower">Lowe>ody</option><option value="push">Push Day</option><option value="pull">Pull Day</option><option value="legs">Legs Day</option><option value="full">Ful<ody</option><option value="mobility">Mobility Session</option><option value="cardio">Cardio Machine</option>
+          <option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="push">Push Day</option><option value="pull">Pull Day</option><option value="legs">Legs Day</option><option value="full">Full Body</option><option value="mobility">Mobility Session</option><option value="cardio">Cardio Machine</option>
         </select>
       </div>
       <div class="field"><label class="field-label">Intensity</label>
@@ -892,11 +753,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title">Not Today, huh?</div><button class="modal-close" onclick="closeModal('skipModal')">×</button></div>
-    <div class="modal-desc" id="skipModalDesc">Al→. Life happens. What's the situation?</div>
+    <div class="modal-desc" id="skipModalDesc">Alright. Life happens. What's the situation?</div>
     <div id="skipOptions" style="display:grid;gap:8px">
       <div class="option-item" onclick="handleSkip('cant')"><div class="option-info"><div class="option-title">Genuinely can't today</div><div class="option-desc">Work, family, illness. Smart redistribution.</div></div><div style="color:var(--accent);font-size:20px">→</div></div>
       <div class="option-item" onclick="handleSkip('dont')"><div class="option-info"><div class="option-title">Just don't feel like it</div><div class="option-desc">Valid sometimes. Redistribute + light nagging.</div></div><div style="color:var(--warn);font-size:20px">→</div></div>
-      <div class="option-item" onclick="handleSkip('sick')"><div class="option-info"><div class="option-title">Feeling sick/exhausted</div><div class="option-desc">Listen to you>ody. Take proper rest.</div></div><div style="color:var(--danger);font-size:20px">→</div></div>
+      <div class="option-item" onclick="handleSkip('sick')"><div class="option-info"><div class="option-title">Feeling sick/exhausted</div><div class="option-desc">Listen to your body. Take proper rest.</div></div><div style="color:var(--danger);font-size:20px">→</div></div>
     </div>
     <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('skipModal')">Actually, I'll do it</button>
   </div>
@@ -930,7 +791,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="modal-desc">One tap. Helps me plan better.</div>
     <div style="display:grid;gap:8px">
       <div class="pill pill-goal" onclick="saveFeedback('easy')"><div class="goal-title">😌 Too easy</div><div class="goal-sub">Could have gone longer/harder</div></div>
-      <div class="pill pill-goal" onclick="saveFeedback('→')"><div class="goal-title">👍 Just →</div><div class="goal-sub">Sweet spot for me today</div></div>
+      <div class="pill pill-goal" onclick="saveFeedback('right')"><div class="goal-title">👍 Just right</div><div class="goal-sub">Sweet spot for me today</div></div>
       <div class="pill pill-goal" onclick="saveFeedback('hard')"><div class="goal-title">😰 Harder than expected</div><div class="goal-sub">Ease up next time</div></div>
     </div>
     <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('feedbackModal')">Skip</button>
@@ -955,7 +816,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title" id="detailTitle">Details</div><button class="modal-close" onclick="closeModal('detailModal')">×</button></div>
-    <div id="detai<ody"></div>
+    <div id="detailBody"></div>
   </div>
 </div>
 
@@ -1026,7 +887,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 
 
 
-<div id="viz-controls" style="position:fixed;top:15px;→:15px;z-index:9999;display:flex;gap:8px">
+<div id="viz-controls" style="position:fixed;top:15px;right:15px;z-index:9999;display:flex;gap:8px">
   <button id="export-html-btn" class="viz-btn">Save HTML</button>
   <button id="fs-btn" class="viz-btn">⛶</button>
 </div>
@@ -1136,15 +997,15 @@ const REPS_REMINDER = "<strong>Real Talk About Reps:</strong> 8-12 is reference 
 
 const workoutStructures = {
   upper: {
-    title: 'Uppe>ody Structure', duration: '60-75 min',
+    title: 'Upper Body Structure', duration: '60-75 min',
     sections: [
       {name:'CHEST', items:[
-        {ex:'Incline press', sets:'4 sets', note:'Dumbbell, ba>ell, or Smith machine. Pick what feels good on your joints. Stick to it. Progress on it.'},
+        {ex:'Incline press', sets:'4 sets', note:'Dumbbell, barbell, or Smith machine. Pick what feels good on your joints. Stick to it. Progress on it.'},
         {ex:'Chest fly', sets:'3 sets', note:'Pec deck, cable, or dumbbell — your favorite.'}
       ]},
       {name:'BACK', items:[
         {ex:'Lat pulldown or pull-ups', sets:'4 sets', note:'If you can do pull-ups, do them. Otherwise pulldowns.'},
-        {ex:'Rows', sets:'3 sets', note:'Ba>ell, dumbbell, cable, T-bar — whatever your gym has.'}
+        {ex:'Rows', sets:'3 sets', note:'Barbell, dumbbell, cable, T-bar — whatever your gym has.'}
       ]},
       {name:'SHOULDERS', items:[
         {ex:'Lateral raises', sets:'4 sets', note:'Non-negotiable for shoulder width.'},
@@ -1163,10 +1024,10 @@ const workoutStructures = {
     ]
   },
   lower: {
-    title: 'Lowe>ody Structure', duration: '60-75 min',
+    title: 'Lower Body Structure', duration: '60-75 min',
     sections: [
       {name:'MAIN COMPOUND', items:[
-        {ex:'Squat variation', sets:'4 sets', note:'Ba>el<ack squat, front squat, goblet, hack — 100 types. Pick what feels good on YOUR joints. Stick with it.'}
+        {ex:'Squat variation', sets:'4 sets', note:'Barbell back squat, front squat, goblet, hack — 100 types. Pick what feels good on YOUR joints. Stick with it.'}
       ]},
       {name:'QUADS', items:[
         {ex:'Leg extension', sets:'3 sets', note:'Any isolated quad movement.'}
@@ -1217,7 +1078,7 @@ const workoutStructures = {
         {ex:'Pull-ups or lat pulldowns', sets:'4 sets', note:'Pull-ups if you can, otherwise pulldowns.'}
       ]},
       {name:'HORIZONTAL PULL', items:[
-        {ex:'Rows', sets:'4 sets', note:'Ba>ell, dumbbell, cable, T-bar. Pick your favorite.'}
+        {ex:'Rows', sets:'4 sets', note:'Barbell, dumbbell, cable, T-bar. Pick your favorite.'}
       ]},
       {name:'BACK ISOLATION', items:[
         {ex:'Pullover or straight-arm pulldown', sets:'3 sets (optional)', note:'Some love it, some skip.'}
@@ -1226,7 +1087,7 @@ const workoutStructures = {
         {ex:'Face pulls or reverse flys', sets:'3 sets', note:'Non-negotiable. Prevents shoulder problems.'}
       ]},
       {name:'BICEPS', items:[
-        {ex:'Curl variation 1', sets:'3 sets', note:'Ba>ell, dumbbell, or cable.'},
+        {ex:'Curl variation 1', sets:'3 sets', note:'Barbell, dumbbell, or cable.'},
         {ex:'Curl variation 2', sets:'3 sets', note:'Different angle — hammer, preacher, incline.'}
       ]}
     ],
@@ -1239,7 +1100,7 @@ const workoutStructures = {
     title: 'Legs Day Structure', duration: '60-90 min',
     sections: [
       {name:'MAIN SQUAT', items:[
-        {ex:'Squat variation', sets:'4-5 sets', note:'Your main progress lift. Whatever type you>ody likes.'}
+        {ex:'Squat variation', sets:'4-5 sets', note:'Your main progress lift. Whatever type your body likes.'}
       ]},
       {name:'POSTERIOR CHAIN', items:[
         {ex:'RDL or hip thrust', sets:'3-4 sets', note:'Hamstrings and glutes.'}
@@ -1264,7 +1125,7 @@ const workoutStructures = {
     ]
   },
   full: {
-    title: 'Ful<ody Structure', duration: '45-60 min',
+    title: 'Full Body Structure', duration: '45-60 min',
     sections: [
       {name:'LOWER COMPOUND', items:[
         {ex:'Squat or deadlift', sets:'3 sets', note:'Pick one — alternate week to week if you like.'}
@@ -1321,12 +1182,12 @@ const glossary = {
   moderate: {name:'Moderate Run', effort:'Steady, comfortably hard — can speak in short sentences', zone:'moderate', frequency:'1-2x per week if goal is running fitness', description:'Tempo work. Sustained effort at threshold. Builds your ability to run faster for longer.'},
   hard: {name:'Hard Run', effort:'Very challenging — you\'d rather stop', zone:'hard', frequency:'1x per week max', description:'Intervals, hill repeats, VO2max work. The 20% that makes you faster. Only when recovered.'},
   long: {name:'Long Run', effort:'Comfortable pace, extended duration', zone:'long', frequency:'1x per week (weekends work best)', description:'Weekly long run builds endurance. Grows 10% max per week. This is where mental toughness lives.'},
-  upper: {name:'Uppe>ody Day', effort:'Moderate to heavy', frequency:'1-2x per week', description:'Complete uppe>ody training in one session. Chest, back, shoulders, arms.', workout:'upper'},
-  lower: {name:'Lowe>ody Day', effort:'Heavy compounds + accessories', frequency:'1-2x per week (avoid same week as hard run)', description:'All lowe>ody in one session. Squats primary, then supporting work.', workout:'lower'},
+  upper: {name:'Upper Body Day', effort:'Moderate to heavy', frequency:'1-2x per week', description:'Complete upper body training in one session. Chest, back, shoulders, arms.', workout:'upper'},
+  lower: {name:'Lower Body Day', effort:'Heavy compounds + accessories', frequency:'1-2x per week (avoid same week as hard run)', description:'All lower body in one session. Squats primary, then supporting work.', workout:'lower'},
   push: {name:'Push Day', effort:'Heavy compounds', frequency:'1-2x per week', description:'All pushing movements: chest, shoulders, triceps. Part of PPL split.', workout:'push'},
   pull: {name:'Pull Day', effort:'Heavy compounds', frequency:'1-2x per week', description:'All pulling movements: back, rear delts, biceps. Part of PPL split.', workout:'pull'},
   legs: {name:'Legs Day', effort:'Heavy compounds — longest gym day', frequency:'1x per week', description:'Complete leg training. Squats, hamstrings, glutes, calves. Part of PPL split.', workout:'legs'},
-  full: {name:'Ful<ody', effort:'Moderate intensity, efficient', frequency:'2-3x per week if short on time', description:'Hits everything in one session. Perfect fo>eginners o>usy schedules.', workout:'full'},
+  full: {name:'Full Body', effort:'Moderate intensity, efficient', frequency:'2-3x per week if short on time', description:'Hits everything in one session. Perfect for beginners or busy schedules.', workout:'full'},
   mobility: {name:'Mobility Session', effort:'Light — restorative', frequency:'1-2x per week', description:'Injury prevention. Strength for weak points. Flexibility for tight areas. Boring but essential.', workout:'mobility'},
   cardio: {name:'Cardio Machine', effort:'Variable', frequency:'As needed', description:'Bike, elliptical, rower, stairmaster. Non-impact cardio for recovery days or extra volume.'},
   activity: {name:'Regular Activity', effort:'Depends on activity', frequency:'Scheduled', description:'Sports, classes, or hobbies you do regularly. Football, tennis, yoga — coach plans around them.'}
@@ -1607,10 +1468,10 @@ function generateWeeklyPlan(weekStartDate){
         neededRuns--;
       }
 
-      // 12. Fill any ←over as uppe>ody (fal<ack)
+      // 12. Fill any leftover as upper body (fallback)
       while(neededGyms > 0 && availableDays.length > 0) {
         const day = availableDays.shift();
-        gymPlacements.push({day, type:'upper', intensity:'moderate', label:'Uppe>ody'});
+        gymPlacements.push({day, type:'upper', intensity:'moderate', label:'Upper Body'});
         neededGyms--;
       }
 
@@ -1726,7 +1587,7 @@ function getGymSplit(numGyms, numRuns, preference){
 }
 
 function getGymLabel(type){
-  const labels = {upper:'Uppe>ody', lower:'Lowe>ody', push:'Push Day', pull:'Pull Day', legs:'Legs Day', full:'Ful<ody', mobility:'Mobility', cardio:'Cardio'};
+  const labels = {upper:'Upper Body', lower:'Lower Body', push:'Push Day', pull:'Pull Day', legs:'Legs Day', full:'Full Body', mobility:'Mobility', cardio:'Cardio'};
   return labels[type] || type;
 }
 // V5.4 ADD: Muscle group conflict detection
@@ -1908,7 +1769,7 @@ function performSwap(dayA, dayB, week) {
     document.getElementById('swapWarningBody').innerHTML = `
       <div class="modal-desc">${warning.message}</div>
       <div class="warning-box"><strong>Between:</strong> ${warning.day1} and ${warning.day2}</div>
-      <div class="rec-box" style="margin-top:14px"><div class="rec-box-content" style="font-style:italic">"I'd skip this swap. But you know you>ody better than I do."</div></div>
+      <div class="rec-box" style="margin-top:14px"><div class="rec-box-content" style="font-style:italic">"I'd skip this swap. But you know your body better than I do."</div></div>
     `;
     document.getElementById('swapWarningModal').classList.add('active');
   } else {
@@ -2078,18 +1939,18 @@ function getRecommendation(){
     cls = 'rest';
   } else if(consec >= 6){
     activity = 'Rest Required'; detail = `${consec} days in a row`;
-    reason = `You>ody's asking${nameP}.`;
+    reason = `Your body's asking${nameP}.`;
     cls = 'warn';
   } else if(hardCount >= 2){
     activity = 'Easy or Rest'; detail = 'Easy 3-5km, or take today off';
     reason = `${hardCount} intense sessions in 3 days. Ease off.`;
     cls = 'warn';
   } else if(yHeavyLeg){
-    activity = 'Uppe>ody Gym'; detail = 'Uppe>ody or very easy short run';
+    activity = 'Upper Body Gym'; detail = 'Upper body or very easy short run';
     reason = "Legs recovering from heavy work.";
     cls = 'warn';
   } else if(yLeg || yHard){
-    activity = 'Easy Session'; detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Uppe>ody`;
+    activity = 'Easy Session'; detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Upper Body`;
     reason = yHard ? "Yesterday was hard. Today, easy." : "Post-leg-day. Running stays easy.";
   } else if(todayPlan && todayPlan.type === 'run'){
     activity = todayPlan.label;
@@ -2104,7 +1965,7 @@ function getRecommendation(){
     if(state.prefs.focus && state.prefs.focus.length > 0) reason += ` Focus: ${state.prefs.focus.join(', ')}.`;
   } else {
     activity = 'Your Choice';
-    detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Ful<ody`;
+    detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Full Body`;
     reason = `Fully recovered${nameP}. Pick what you trained least recently.`;
   }
   
@@ -2118,9 +1979,9 @@ function generateSessionReason(planItem, isWork, timeBudget, nameP){
     if(planItem.subtype === 'moderate') return planItem.isLong ? `Weekend long run${nameP}. Moderate effort.` : `Comfortably hard, sustainable.`;
   }
   if(planItem.type === 'gym'){
-    if(planItem.subtype === 'upper' || planItem.subtype === 'push' || planItem.subtype === 'pull') return `Uppe>ody doesn't interfere with running.`;
+    if(planItem.subtype === 'upper' || planItem.subtype === 'push' || planItem.subtype === 'pull') return `Upper body doesn't interfere with running.`;
     if(planItem.subtype === 'lower' || planItem.subtype === 'legs') return `Legs get worked${nameP}. Keep intensity in check.`;
-    if(planItem.subtype === 'full') return `Ful<ody. Efficient use of ${timeBudget} min.`;
+    if(planItem.subtype === 'full') return `Full body. Efficient use of ${timeBudget} min.`;
     if(planItem.subtype === 'mobility') return `Mobility session${nameP}. Injury prevention.`;
   }
   return "Session scheduled based on your week's balance.";
@@ -2140,146 +2001,6 @@ function getRecovery(){
   return {cls:'dot-green', text:'Ready'};
 }
 
-// V5.4 ADD: Detailed recovery score (0-100)
-function getRecoveryScore(){
-  let score = 100;
-  const all = allSess();
-  // Iterate through sessions in last 3 days
-  for(let daysBack = 1; daysBack <= 3; daysBack++){
-    const dayS = all.filter(s => daysSince(s.date) === daysBack);
-    dayS.forEach(s => {
-      if(s.kind === 'run'){
-        const isHard = s.type === 'hard';
-        const isLong = s.distance >= 8;
-        const isMod = s.type === 'moderate' && !isLong;
-        const isEasy = s.type === 'easy';
-        if(isHard){
-          if(daysBack === 1) score -= 30;
-          else if(daysBack === 2) score -= 15;
-          else score -= 5;
-        } else if(isLong){
-          if(daysBack === 1) score -= 25;
-          else if(daysBack === 2) score -= 10;
-        } else if(isMod){
-          if(daysBack === 1) score -= 12;
-          else if(daysBack === 2) score -= 4;
-        } else if(isEasy){
-          if(daysBack === 1) score -= 5;
-        }
-      } else if(s.kind === 'gym'){
-        const isLegs = s.type === 'lower' || s.type === 'legs';
-        const isFull = s.type === 'full';
-        const isUpper = ['upper','push','pull'].includes(s.type);
-        const isMob = s.type === 'mobility';
-        const intensity = s.intensity;
-        if(isMob) return;
-        if(isLegs){
-          const legPenalty = intensity === 'heavy' ? 35 : 20;
-          if(daysBack === 1) score -= legPenalty;
-          else if(daysBack === 2) score -= Math.round(legPenalty * 0.55);
-          else score -= Math.round(legPenalty * 0.2);
-        } else if(isFull){
-          const fullPenalty = intensity === 'heavy' ? 25 : 12;
-          if(daysBack === 1) score -= fullPenalty;
-          else if(daysBack === 2) score -= Math.round(fullPenalty * 0.4);
-        } else if(isUpper){
-          const upperPenalty = intensity === 'heavy' ? 15 : intensity === 'moderate' ? 8 : 3;
-          if(daysBack === 1) score -= upperPenalty;
-          else if(daysBack === 2) score -= Math.round(upperPenalty * 0.3);
-        }
-      } else if(s.kind === 'activity'){
-        const actPenalty = s.intensity === 'hard' ? 18 : s.intensity === 'moderate' ? 10 : 3;
-        if(daysBack === 1) score -= actPenalty;
-        else if(daysBack === 2) score -= Math.round(actPenalty * 0.4);
-      }
-    });
-  }
-// V5.4 ADD: Week completion percentage
-function getWeekProgress(){
-  const ws = weekStart(new Date());
-  const sessionsThisWeek = allSess().filter(s => new Date(s.date) >= ws).length;
-  const target = state.prefs.runDays + state.prefs.gymDays;
-  if(target === 0) return 0;
-  return Math.min(100, Math.round((sessionsThisWeek / target) * 100));
-}
-
-// V5.4 ADD: Today's completion score
-function getTodayScore(){
-  const ws = weekStart(new Date());
-  const todayIdx = dayOfWeekMonStart(new Date());
-  const plan = generateWeeklyPlan(ws);
-  const todayPlan = plan[todayIdx];
-  const todaySessions = allSess().filter(s => daysSince(s.date) === 0);
-  // Rest day: 100 if actually rested (no session), still 100 if user chose to train
-  if(todayPlan && todayPlan.type === 'rest') return 100;
-  // Activity day: 100 if activity logged
-  if(todayPlan && todayPlan.type === 'activity'){
-    return todaySessions.some(s => s.kind === 'activity') ? 100 : 0;
-  }
-  // Combined day: 50 for each part logged
-  if(todayPlan && todayPlan.type === 'combined'){
-    const hasRun = todaySessions.some(s => s.kind === 'run');
-    const hasGym = todaySessions.some(s => s.kind === 'gym');
-    return (hasRun ? 50 : 0) + (hasGym ? 50 : 0);
-  }
-  // Regular training day
-  if(!todayPlan || todaySessions.length === 0) return 0;
-  if(todayPlan.type === 'run'){
-    const runsToday = todaySessions.filter(s => s.kind === 'run');
-    if(runsToday.length === 0) return 0;
-    const totalKm = runsToday.reduce((a, r) => a + r.distance, 0);
-    const target = todayPlan.distance || 5;
-    const pct = Math.min(100, Math.round((totalKm / target) * 100));
-    // Feedback adjustment
-    const todayFb = state.feedbacks.filter(f => daysSince(f.date) === 0);
-    if(todayFb.some(f => f.feeling === 'hard')) return Math.min(100, pct + 5);
-    if(todayFb.some(f => f.feeling === 'easy')) return Math.max(0, pct - 5);
-    return pct;
-  }
-  if(todayPlan.type === 'gym'){
-    const gymsToday = todaySessions.filter(s => s.kind === 'gym');
-    if(gymsToday.length === 0) return 0;
-    const totalMin = gymsToday.reduce((a, g) => a + g.duration, 0);
-    const target = todayPlan.duration || 45;
-    return Math.min(100, Math.round((totalMin / target) * 100));
-  }
-  return todaySessions.length > 0 ? 100 : 0;
-}
-  // Consecutive training days
-  let consec = 0;
-  for(let i = 1; i <= 10; i++){ if(all.some(s => daysSince(s.date) === i)) consec++; else break; }
-  if(consec >= 7) score -= 35;
-  else if(consec >= 6) score -= 20;
-  else if(consec >= 5) score -= 10;
-  // Hard cluster
-  const l3 = all.filter(s => daysSince(s.date) <= 3);
-  const hardCount3 = l3.filter(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy')).length;
-  if(hardCount3 >= 2) score -= 20;
-  const l5 = all.filter(s => daysSince(s.date) <= 5);
-  const hardCount5 = l5.filter(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy')).length;
-  if(hardCount5 >= 3) score -= 10;
-  // Load trend
-  const thisWeekLoad = sessRange(7).reduce((a, s) => a + sessLoad(s), 0);
-  const prevWeekLoad = all.filter(s => daysSince(s.date) > 7 && daysSince(s.date) <= 14).reduce((a, s) => a + sessLoad(s), 0);
-  if(prevWeekLoad > 0){
-    const ratio = thisWeekLoad / prevWeekLoad;
-    if(ratio > 1.5) score -= 25;
-    else if(ratio > 1.3) score -= 12;
-  }
-  // Feedback signals
-  const recentFb = state.feedbacks.filter(f => daysSince(f.date) <= 7);
-  const hardFb = recentFb.filter(f => f.feeling === 'hard').length;
-  if(hardFb >= 2) score -= 15;
-  // Bonuses
-  const yesterdaySess = all.filter(s => daysSince(s.date) === 1);
-  if(yesterdaySess.length === 0) score += 8;
-  const twoDaysBackSess = all.filter(s => daysSince(s.date) === 2);
-  if(yesterdaySess.length === 0 && twoDaysBackSess.length === 0) score += 7;
-  const easyFb = recentFb.filter(f => f.feeling === 'easy').length;
-  if(easyFb >= 1) score += 3;
-  // Cap
-  return Math.max(0, Math.min(100, Math.round(score)));
-}
 function getInsights(){
   const out = [];
   const last30 = sessRange(30);
@@ -2377,7 +2098,7 @@ function checkYesterdayReminder() {
   }
   
   // Show reminder
-  const banner = document.getElementById('reminde>anner');
+  const banner = document.getElementById('reminderBanner');
   banner.classList.remove('hidden');
   
   const yDayName = yesterday.toLocaleDateString('en-US', {weekday: 'long'});
@@ -2388,11 +2109,11 @@ function checkYesterdayReminder() {
   else if(yPlan.type === 'combined') plannedDesc = 'Combined session';
   
   document.getElementById('reminderTitle').textContent = `Log ${yDayName}?`;
-  document.getElementById('reminde>ody').innerHTML = `${yDayName} was planned: <strong>${plannedDesc}</strong>. Did you do it?`;
+  document.getElementById('reminderBody').innerHTML = `${yDayName} was planned: <strong>${plannedDesc}</strong>. Did you do it?`;
 }
 
 function hideReminder() {
-  document.getElementById('reminde>anner').classList.add('hidden');
+  document.getElementById('reminderBanner').classList.add('hidden');
 }
 
 function openLogForYesterday() {
@@ -2529,145 +2250,15 @@ function renderWorkoutStructureHTML(struct){
 function renderCoachNote(){ document.getElementById('coachNoteText').textContent = getCoachNote(); }
 
 function renderHero(){
-// V5.4 ADD: Render vitals card
-function renderVitals(){
-  const recovery = getRecoveryScore();
-  const weekPct = getWeekProgress();
-  const todayPct = getTodayScore();
-  function bandFor(score, isWeek){
-    if(isWeek){
-      if(score >= 80) return 'green';
-      if(score >= 50) return 'yellow';
-      if(score >= 20) return 'orange';
-      return 'red';
-    }
-    if(score >= 80) return 'green';
-    if(score >= 60) return 'yellow';
-    if(score >= 40) return 'orange';
-    return 'red';
-  }
-  function statusFor(score, kind){
-    if(kind === 'recovery'){
-      if(score >= 80) return 'Ready';
-      if(score >= 60) return 'Moderate';
-      if(score >= 40) return 'Take it easy';
-      if(score >= 20) return 'Rest advised';
-      return 'Rest required';
-    }
-    if(kind === 'week'){
-      if(score >= 100) return 'Complete';
-      if(score >= 70) return 'On track';
-      if(score >= 40) return 'In progress';
-      if(score > 0) return 'Behind';
-      return 'Fresh start';
-    }
-    if(kind === 'today'){
-      if(score >= 100) return 'Done';
-      if(score >= 60) return 'In progress';
-      if(score > 0) return 'Started';
-      return 'Not yet';
-    }
-    return '';
-  }
-  const CIRC = 220;
-  const rec = document.getElementById('vitalRecovery');
-  rec.className = 'vital-ring ' + bandFor(recovery);
-  document.getElementById('vitalRecoveryNum').textContent = recovery;
-  document.getElementById('vitalRecoveryFill').style.strokeDashoffset = CIRC * (1 - recovery/100);
-  document.getElementById('vitalRecoveryStatus').textContent = statusFor(recovery, 'recovery');
-  const wk = document.getElementById('vitalWeek');
-  wk.className = 'vital-ring ' + bandFor(weekPct, true);
-  document.getElementById('vitalWeekNum').textContent = weekPct + '%';
-  document.getElementById('vitalWeekFill').style.strokeDashoffset = CIRC * (1 - weekPct/100);
-  document.getElementById('vitalWeekStatus').textContent = statusFor(weekPct, 'week');
-  const td = document.getElementById('vitalToday');
-  td.className = 'vital-ring ' + bandFor(todayPct);
-  document.getElementById('vitalTodayNum').textContent = todayPct;
-  document.getElementById('vitalTodayFill').style.strokeDashoffset = CIRC * (1 - todayPct/100);
-  document.getElementById('vitalTodayStatus').textContent = statusFor(todayPct, 'today');
-}
   const r = getRecommendation();
   const card = document.getElementById('heroCard');
-  const plan = r.plan;
-  // Determine type class for coloring
-  let typeClass = '';
-  let ringNum = '—';
-  let ringUnit = '';
-  let ringFillPercent = 0.65;
-  let extraBadge = '';
-  const isRest = (plan && plan.type === 'rest') || r.activity === 'Rest Day' || r.activity === 'Rest Required';
-  const isCombo = plan && plan.type === 'combined';
-  const isActivity = plan && plan.type === 'activity';
-  const isLogged = plan && plan.type === 'logged';
-  if(isRest){ typeClass = 'rest-day'; ringNum = '○'; ringUnit = 'REST'; ringFillPercent = 0; }
-  else if(isCombo){
-    typeClass = 'type-' + (plan.gymPart ? plan.gymPart.subtype : 'upper');
-    ringNum = '2×';
-    ringUnit = 'COMBO';
-    ringFillPercent = 1;
-    extraBadge = '<span class="hero-v2-badge">COMBO</span>';
-  }
-  else if(isActivity){ typeClass = 'type-full'; ringNum = plan.duration; ringUnit = 'MIN'; ringFillPercent = 0.85; }
-  else if(isLogged){ 
-    typeClass = 'type-easy'; 
-    ringNum = '✓'; 
-    ringUnit = 'DONE'; 
-    ringFillPercent = 1;
-    extraBadge = '<span class="hero-v2-badge">COMPLETED</span>';
-  }
-  else if(plan && plan.type === 'run'){
-    typeClass = 'type-' + (plan.isLong ? 'moderate' : plan.subtype);
-    ringNum = plan.distance;
-    ringUnit = 'KM';
-    ringFillPercent = 0.75;
-  }
-  else if(plan && plan.type === 'gym'){
-    typeClass = 'type-' + plan.subtype;
-    ringNum = plan.duration;
-    ringUnit = 'MIN';
-    ringFillPercent = 0.75;
-  }
-  card.className = 'hero-v2 ' + typeClass;
-  // Date
-  const dateStr = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase().replace(/,/g,'').replace(/ /g,' · ');
-  document.getElementById('heroV2Date').textContent = dateStr;
-  document.getElementById('heroV2ExtraBadge').innerHTML = extraBadge;
-  // Name & meta
-  let nameText = r.activity;
-  if(isCombo && plan.runPart && plan.gymPart) nameText = plan.runPart.label.replace(' Run','') + ' + ' + plan.gymPart.label.replace(' Body','').replace(' Day','');
-  document.getElementById('heroV2NameText').textContent = nameText;
-  document.getElementById('heroV2Meta').textContent = r.detail;
-  // Ring
-  document.getElementById('heroV2RingNum').textContent = ringNum;
-  document.getElementById('heroV2RingUnit').textContent = ringUnit;
-  const circ = 283;
-  document.getElementById('heroV2RingFill').style.stroke-offset = circ * (1 - ringFillPercent);
-  // Tap hint — only when there's something to see
-  const hasDetails = r.termKey && (glossary[r.termKey] || workoutStructures[r.termKey]);
-  document.getElementById('heroV2Hint').textContent = hasDetails ? 'Tap name for details' : '';
-  document.getElementById('heroV2Hint').style.opacity = hasDetails ? '0.6' : '0';
-  // Store term key for openHeroDetails
-  card.dataset.termKey = r.termKey || '';
-  // Actions — combo day gets two log buttons
-  const actions = document.getElementById('heroV2Actions');
-  if(isCombo){
-    actions.className = 'hero-v2-combo-actions';
-    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'run\')">Log Run</button><button class="hero-v2-primary" onclick="openLog(\'gym\')">Log Gym</button>';
-  } else if(isRest){
-    actions.className = 'hero-v2-actions';
-    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'any\')">I Feel Like Moving</button><button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button><button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Keep rest">✕</button>';
-  } else if(isLogged){
-    actions.className = 'hero-v2-actions';
-    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'any\')">Log Another</button><button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button><button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Done">✓</button>';
-  } else {
-    actions.className = 'hero-v2-actions';
-    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'any\')">Log Session</button><button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button><button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Not today">✕</button>';
-}
-}
-function openHeroDetails(){
-  const card = document.getElementById('heroCard');
-  const termKey = card.dataset.termKey;
-  if(termKey) showGlossary(termKey);
+  card.className = 'hero ' + r.cls;
+  let activityHTML = r.activity;
+ if(r.termKey && (glossary[r.termKey] || workoutStructures[r.termKey])) { activityHTML += ' <button class="info-btn" onclick="showGlossary(\'' + r.termKey + '\')" title="Show workout details">ⓘ</button>'; }
+  document.getElementById('heroActivity').innerHTML = activityHTML;
+  document.getElementById('heroDetail').textContent = r.detail;
+  document.getElementById('heroReason').textContent = r.reason;
+  document.getElementById('heroDate').textContent = `TODAY · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}).toUpperCase()}`;
 }
 
 function renderStats(){
@@ -2830,7 +2421,7 @@ function showDayDetail(planItem, dayIdx, weekStartDate){
       if(s.kind === 'run') label = 'Delete ' + s.type.charAt(0).toUpperCase() + s.type.slice(1) + ' Run';
       else if(s.kind === 'gym') label = 'Delete ' + getGymLabel(s.type);
       else label = 'Delete ' + s.name;
-      body += '<button class="btn btn-dange>tn-full" style="margin-bottom:6px" onclick="closeModal(\'detailModal\');deleteSession(\'' + s.id + '\',\'' + s.kind + '\')">🗑️ ' + label + '</button>';
+      body += '<button class="btn btn-danger btn-full" style="margin-bottom:6px" onclick="closeModal(\'detailModal\');deleteSession(\'' + s.id + '\',\'' + s.kind + '\')">🗑️ ' + label + '</button>';
     });
     body += '</div>';
   }else if(!planItem || planItem.type === 'rest'){
@@ -2850,7 +2441,7 @@ function showDayDetail(planItem, dayIdx, weekStartDate){
       ${!isPast && (isToday || new Date(localDateKey(d)) > new Date(todayKey())) ? `<button class="btn btn-primary btn-full" onclick="closeModal('detailModal');openLog('gym')">Log Gym</button>` : ''}`;
   }
   
-  document.getElementById('detai<ody').innerHTML = body;
+  document.getElementById('detailBody').innerHTML = body;
   document.getElementById('detailModal').classList.add('active');
 }
 
@@ -2876,62 +2467,10 @@ function renderSessionRow(s){
   </div>`;
 }
 
-// V5.4 ADD: Weekly card swipe state
-let currentWeekView = 0; // 0 = this, 1 = next
-
-function switchWeek(idx){
-  currentWeekView = idx;
-  const slider = document.getElementById('weeksSlider');
-  if(!slider) return;
-  slider.style.transform = 'translateX(' + (idx * -50) + '%)';
-  document.querySelectorAll('.weeks-dot').forEach((d, i) => {
-    d.classList.toggle('active', i === idx);
-  });
-  document.getElementById('weeksTitle').textContent = idx === 0 ? 'This Week' : 'Next Week';
-  const ws = idx === 0 ? weekStart(new Date()) : nextWeekStart();
-  const end = new Date(ws); end.setDate(end.getDate() + 6);
-  document.getElementById('weeksSubtitle').textContent = ws.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' — ' + end.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  document.getElementById('weeksPrev').disabled = idx === 0;
-  document.getElementById('weeksNext').disabled = idx === 1;
-}
-
-function openRestPickerFromSlider(){ openRestPicker(currentWeekView === 0 ? 'current' : 'next'); }
-function enterSwapModeFromSlider(){ enterSwapMode(currentWeekView === 0 ? 'current' : 'next'); }
-
-function setupWeekSwipe(){
-  const viewport = document.getElementById('weeksViewport');
-  const slider = document.getElementById('weeksSlider');
-  if(!viewport || !slider) return;
-  let startX = 0, currentX = 0, isDragging = false;
-  viewport.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-    slider.classList.add('dragging');
-  });
-  viewport.addEventListener('touchmove', (e) => {
-    if(!isDragging) return;
-    currentX = e.touches[0].clientX;
-  });
-  viewport.addEventListener('touchend', () => {
-    if(!isDragging) return;
-    isDragging = false;
-    slider.classList.remove('dragging');
-    const diff = currentX - startX;
-    if(Math.abs(diff) > 50){
-      if(diff < 0 && currentWeekView === 0) switchWeek(1);
-      else if(diff > 0 && currentWeekView === 1) switchWeek(0);
-    }
-    startX = 0; currentX = 0;
-  });
-}
 function renderWeek(){
   const ws = weekStart(new Date());
   const end = new Date(ws); end.setDate(end.getDate()+6);
-  // V5.4: subtitle is now on the swipe card
-  const subtitleEl = document.getElementById('weeksSubtitle');
-  if(subtitleEl && currentWeekView === 0){
-    subtitleEl.textContent = `${ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})} — ${end.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
-  }
+  document.getElementById('weekRange').textContent = `${ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})} — ${end.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
   renderWeekGrid('weekGrid', ws, 'current');
   const wk = allSess().filter(s => new Date(s.date) >= ws);
   const runs = wk.filter(s => s.kind==='run').length;
@@ -2949,6 +2488,8 @@ function renderWeek(){
 
 function renderNextWeek(){
   const ns = nextWeekStart();
+  const ne = new Date(ns); ne.setDate(ne.getDate()+6);
+  document.getElementById('nextWeekRange').textContent = `${ns.toLocaleDateString('en-US',{month:'short',day:'numeric'})} — ${ne.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
   renderWeekGrid('nextWeekGrid', ns, 'next');
 }
 
@@ -2967,7 +2508,7 @@ function renderRing(){
   document.getElementById('ringNum').textContent = thisKm.toFixed(1);
   document.getElementById('ringTarget').textContent = target.toFixed(1);
   const ring = document.getElementById('ringFill');
-  ring.style.stroke-offset = offset;
+  ring.style.strokeDashoffset = offset;
   ring.className = thisKm > target ? 'ring-fill warn' : 'ring-fill';
   document.getElementById('ringDetail').innerHTML = `Last week: <strong style="color:var(--text)">${lastKm.toFixed(1)}km</strong> · Safe cap: <strong style="color:var(--text)">+${Math.max(0,(target-lastKm)).toFixed(1)}km</strong>`;
 }
@@ -3009,7 +2550,7 @@ function renderPaceChart(){
   window.paceC = new Chart(document.getElementById('paceChart'), {
     type: 'line',
     data: { datasets: [{label:'Easy', data:byType.easy, borderColor:'#4CAF50', backgroundColor:'#4CAF50', tension:0.3, pointRadius:4, borderWidth:2},{label:'Moderate', data:byType.moderate, borderColor:'#FF9800', backgroundColor:'#FF9800', tension:0.3, pointRadius:4, borderWidth:2},{label:'Hard', data:byType.hard, borderColor:'#EF5350', backgroundColor:'#EF5350', tension:0.3, pointRadius:4, borderWidth:2}]},
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom', labels:{boxWidth:10, boxHeight:10, font:{size:11}, padding:12}}}, scales:{x:{grid:{display:false}}, y:{reverse:true, grid:{color:'#242A33'}, ticks:{cal<ack:v => Math.floor(v)+':'+Math.round((v%1)*60).toString().padStart(2,'0')}}}}
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom', labels:{boxWidth:10, boxHeight:10, font:{size:11}, padding:12}}}, scales:{x:{grid:{display:false}}, y:{reverse:true, grid:{color:'#242A33'}, ticks:{callback:v => Math.floor(v)+':'+Math.round((v%1)*60).toString().padStart(2,'0')}}}}
   });
 }
 
@@ -3044,8 +2585,8 @@ function showSession(id, kind){
   } else {
     body = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px"><div><div class="pb-label">Duration</div><div class="pb-value">${s.duration} <span style="font-size:12px;color:var(--text-faint)">min</span></div></div><div><div class="pb-label">Intensity</div><div class="pb-value">${s.intensity.charAt(0).toUpperCase()+s.intensity.slice(1)}</div></div></div><div class="insight info"><div class="insight-icon">●</div><div><strong>${s.name}</strong> on ${fmtDate(s.date)}</div></div>`;
   }
-  body += `<button class="btn btn-dange>tn-full mt-2" onclick="deleteSession('${id}','${kind}')">Delete Session</button>`;
-  document.getElementById('detai<ody').innerHTML = body;
+  body += `<button class="btn btn-danger btn-full mt-2" onclick="deleteSession('${id}','${kind}')">Delete Session</button>`;
+  document.getElementById('detailBody').innerHTML = body;
   document.getElementById('detailModal').classList.add('active');
 }
 
@@ -3102,10 +2643,10 @@ function renderCmp(){
   };
   document.getElementById('cmpBox').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;font-size:13px;align-items:center">
-      <div style="font-weight:700;color:var(--text-dim);font-size:10px;text-transform:uppercase">Recent</div><div></div><div style="text-align:→;font-weight:700;color:var(--text-dim);font-size:10px;text-transform:uppercase">Previous</div>
-      <div><strong>${cKm.toFixed(1)} km</strong></div><div style="text-align:center">${arr(cKm,pKm)}</div><div style="text-align:→">${pKm.toFixed(1)} km</div>
-      <div><strong>${cRuns}</strong> runs</div><div style="text-align:center">${arr(cRuns,pRuns)}</div><div style="text-align:→">${pRuns} runs</div>
-      <div><strong>${cGyms}</strong> gym</div><div style="text-align:center">${arr(cGyms,pGyms)}</div><div style="text-align:→">${pGyms} gym</div>
+      <div style="font-weight:700;color:var(--text-dim);font-size:10px;text-transform:uppercase">Recent</div><div></div><div style="text-align:right;font-weight:700;color:var(--text-dim);font-size:10px;text-transform:uppercase">Previous</div>
+      <div><strong>${cKm.toFixed(1)} km</strong></div><div style="text-align:center">${arr(cKm,pKm)}</div><div style="text-align:right">${pKm.toFixed(1)} km</div>
+      <div><strong>${cRuns}</strong> runs</div><div style="text-align:center">${arr(cRuns,pRuns)}</div><div style="text-align:right">${pRuns} runs</div>
+      <div><strong>${cGyms}</strong> gym</div><div style="text-align:center">${arr(cGyms,pGyms)}</div><div style="text-align:right">${pGyms} gym</div>
     </div>`;
 }
 
@@ -3288,7 +2829,7 @@ function saveFeedback(feeling){
     save();
   }
   closeModal('feedbackModal');
-  const msg = feeling === 'easy' ? "Noted. Might push more next time." : feeling === '→' ? "Perfect. Keeping this level." : "Got it. Backing off next time.";
+  const msg = feeling === 'easy' ? "Noted. Might push more next time." : feeling === 'right' ? "Perfect. Keeping this level." : "Got it. Backing off next time.";
   showToast(msg, 'info', 3000);
 }
 
@@ -3297,7 +2838,7 @@ function openConflictModal(){
   const goal = state.prefs.goal;
   document.getElementById('conflictModalDesc').innerHTML = `Your training days exceed 7. Pick how to handle overflow this week.`;
   const options = [
-    {val:'combine', title:'🔀 Easy Run + Uppe>ody Combined', desc:'Merge onto one day.', rec: goal==='weightloss' || goal === 'balance'},
+    {val:'combine', title:'🔀 Easy Run + Upper Body Combined', desc:'Merge onto one day.', rec: goal==='weightloss' || goal === 'balance'},
     {val:'mobility', title:'🧘 Replace with Mobility', desc:'Swap redundant lower for mobility.', rec: goal==='running'},
     {val:'single', title:'💪 One Harder Session', desc:'Fewer sessions with more intensity.', rec: goal==='muscle'},
     {val:'skip_run', title:'⏭️ Skip 1 Easy Run', desc:'Simple. Drop lowest priority run.', rec: false},
@@ -3646,15 +3187,15 @@ function checkSetupWarning(){
   const rest = parseInt(document.querySelector('#setupRestDays .pill.active')?.dataset.val || 0);
   const total = r + g + rest;
   const box = document.getElementById('setupWarning');
-  const ove>ox = document.getElementById('setupOvertrainingWarning');
+  const overBox = document.getElementById('setupOvertrainingWarning');
   if(total > 7){
     box.classList.remove('hidden');
     box.innerHTML = `<strong>Note:</strong> ${r} + ${g} + ${rest} = ${total} days. Week has 7. Handle overflow in next step.`;
   } else box.classList.add('hidden');
   if(g >= 6 && r >= 3){
-    ove>ox.classList.remove('hidden');
-    ove>ox.innerHTML = `<strong>Ambition Check:</strong> 6 gym + ${r} runs is a lot. Body needs rest to grow.`;
-  } else ove>ox.classList.add('hidden');
+    overBox.classList.remove('hidden');
+    overBox.innerHTML = `<strong>Ambition Check:</strong> 6 gym + ${r} runs is a lot. Body needs rest to grow.`;
+  } else overBox.classList.add('hidden');
 }
 
 function nextStep(from){
@@ -3800,7 +3341,7 @@ function buildIntro(){
   const name = document.getElementById('setupName').value.trim();
   const namePart = name ? ' ' + name : '';
   const intros = {
-    weightloss: `Al→${namePart}, weight loss mode. Cardio-heavy, muscle-preserving.`,
+    weightloss: `Alright${namePart}, weight loss mode. Cardio-heavy, muscle-preserving.`,
     muscle: `Muscle building${namePart}. Frequency + recovery + protein + sleep.`,
     running: `Running goal${namePart}. Miles today, speed later.`,
     balance: `Balanced approach${namePart}. Best of both.`,
@@ -3849,9 +3390,8 @@ function renderAll(){
   checkYesterdayReminder();
   renderConflictBanner();
   renderImprovementBanner();
+  renderCoachNote();
   renderHero();
-renderVitals();
-if(!window._weekSwipeInit){ setupWeekSwipe(); switchWeek(0); window._weekSwipeInit = true; }
   renderStats();
   renderPaceZones();
   renderWeek();
