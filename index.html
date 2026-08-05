@@ -337,6 +337,60 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .viz-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit}
 .viz-btn:hover{border-color:var(--text-faint)}
 #export-html-btn{background:var(--accent);border-color:var(--accent);color:#001210}
+/* V5.4 HERO REDESIGN — Whoop-inspired */
+.hero-v2{background:linear-gradient(160deg,#181D25 0%,#22293A 100%);border:1px solid var(--border-2);border-radius:22px;padding:26px 24px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.25)}
+.hero-v2::before{content:'';position:absolute;top:-40%;right:-15%;width:340px;height:340px;background:radial-gradient(circle,rgba(0,212,170,0.10) 0%,transparent 60%);pointer-events:none}
+.hero-v2.rest-day::before{background:radial-gradient(circle,rgba(92,158,255,0.12) 0%,transparent 60%)}
+.hero-v2.type-easy::before{background:radial-gradient(circle,rgba(76,175,80,0.14) 0%,transparent 60%)}
+.hero-v2.type-moderate::before{background:radial-gradient(circle,rgba(255,152,0,0.14) 0%,transparent 60%)}
+.hero-v2.type-hard::before{background:radial-gradient(circle,rgba(239,83,80,0.14) 0%,transparent 60%)}
+.hero-v2.type-upper::before,.hero-v2.type-push::before,.hero-v2.type-pull::before{background:radial-gradient(circle,rgba(180,124,255,0.14) 0%,transparent 60%)}
+.hero-v2.type-legs::before,.hero-v2.type-lower::before{background:radial-gradient(circle,rgba(255,138,61,0.14) 0%,transparent 60%)}
+.hero-v2.type-full::before{background:radial-gradient(circle,rgba(255,107,157,0.14) 0%,transparent 60%)}
+.hero-v2.type-mobility::before{background:radial-gradient(circle,rgba(38,217,193,0.14) 0%,transparent 60%)}
+.hero-v2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;position:relative}
+.hero-v2-date{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.22em;font-weight:700}
+.hero-v2-badge{display:inline-block;padding:3px 9px;background:rgba(0,212,170,0.15);color:var(--accent);border-radius:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.15em;margin-left:8px;vertical-align:middle}
+.hero-v2-main{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-bottom:26px;position:relative}
+.hero-v2-info{min-width:0}
+.hero-v2-name{font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.hero-v2-name:hover{opacity:0.85}
+.hero-v2-name .name-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.hero-v2.type-easy .name-dot{background:var(--easy)}
+.hero-v2.type-moderate .name-dot{background:var(--moderate)}
+.hero-v2.type-hard .name-dot{background:var(--hard)}
+.hero-v2.type-upper .name-dot,.hero-v2.type-push .name-dot,.hero-v2.type-pull .name-dot{background:var(--upper)}
+.hero-v2.type-legs .name-dot,.hero-v2.type-lower .name-dot{background:var(--lower)}
+.hero-v2.type-full .name-dot{background:var(--full)}
+.hero-v2.type-mobility .name-dot{background:var(--mobility)}
+.hero-v2.rest-day .name-dot{background:#5C9EFF}
+.hero-v2-meta{font-size:13px;color:var(--text-dim);font-weight:500}
+.hero-v2-tap-hint{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-top:6px;opacity:0.6}
+.hero-v2-ring{width:100px;height:100px;position:relative;flex-shrink:0}
+.hero-v2-ring svg{transform:rotate(-90deg)}
+.hero-v2-ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:6}
+.hero-v2-ring-fill{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:60;transition:stroke-dashoffset 0.6s ease-out}
+.hero-v2.type-easy .hero-v2-ring-fill{stroke:var(--easy)}
+.hero-v2.type-moderate .hero-v2-ring-fill{stroke:var(--moderate)}
+.hero-v2.type-hard .hero-v2-ring-fill{stroke:var(--hard)}
+.hero-v2.type-upper .hero-v2-ring-fill,.hero-v2.type-push .hero-v2-ring-fill,.hero-v2.type-pull .hero-v2-ring-fill{stroke:var(--upper)}
+.hero-v2.type-legs .hero-v2-ring-fill,.hero-v2.type-lower .hero-v2-ring-fill{stroke:var(--lower)}
+.hero-v2.type-full .hero-v2-ring-fill{stroke:var(--full)}
+.hero-v2.type-mobility .hero-v2-ring-fill{stroke:var(--mobility)}
+.hero-v2.rest-day .hero-v2-ring-fill{stroke:#5C9EFF;stroke-dasharray:4 4}
+.hero-v2-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 4px}
+.hero-v2-ring-num{font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.hero-v2-ring-unit{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;margin-top:3px;font-weight:700}
+.hero-v2-actions{display:grid;grid-template-columns:1fr 44px 44px;gap:8px;position:relative}
+.hero-v2-primary{background:var(--accent);color:#001210;border:none;padding:14px 20px;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:-0.01em;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.06em;transition:all 0.15s}
+.hero-v2-primary:hover{background:var(--accent-dim);transform:translateY(-1px)}
+.hero-v2-primary:active{transform:scale(0.98)}
+.hero-v2-icon-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text-dim);width:44px;height:44px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.hero-v2-icon-btn:hover{color:var(--text);border-color:var(--border-2);background:rgba(255,255,255,0.1)}
+.hero-v2-icon-btn:active{transform:scale(0.94)}
+.hero-v2.rest-day .hero-v2-primary{background:#5C9EFF;color:#001A3A}
+.hero-v2.rest-day .hero-v2-primary:hover{background:#4A8AE8}
+.hero-v2-combo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative}
 .info-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--text-dim);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;padding:0;line-height:1;vertical-align:middle}
 .info-btn:hover{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
 .info-btn.inline{font-size:9px;width:16px;height:16px;margin-left:4px}
@@ -546,25 +600,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       </div>
     </div>
     
-    <div class="coach-note"><div class="coach-note-label">Coach says</div><div class="coach-note-text" id="coachNoteText"></div></div>
     
-    <div id="heroCard" class="hero">
-      <div class="hero-label"><span id="heroDate"></span></div>
-      <div class="hero-activity" id="heroActivity">Loading</div>
-      <div class="hero-detail" id="heroDetail"></div>
-      <div class="hero-reason" id="heroReason"></div>
-      <div class="hero-buttons">
-        <button class="btn btn-primary" onclick="openLog('any')">Log It</button>
-        <button class="btn btn-secondary" onclick="openQuickSession()">⚡ Quick</button>
-        <button class="btn btn-secondary" onclick="openSkipModal()">Not Today</button>
+    <div id="heroCard" class="hero-v2">
+  <div class="hero-v2-top">
+    <div class="hero-v2-date" id="heroV2Date"></div>
+    <div id="heroV2ExtraBadge"></div>
+  </div>
+  <div class="hero-v2-main">
+    <div class="hero-v2-info">
+      <div class="hero-v2-name" id="heroV2Name" onclick="openHeroDetails()">
+        <span class="name-dot"></span>
+        <span id="heroV2NameText">Loading</span>
       </div>
+      <div class="hero-v2-meta" id="heroV2Meta"></div>
+      <div class="hero-v2-tap-hint" id="heroV2Hint">Tap name for details</div>
     </div>
-    
-    <div class="stats-strip">
-      <div class="stat-item"><div class="stat-num" id="statWeekKm">0</div><div class="stat-label">Week KM</div></div>
-      <div class="stat-item"><div class="stat-num" id="statSessions">0</div><div class="stat-label">Sessions</div></div>
-      <div class="stat-item"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Week Streak</div></div>
-      <div class="stat-item"><div class="stat-num" style="font-size:15px;line-height:20px"><span class="stat-dot" id="statRecoveryDot"></span><span id="statRecoveryText">Ready</span></div><div class="stat-label">Recovery</div></div>
+      <div class="hero-v2-ring">
+  <svg width="100" height="100" viewBox="0 0 100 100">
+    <circle class="hero-v2-ring-bg" cx="50" cy="50" r="45"></circle>
+    <circle class="hero-v2-ring-fill" id="heroV2RingFill" cx="50" cy="50" r="45"></circle>
+  </svg>
+  <div class="hero-v2-ring-center">
+    <div class="hero-v2-ring-num" id="heroV2RingNum">-</div>
+    <div class="hero-v2-ring-unit" id="heroV2RingUnit">.</div>
+  </div>
+</div>
+<div id="heroV2Actions" class="hero-v2-actions">
+  <button class="hero-v2-primary" onclick="openLog('any')">Log Session</button>
+  <button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button>
+  <button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Not today">✕</button>
+</div>
     </div>
     
     <div class="swap-mode-banner hidden" id="swapModeBanner">
@@ -645,6 +710,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     
     <div class="card"><div class="card-header"><div class="card-title">Pace Progression</div></div><div class="chart-wrap"><canvas id="paceChart"></canvas></div></div>
     
+<div class="stats-strip">
+      <div class="stat-item"><div class="stat-num" id="statWeekKm">0</div><div class="stat-label">Week KM</div></div>
+      <div class="stat-item"><div class="stat-num" id="statSessions">0</div><div class="stat-label">Sessions</div></div>
+      <div class="stat-item"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Week Streak</div></div>
+      <div class="stat-item"><div class="stat-num" style="font-size:15px;line-height:20px"><span class="stat-dot" id="statRecoveryDot"></span><span id="statRecoveryText">Ready</span></div><div class="stat-label">Recovery</div></div>
+    </div>
     <div class="card"><div class="card-header"><div class="card-title">Recent Sessions</div></div><div class="session-list" id="sessionList"></div></div>
     
     <div class="card"><div class="card-header"><div class="card-title">Personal Records</div></div><div class="pb-grid" id="pbGrid"></div></div>
@@ -2252,13 +2323,86 @@ function renderCoachNote(){ document.getElementById('coachNoteText').textContent
 function renderHero(){
   const r = getRecommendation();
   const card = document.getElementById('heroCard');
-  card.className = 'hero ' + r.cls;
-  let activityHTML = r.activity;
- if(r.termKey && (glossary[r.termKey] || workoutStructures[r.termKey])) { activityHTML += ' <button class="info-btn" onclick="showGlossary(\'' + r.termKey + '\')" title="Show workout details">ⓘ</button>'; }
-  document.getElementById('heroActivity').innerHTML = activityHTML;
-  document.getElementById('heroDetail').textContent = r.detail;
-  document.getElementById('heroReason').textContent = r.reason;
-  document.getElementById('heroDate').textContent = `TODAY · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}).toUpperCase()}`;
+  const plan = r.plan;
+  // Determine type class for coloring
+  let typeClass = '';
+  let ringNum = '—';
+  let ringUnit = '';
+  let ringFillPercent = 0.65;
+  let extraBadge = '';
+  const isRest = (plan && plan.type === 'rest') || r.activity === 'Rest Day' || r.activity === 'Rest Required';
+  const isCombo = plan && plan.type === 'combined';
+  const isActivity = plan && plan.type === 'activity';
+  const isLogged = plan && plan.type === 'logged';
+  if(isRest){ typeClass = 'rest-day'; ringNum = '○'; ringUnit = 'REST'; ringFillPercent = 0; }
+  else if(isCombo){
+    typeClass = 'type-' + (plan.gymPart ? plan.gymPart.subtype : 'upper');
+    ringNum = '2×';
+    ringUnit = 'COMBO';
+    ringFillPercent = 1;
+    extraBadge = '<span class="hero-v2-badge">COMBO</span>';
+  }
+  else if(isActivity){ typeClass = 'type-full'; ringNum = plan.duration; ringUnit = 'MIN'; ringFillPercent = 0.85; }
+  else if(isLogged){ 
+    typeClass = 'type-easy'; 
+    ringNum = '✓'; 
+    ringUnit = 'DONE'; 
+    ringFillPercent = 1;
+    extraBadge = '<span class="hero-v2-badge">COMPLETED</span>';
+  }
+  else if(plan && plan.type === 'run'){
+    typeClass = 'type-' + (plan.isLong ? 'moderate' : plan.subtype);
+    ringNum = plan.distance;
+    ringUnit = 'KM';
+    ringFillPercent = 0.75;
+  }
+  else if(plan && plan.type === 'gym'){
+    typeClass = 'type-' + plan.subtype;
+    ringNum = plan.duration;
+    ringUnit = 'MIN';
+    ringFillPercent = 0.75;
+  }
+  card.className = 'hero-v2 ' + typeClass;
+  // Date
+  const dateStr = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase().replace(/,/g,'').replace(/ /g,' · ');
+  document.getElementById('heroV2Date').textContent = dateStr;
+  document.getElementById('heroV2ExtraBadge').innerHTML = extraBadge;
+  // Name & meta
+  let nameText = r.activity;
+  if(isCombo && plan.runPart && plan.gymPart) nameText = plan.runPart.label.replace(' Run','') + ' + ' + plan.gymPart.label.replace(' Body','').replace(' Day','');
+  document.getElementById('heroV2NameText').textContent = nameText;
+  document.getElementById('heroV2Meta').textContent = r.detail;
+  // Ring
+  document.getElementById('heroV2RingNum').textContent = ringNum;
+  document.getElementById('heroV2RingUnit').textContent = ringUnit;
+  const circ = 283;
+  document.getElementById('heroV2RingFill').style.strokeDashoffset = circ * (1 - ringFillPercent);
+  // Tap hint — only when there's something to see
+  const hasDetails = r.termKey && (glossary[r.termKey] || workoutStructures[r.termKey]);
+  document.getElementById('heroV2Hint').textContent = hasDetails ? 'Tap name for details' : '';
+  document.getElementById('heroV2Hint').style.opacity = hasDetails ? '0.6' : '0';
+  // Store term key for openHeroDetails
+  card.dataset.termKey = r.termKey || '';
+  // Actions — combo day gets two log buttons
+  const actions = document.getElementById('heroV2Actions');
+  if(isCombo){
+    actions.className = 'hero-v2-combo-actions';
+    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'run\')">Log Run</button><button class="hero-v2-primary" onclick="openLog(\'gym\')">Log Gym</button>';
+  } else if(isRest){
+    actions.className = 'hero-v2-actions';
+    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'any\')">I Feel Like Moving</button><button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button><button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Keep rest">✕</button>';
+  } else if(isLogged){
+    actions.className = 'hero-v2-actions';
+    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'any\')">Log Another</button><button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button><button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Done">✓</button>';
+  } else {
+    actions.className = 'hero-v2-actions';
+    actions.innerHTML = '<button class="hero-v2-primary" onclick="openLog(\'any\')">Log Session</button><button class="hero-v2-icon-btn" onclick="openQuickSession()" title="Quick session">⚡</button><button class="hero-v2-icon-btn" onclick="openSkipModal()" title="Not today">✕</button>';
+}
+}
+function openHeroDetails(){
+  const card = document.getElementById('heroCard');
+  const termKey = card.dataset.termKey;
+  if(termKey) showGlossary(termKey);
 }
 
 function renderStats(){
@@ -3390,7 +3534,6 @@ function renderAll(){
   checkYesterdayReminder();
   renderConflictBanner();
   renderImprovementBanner();
-  renderCoachNote();
   renderHero();
   renderStats();
   renderPaceZones();
