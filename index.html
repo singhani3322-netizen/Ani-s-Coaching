@@ -2294,7 +2294,10 @@ function renderWorkoutStructureHTML(struct){
   return html;
 }
 // ==================== RENDERING ====================
-function renderCoachNote(){ document.getElementById('coachNoteText').textContent = getCoachNote(); }
+function renderCoachNote(){ 
+  const el = document.getElementById('coachNoteText'); 
+  if(el) el.textContent = getCoachNote(); 
+}
 
 function renderHero(){
   const r = getRecommendation();
@@ -3530,7 +3533,6 @@ function renderAll(){
   checkYesterdayReminder();
   renderConflictBanner();
   renderImprovementBanner();
-  renderCoachNote();//
   renderHero();
   renderStats();
   renderPaceZones();
