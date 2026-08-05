@@ -338,7 +338,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .viz-btn:hover{border-color:var(--text-faint)}
 #export-html-btn{background:var(--accent);border-color:var(--accent);color:#001210}
 /* V5.4 HERO REDESIGN — Whoop-inspired */
-.hero-v2{background:linear-gradient(160deg,#181D25 0%,#22293A 100%);border:1px solid var(--border-2);border-radius:22px;padding:26px 24px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.25)}
+.hero-v2{background:linear-gradient(160deg,#181D25 0%,#22293A 100%);border:1px solid var(--border-2);border-radius:18px;padding:18px 20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.22)}
 .hero-v2::before{content:'';position:absolute;top:-40%;right:-15%;width:340px;height:340px;background:radial-gradient(circle,rgba(0,212,170,0.10) 0%,transparent 60%);pointer-events:none}
 .hero-v2.rest-day::before{background:radial-gradient(circle,rgba(92,158,255,0.12) 0%,transparent 60%)}
 .hero-v2.type-easy::before{background:radial-gradient(circle,rgba(76,175,80,0.14) 0%,transparent 60%)}
@@ -348,12 +348,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .hero-v2.type-legs::before,.hero-v2.type-lower::before{background:radial-gradient(circle,rgba(255,138,61,0.14) 0%,transparent 60%)}
 .hero-v2.type-full::before{background:radial-gradient(circle,rgba(255,107,157,0.14) 0%,transparent 60%)}
 .hero-v2.type-mobility::before{background:radial-gradient(circle,rgba(38,217,193,0.14) 0%,transparent 60%)}
-.hero-v2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;position:relative}
+.hero-v2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;position:relative}
 .hero-v2-date{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.22em;font-weight:700}
 .hero-v2-badge{display:inline-block;padding:3px 9px;background:rgba(0,212,170,0.15);color:var(--accent);border-radius:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.15em;margin-left:8px;vertical-align:middle}
-.hero-v2-main{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-bottom:26px;position:relative}
+.hero-v2-main{display:block;margin-bottom:16px;position:relative}
 .hero-v2-info{min-width:0}
-.hero-v2-name{font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.hero-v2-tap-hint{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-top:4px;opacity:0.5}
+.hero-v2-recovery-note{font-size:11px;color:var(--warn);font-weight:600;margin-top:4px;padding:4px 8px;background:rgba(255,176,32,0.08);border-left:2px solid var(--warn);border-radius:4px;display:none}
+.hero-v2-recovery-note.active{display:block}
+/* V5.4 VITALS CARD */
+.vitals-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px 20px;margin-bottom:12px}
+.vitals-title{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.2em;font-weight:700;margin-bottom:14px}
+.vitals-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.vital-item{display:flex;flex-direction:column;align-items:center;text-align:center}
+.vital-ring{width:76px;height:76px;position:relative;margin-bottom:8px}
+.vital-ring svg{transform:rotate(-90deg)}
+.vital-ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:5}
+.vital-ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:220;transition:stroke-dashoffset 0.6s ease-out,stroke 0.3s}
+.vital-ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vital-ring-num{font-size:20px;font-weight:800;letter-spacing:-0.02em;line-height:1}
+.vital-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.12em;font-weight:700}
+.vital-status{font-size:10px;color:var(--text-faint);margin-top:2px;font-weight:600}
+.vital-ring.green .vital-ring-fill{stroke:#4CAF50}
+.vital-ring.yellow .vital-ring-fill{stroke:#F5C842}
+.vital-ring.orange .vital-ring-fill{stroke:#FF9800}
+.vital-ring.red .vital-ring-fill{stroke:#EF5350}
+.vital-ring.green .vital-ring-num{color:#4CAF50}
+.vital-ring.yellow .vital-ring-num{color:#F5C842}
+.vital-ring.orange .vital-ring-num{color:#FF9800}
+.vital-ring.red .vital-ring-num{color:#EF5350}
 .hero-v2-name:hover{opacity:0.85}
 .hero-v2-name .name-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .hero-v2.type-easy .name-dot{background:var(--easy)}
@@ -614,16 +637,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       </div>
       <div class="hero-v2-meta" id="heroV2Meta"></div>
       <div class="hero-v2-tap-hint" id="heroV2Hint">Tap name for details</div>
+<div class="hero-v2-recovery-note" id="heroV2RecoveryNote"></div>
     </div>
-      <div class="hero-v2-ring">
-  <svg width="100" height="100" viewBox="0 0 100 100">
-    <circle class="hero-v2-ring-bg" cx="50" cy="50" r="45"></circle>
-    <circle class="hero-v2-ring-fill" id="heroV2RingFill" cx="50" cy="50" r="45"></circle>
-  </svg>
-  <div class="hero-v2-ring-center">
-    <div class="hero-v2-ring-num" id="heroV2RingNum">-</div>
-    <div class="hero-v2-ring-unit" id="heroV2RingUnit">.</div>
-  </div>
 </div>
 <div id="heroV2Actions" class="hero-v2-actions">
   <button class="hero-v2-primary" onclick="openLog('any')">Log Session</button>
@@ -2072,6 +2087,146 @@ function getRecovery(){
   return {cls:'dot-green', text:'Ready'};
 }
 
+// V5.4 ADD: Detailed recovery score (0-100)
+function getRecoveryScore(){
+  let score = 100;
+  const all = allSess();
+  // Iterate through sessions in last 3 days
+  for(let daysBack = 1; daysBack <= 3; daysBack++){
+    const dayS = all.filter(s => daysSince(s.date) === daysBack);
+    dayS.forEach(s => {
+      if(s.kind === 'run'){
+        const isHard = s.type === 'hard';
+        const isLong = s.distance >= 8;
+        const isMod = s.type === 'moderate' && !isLong;
+        const isEasy = s.type === 'easy';
+        if(isHard){
+          if(daysBack === 1) score -= 30;
+          else if(daysBack === 2) score -= 15;
+          else score -= 5;
+        } else if(isLong){
+          if(daysBack === 1) score -= 25;
+          else if(daysBack === 2) score -= 10;
+        } else if(isMod){
+          if(daysBack === 1) score -= 12;
+          else if(daysBack === 2) score -= 4;
+        } else if(isEasy){
+          if(daysBack === 1) score -= 5;
+        }
+      } else if(s.kind === 'gym'){
+        const isLegs = s.type === 'lower' || s.type === 'legs';
+        const isFull = s.type === 'full';
+        const isUpper = ['upper','push','pull'].includes(s.type);
+        const isMob = s.type === 'mobility';
+        const intensity = s.intensity;
+        if(isMob) return;
+        if(isLegs){
+          const legPenalty = intensity === 'heavy' ? 35 : 20;
+          if(daysBack === 1) score -= legPenalty;
+          else if(daysBack === 2) score -= Math.round(legPenalty * 0.55);
+          else score -= Math.round(legPenalty * 0.2);
+        } else if(isFull){
+          const fullPenalty = intensity === 'heavy' ? 25 : 12;
+          if(daysBack === 1) score -= fullPenalty;
+          else if(daysBack === 2) score -= Math.round(fullPenalty * 0.4);
+        } else if(isUpper){
+          const upperPenalty = intensity === 'heavy' ? 15 : intensity === 'moderate' ? 8 : 3;
+          if(daysBack === 1) score -= upperPenalty;
+          else if(daysBack === 2) score -= Math.round(upperPenalty * 0.3);
+        }
+      } else if(s.kind === 'activity'){
+        const actPenalty = s.intensity === 'hard' ? 18 : s.intensity === 'moderate' ? 10 : 3;
+        if(daysBack === 1) score -= actPenalty;
+        else if(daysBack === 2) score -= Math.round(actPenalty * 0.4);
+      }
+    });
+  }
+// V5.4 ADD: Week completion percentage
+function getWeekProgress(){
+  const ws = weekStart(new Date());
+  const sessionsThisWeek = allSess().filter(s => new Date(s.date) >= ws).length;
+  const target = state.prefs.runDays + state.prefs.gymDays;
+  if(target === 0) return 0;
+  return Math.min(100, Math.round((sessionsThisWeek / target) * 100));
+}
+
+// V5.4 ADD: Today's completion score
+function getTodayScore(){
+  const ws = weekStart(new Date());
+  const todayIdx = dayOfWeekMonStart(new Date());
+  const plan = generateWeeklyPlan(ws);
+  const todayPlan = plan[todayIdx];
+  const todaySessions = allSess().filter(s => daysSince(s.date) === 0);
+  // Rest day: 100 if actually rested (no session), still 100 if user chose to train
+  if(todayPlan && todayPlan.type === 'rest') return 100;
+  // Activity day: 100 if activity logged
+  if(todayPlan && todayPlan.type === 'activity'){
+    return todaySessions.some(s => s.kind === 'activity') ? 100 : 0;
+  }
+  // Combined day: 50 for each part logged
+  if(todayPlan && todayPlan.type === 'combined'){
+    const hasRun = todaySessions.some(s => s.kind === 'run');
+    const hasGym = todaySessions.some(s => s.kind === 'gym');
+    return (hasRun ? 50 : 0) + (hasGym ? 50 : 0);
+  }
+  // Regular training day
+  if(!todayPlan || todaySessions.length === 0) return 0;
+  if(todayPlan.type === 'run'){
+    const runsToday = todaySessions.filter(s => s.kind === 'run');
+    if(runsToday.length === 0) return 0;
+    const totalKm = runsToday.reduce((a, r) => a + r.distance, 0);
+    const target = todayPlan.distance || 5;
+    const pct = Math.min(100, Math.round((totalKm / target) * 100));
+    // Feedback adjustment
+    const todayFb = state.feedbacks.filter(f => daysSince(f.date) === 0);
+    if(todayFb.some(f => f.feeling === 'hard')) return Math.min(100, pct + 5);
+    if(todayFb.some(f => f.feeling === 'easy')) return Math.max(0, pct - 5);
+    return pct;
+  }
+  if(todayPlan.type === 'gym'){
+    const gymsToday = todaySessions.filter(s => s.kind === 'gym');
+    if(gymsToday.length === 0) return 0;
+    const totalMin = gymsToday.reduce((a, g) => a + g.duration, 0);
+    const target = todayPlan.duration || 45;
+    return Math.min(100, Math.round((totalMin / target) * 100));
+  }
+  return todaySessions.length > 0 ? 100 : 0;
+}
+  // Consecutive training days
+  let consec = 0;
+  for(let i = 1; i <= 10; i++){ if(all.some(s => daysSince(s.date) === i)) consec++; else break; }
+  if(consec >= 7) score -= 35;
+  else if(consec >= 6) score -= 20;
+  else if(consec >= 5) score -= 10;
+  // Hard cluster
+  const l3 = all.filter(s => daysSince(s.date) <= 3);
+  const hardCount3 = l3.filter(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy')).length;
+  if(hardCount3 >= 2) score -= 20;
+  const l5 = all.filter(s => daysSince(s.date) <= 5);
+  const hardCount5 = l5.filter(s => (s.kind==='run' && s.type==='hard') || (s.kind==='gym' && s.intensity==='heavy')).length;
+  if(hardCount5 >= 3) score -= 10;
+  // Load trend
+  const thisWeekLoad = sessRange(7).reduce((a, s) => a + sessLoad(s), 0);
+  const prevWeekLoad = all.filter(s => daysSince(s.date) > 7 && daysSince(s.date) <= 14).reduce((a, s) => a + sessLoad(s), 0);
+  if(prevWeekLoad > 0){
+    const ratio = thisWeekLoad / prevWeekLoad;
+    if(ratio > 1.5) score -= 25;
+    else if(ratio > 1.3) score -= 12;
+  }
+  // Feedback signals
+  const recentFb = state.feedbacks.filter(f => daysSince(f.date) <= 7);
+  const hardFb = recentFb.filter(f => f.feeling === 'hard').length;
+  if(hardFb >= 2) score -= 15;
+  // Bonuses
+  const yesterdaySess = all.filter(s => daysSince(s.date) === 1);
+  if(yesterdaySess.length === 0) score += 8;
+  const twoDaysBackSess = all.filter(s => daysSince(s.date) === 2);
+  if(yesterdaySess.length === 0 && twoDaysBackSess.length === 0) score += 7;
+  const easyFb = recentFb.filter(f => f.feeling === 'easy').length;
+  if(easyFb >= 1) score += 3;
+  // Cap
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
 function getInsights(){
   const out = [];
   const last30 = sessRange(30);
