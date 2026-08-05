@@ -433,9 +433,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .vital-fill.red{stroke:var(--danger)}
 .vital-fill.accent{stroke:var(--accent)}
 .vital-fill.purple{stroke:var(--upper)}
-.vital-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.vital-num{font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1}
-.vital-unit{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;font-weight:700}
+.vital-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vital-num{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1}
 .vital-label{font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.12em}
 .vital-sub{font-size:10px;color:var(--text-faint);margin-top:2px;line-height:1.3;font-weight:500}
 @media(max-width:400px){.vital-svg{width:76px;height:76px}.vital-num{font-size:19px}}
@@ -3680,21 +3679,21 @@ function renderVitals(){
     '<svg width="88" height="88" viewBox="0 0 88 88">' +
     '<circle class="vital-bg" cx="44" cy="44" r="36"></circle>' +
     '<circle class="vital-fill ' + rec.color + '" cx="44" cy="44" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + recOffset + '"></circle>' +
-    '</svg><div class="vital-center"><div class="vital-num">' + rec.score + '</div><div class="vital-unit">/ 100</div></div></div>' +
+    '</svg><div class="vital-center"><div class="vital-num">' + rec.score + '</div></div></div>' +
     '<div class="vital-label">Recovery</div><div class="vital-sub">' + rec.label + '</div></div>' +
 
     '<div class="vital-ring"><div class="vital-svg">' +
     '<svg width="88" height="88" viewBox="0 0 88 88">' +
     '<circle class="vital-bg" cx="44" cy="44" r="36"></circle>' +
     '<circle class="vital-fill accent" cx="44" cy="44" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + wkOffset + '"></circle>' +
-    '</svg><div class="vital-center"><div class="vital-num">' + wk.pct + '</div><div class="vital-unit">%</div></div></div>' +
+    '</svg><div class="vital-center"><div class="vital-num">' + wk.pct + '</div></div></div>' +
     '<div class="vital-label">Week</div><div class="vital-sub">' + wk.done + ' / ' + wk.planned + ' sessions</div></div>' +
 
     '<div class="vital-ring"><div class="vital-svg">' +
     '<svg width="88" height="88" viewBox="0 0 88 88">' +
     '<circle class="vital-bg" cx="44" cy="44" r="36"></circle>' +
     '<circle class="vital-fill purple" cx="44" cy="44" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + tdOffset + '"></circle>' +
-    '</svg><div class="vital-center"><div class="vital-num">' + td.score + '</div><div class="vital-unit">%</div></div></div>' +
+    '</svg><div class="vital-center"><div class="vital-num">' + td.score + '</div></div></div>' +
     '<div class="vital-label">Today</div><div class="vital-sub">' + td.label + '</div></div>';
 }
 
