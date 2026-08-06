@@ -452,6 +452,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .weeks-title-block{flex:1;text-align:center;min-width:0}
 .weeks-track{display:flex;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);will-change:transform}
 .weeks-slide{min-width:100%;flex-shrink:0}
+/* V5.4 Patch 11 — Weather */
+.weather-banner{background:linear-gradient(135deg,rgba(77,208,225,0.08),rgba(92,158,255,0.05));border:1px solid rgba(77,208,225,0.25);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all 0.2s}
+.weather-banner:hover{border-color:rgba(77,208,225,0.5)}
+.weather-banner.warn{background:linear-gradient(135deg,rgba(255,176,32,0.08),rgba(255,138,61,0.05));border-color:rgba(255,176,32,0.3)}
+.weather-banner.danger{background:linear-gradient(135deg,rgba(239,83,80,0.08),rgba(255,138,61,0.05));border-color:rgba(239,83,80,0.3)}
+.weather-banner.good{background:linear-gradient(135deg,rgba(76,175,80,0.08),rgba(0,212,170,0.05));border-color:rgba(76,175,80,0.3)}
+.weather-icon{font-size:24px;flex-shrink:0;line-height:1}
+.weather-content{flex:1;min-width:0}
+.weather-title{font-size:13px;font-weight:700;line-height:1.3;margin-bottom:2px}
+.weather-detail{font-size:11.5px;color:var(--text-dim);line-height:1.4}
+.weather-arrow{color:var(--text-faint);font-size:16px;flex-shrink:0}
+.weather-loading{opacity:0.5}
+
+/* Weather modal */
+.weather-current{background:linear-gradient(135deg,var(--surface-2),rgba(77,208,225,0.05));border-radius:14px;padding:18px;margin-bottom:14px;text-align:center}
+.weather-current-icon{font-size:44px;line-height:1;margin-bottom:6px}
+.weather-current-temp{font-size:34px;font-weight:800;letter-spacing:-0.03em;line-height:1;font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+.weather-current-desc{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-top:6px}
+.weather-current-loc{font-size:11px;color:var(--text-faint);margin-top:4px}
+.weather-advice{background:rgba(0,212,170,0.06);border-left:3px solid var(--accent);border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.55;font-style:italic}
+.weather-hourly{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px}
+.weather-hour{background:var(--surface-2);border-radius:8px;padding:8px 4px;text-align:center;font-size:10px}
+.weather-hour-time{color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
+.weather-hour-icon{font-size:16px;margin:4px 0;line-height:1}
+.weather-hour-temp{font-weight:700;color:var(--text);font-size:11px;font-variant-numeric:tabular-nums}
+.weather-hour.rain{background:rgba(92,158,255,0.12)}
+.weather-hour.hot{background:rgba(239,83,80,0.1)}
+.weather-hour.cold{background:rgba(92,158,255,0.08)}
+.weather-window{background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.25);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.weather-window-label{font-size:10px;font-weight:700;color:var(--easy);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px}
+.weather-window-time{font-size:15px;font-weight:800}
+.weather-window-detail{font-size:11px;color:var(--text-dim);margin-top:2px}
+.weather-loc-prompt{background:var(--surface-2);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center}
+.weather-loc-prompt-title{font-size:13px;font-weight:700;margin-bottom:8px}
+.weather-loc-prompt-sub{font-size:11px;color:var(--text-dim);margin-bottom:12px}
+.weather-error{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.2);border-radius:10px;padding:14px;font-size:12px;color:var(--text-dim);line-height:1.5;text-align:center}
 </style>
 </head>
 <body>
@@ -630,7 +666,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         </div>
       </div>
     </div>
-    
+    <div class="weather-banner hidden" id="weatherBanner" onclick="openWeatherModal()"><div class="weather-icon" id="wbIcon">🌤️</div><div class="weather-content"><div class="weather-title" id="wbTitle"></div><div class="weather-detail" id="wbDetail"></div></div><div class="weather-arrow">›</div></div>
     <div id="heroCard" class="hero-v2 hero-v2-active">
       <div class="h2-date">
         <span id="h2Date"></span>
@@ -931,6 +967,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title" id="glossaryTitle">Session Info</div><button class="modal-close" onclick="closeModal('glossaryModal')">×</button></div>
     <div id="glossaryBody"></div>
+  </div>
+</div>
+<!-- Weather Modal (V5.4 Patch 11) -->
+<div class="modal-bg" id="weatherModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-title">Weather &amp; Running</div><button class="modal-close" onclick="closeModal('weatherModal')">×</button></div>
+    <div id="weatherModalBody"></div>
+    <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" onclick="openWeatherSettings()" style="flex:1">⚙️ Preferences</button>
+      <button class="btn btn-ghost btn-sm" onclick="promptCity()" style="flex:1">📍 Change city</button>
+    </div>
+  </div>
+</div>
+
+<!-- Weather Preferences Modal (V5.4 Patch 11) -->
+<div class="modal-bg" id="weatherPrefsModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-title">Weather Preferences</div><button class="modal-close" onclick="closeModal('weatherPrefsModal')">×</button></div>
+    <div class="modal-desc">Temperature comfort varies by region. Set what feels right for YOU.</div>
+    <div class="field"><label class="field-label">Running feels too HOT above</label>
+      <div class="pill-row-5" id="prefHotRow"><div class="pill" data-val="22">22°C</div><div class="pill" data-val="25">25°C</div><div class="pill" data-val="28">28°C</div><div class="pill" data-val="32">32°C</div><div class="pill" data-val="35">35°C</div></div>
+    </div>
+    <div class="field"><label class="field-label">Running feels too COLD below</label>
+      <div class="pill-row-5" id="prefColdRow"><div class="pill" data-val="0">0°C</div><div class="pill" data-val="5">5°C</div><div class="pill" data-val="10">10°C</div><div class="pill" data-val="15">15°C</div><div class="pill" data-val="18">18°C</div></div>
+    </div>
+    <button class="btn btn-primary btn-full mt-2" onclick="saveWeatherPrefs()">Save Preferences</button>
   </div>
 </div>
 <!-- Settings Modal -->
@@ -3544,6 +3608,410 @@ function finishSetup(withSample){
   setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
 
+// ==================== V5.4 PATCH 11 — WEATHER ====================
+// Weather state — kept separate from main state to avoid migration issues
+let weatherCache = { data: null, fetchedAt: 0, location: null };
+
+function getWeatherPrefs(){
+  return {
+    hotThreshold: (state.prefs.weatherHot != null) ? state.prefs.weatherHot : 30,
+    coldThreshold: (state.prefs.weatherCold != null) ? state.prefs.weatherCold : 5,
+    location: state.prefs.weatherLocation || null,
+    locationDenied: !!state.prefs.weatherLocationDenied
+  };
+}
+
+function saveWeatherLocation(lat, lon, name){
+  state.prefs.weatherLocation = { lat, lon, name: name || null };
+  save();
+}
+
+function fetchWeather(){
+  const prefs = getWeatherPrefs();
+  const banner = document.getElementById('weatherBanner');
+  if(!banner) return;
+
+  // If already fetched in last 3 hours, use cache
+  const threeHours = 3 * 60 * 60 * 1000;
+  if(weatherCache.data && (Date.now() - weatherCache.fetchedAt) < threeHours){
+    renderWeatherBanner(weatherCache.data);
+    return;
+  }
+
+  // Need location first
+  if(!prefs.location){
+    if(prefs.locationDenied){
+      // User previously denied — show subtle city prompt only for outdoor days
+      showLocationPromptIfNeeded();
+      return;
+    }
+    // Try GPS
+    if(!navigator.geolocation){
+      state.prefs.weatherLocationDenied = true;
+      save();
+      return;
+    }
+    banner.classList.remove('hidden');
+    banner.classList.add('weather-loading');
+    document.getElementById('wbIcon').textContent = '🌐';
+    document.getElementById('wbTitle').textContent = 'Detecting location...';
+    document.getElementById('wbDetail').textContent = 'Grant location for weather coaching';
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        saveWeatherLocation(pos.coords.latitude, pos.coords.longitude, null);
+        fetchWeatherData(pos.coords.latitude, pos.coords.longitude);
+      },
+      err => {
+        state.prefs.weatherLocationDenied = true;
+        save();
+        banner.classList.remove('weather-loading');
+        banner.classList.add('hidden');
+        showLocationPromptIfNeeded();
+      },
+      { timeout: 10000, maximumAge: 60000 }
+    );
+    return;
+  }
+
+  // We have location — fetch data
+  fetchWeatherData(prefs.location.lat, prefs.location.lon);
+}
+
+function fetchWeatherData(lat, lon){
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,precipitation,wind_speed_10m,weather_code&timezone=auto&forecast_days=2`;
+
+  fetch(url)
+    .then(r => r.json())
+    .then(data => {
+      weatherCache.data = data;
+      weatherCache.fetchedAt = Date.now();
+      weatherCache.location = { lat, lon };
+      renderWeatherBanner(data);
+    })
+    .catch(err => {
+      console.error('Weather fetch failed:', err);
+      const banner = document.getElementById('weatherBanner');
+      if(banner) banner.classList.add('hidden');
+    });
+}
+
+function weatherCodeToIcon(code){
+  // WMO Weather codes → emoji
+  if(code === 0) return '☀️';
+  if(code >= 1 && code <= 3) return '⛅';
+  if(code >= 45 && code <= 48) return '🌫️';
+  if(code >= 51 && code <= 57) return '🌦️';
+  if(code >= 61 && code <= 67) return '🌧️';
+  if(code >= 71 && code <= 77) return '❄️';
+  if(code >= 80 && code <= 82) return '🌧️';
+  if(code >= 85 && code <= 86) return '❄️';
+  if(code >= 95 && code <= 99) return '⛈️';
+  return '🌤️';
+}
+
+function weatherCodeToText(code){
+  if(code === 0) return 'Clear';
+  if(code >= 1 && code <= 3) return 'Partly cloudy';
+  if(code >= 45 && code <= 48) return 'Foggy';
+  if(code >= 51 && code <= 57) return 'Drizzle';
+  if(code >= 61 && code <= 67) return 'Rain';
+  if(code >= 71 && code <= 77) return 'Snow';
+  if(code >= 80 && code <= 82) return 'Rain showers';
+  if(code >= 85 && code <= 86) return 'Snow showers';
+  if(code >= 95 && code <= 99) return 'Thunderstorm';
+  return 'Cloudy';
+}
+
+function analyzeWeather(data){
+  const prefs = getWeatherPrefs();
+  const now = new Date();
+  const currentHour = now.getHours();
+  const hourly = data.hourly;
+  const current = data.current;
+
+  // Find today's hours from current time onwards (next 18 hours)
+  const times = hourly.time.map(t => new Date(t));
+  const nowIdx = times.findIndex(t => t.getHours() === currentHour && t.toDateString() === now.toDateString());
+  const relevantEnd = Math.min(nowIdx + 18, times.length);
+  const upcoming = [];
+  for(let i = Math.max(0, nowIdx); i < relevantEnd; i++){
+    upcoming.push({
+      hour: times[i],
+      temp: hourly.temperature_2m[i],
+      precip: hourly.precipitation[i] || 0,
+      precipProb: hourly.precipitation_probability ? hourly.precipitation_probability[i] : 0,
+      wind: hourly.wind_speed_10m[i] || 0,
+      code: hourly.weather_code[i]
+    });
+  }
+
+  // Find 45-min+ clear windows (running-friendly)
+  const windows = [];
+  let windowStart = null;
+  for(let i = 0; i < upcoming.length; i++){
+    const h = upcoming[i];
+    const isRunnable = h.precip < 0.5 && h.wind < 25 && h.temp <= prefs.hotThreshold && h.temp >= prefs.coldThreshold;
+    if(isRunnable){
+      if(!windowStart) windowStart = h.hour;
+    } else {
+      if(windowStart){
+        const duration = (upcoming[i-1].hour - windowStart) / 60000 + 60; // in minutes
+        if(duration >= 45) windows.push({ start: windowStart, end: upcoming[i-1].hour, duration });
+        windowStart = null;
+      }
+    }
+  }
+  if(windowStart){
+    const last = upcoming[upcoming.length - 1].hour;
+    const duration = (last - windowStart) / 60000 + 60;
+    if(duration >= 45) windows.push({ start: windowStart, end: last, duration });
+  }
+
+  // Current conditions
+  const currentTemp = current.temperature_2m;
+  const currentPrecip = current.precipitation || 0;
+  const currentWind = current.wind_speed_10m || 0;
+  const currentCode = current.weather_code;
+  const isRaining = currentPrecip > 0.5;
+  const isHot = currentTemp > prefs.hotThreshold;
+  const isCold = currentTemp < prefs.coldThreshold;
+  const isWindy = currentWind > 25;
+
+  // Check if any bad weather in next 18h
+  const anyRain = upcoming.some(h => h.precip > 0.5);
+  const heavyRainAllDay = upcoming.filter(h => h.precip > 2).length >= 8;
+  const allTooHot = upcoming.every(h => h.temp > prefs.hotThreshold);
+  const allTooCold = upcoming.every(h => h.temp < prefs.coldThreshold);
+
+  // Determine banner message + severity
+  let icon, title, detail, severity = '', shouldShow = false;
+
+  if(isRaining || isHot || isCold || isWindy){
+    shouldShow = true;
+    if(isRaining){
+      icon = '🌧️';
+      title = `Raining now · ${Math.round(currentTemp)}°C`;
+      if(windows.length > 0){
+        const w = windows.find(x => x.start > now);
+        if(w) detail = `Best window: ${formatTime(w.start)} — ${formatTime(w.end)}`;
+        else detail = 'No clear window today · treadmill?';
+        severity = 'warn';
+      } else {
+        detail = heavyRainAllDay ? 'Wet all day · consider treadmill or tomorrow' : 'Light rain — your call';
+        severity = heavyRainAllDay ? 'danger' : 'warn';
+      }
+    } else if(isHot){
+      icon = '🔥';
+      title = `Hot · ${Math.round(currentTemp)}°C (your limit: ${prefs.hotThreshold}°C)`;
+      if(windows.length > 0){
+        const w = windows.find(x => x.start > now);
+        if(w) detail = `Better at ${formatTime(w.start)} (${Math.round(getTempAtHour(upcoming, w.start))}°C)`;
+        else detail = 'No cooler window today';
+      } else {
+        detail = allTooHot ? 'Hot all day · run at dawn or dusk' : 'Wait for evening';
+      }
+      severity = 'warn';
+    } else if(isCold){
+      icon = '🥶';
+      title = `Cold · ${Math.round(currentTemp)}°C (your limit: ${prefs.coldThreshold}°C)`;
+      detail = allTooCold ? 'Cold all day · layer up or gym' : 'Warmer later — check forecast';
+      severity = 'warn';
+    } else if(isWindy){
+      icon = '💨';
+      title = `Windy · ${Math.round(currentWind)} km/h`;
+      detail = 'Loop route recommended — no headwind on returns';
+      severity = 'warn';
+    }
+  } else if(anyRain){
+    // Not raining now but rain incoming
+    shouldShow = true;
+    icon = '🌦️';
+    const rainStart = upcoming.find(h => h.precip > 0.5);
+    if(rainStart){
+      const hoursUntilRain = Math.round((rainStart.hour - now) / 3600000);
+      title = `Clear now · ${Math.round(currentTemp)}°C`;
+      detail = `Rain expected around ${formatTime(rainStart.hour)} — run soon`;
+      severity = '';
+    }
+  } else {
+    // Perfect weather — subtle positive banner
+    shouldShow = true;
+    icon = weatherCodeToIcon(currentCode);
+    title = `${weatherCodeToText(currentCode)} · ${Math.round(currentTemp)}°C`;
+    detail = 'Textbook running weather';
+    severity = 'good';
+  }
+
+  return { icon, title, detail, severity, shouldShow, windows, upcoming, current };
+}
+
+function getTempAtHour(upcoming, targetHour){
+  const match = upcoming.find(h => h.hour.getHours() === targetHour.getHours());
+  return match ? match.temp : 0;
+}
+
+function formatTime(date){
+  const h = date.getHours();
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+  return `${h12}${ampm}`;
+}
+
+function renderWeatherBanner(data){
+  const banner = document.getElementById('weatherBanner');
+  if(!banner) return;
+  const analysis = analyzeWeather(data);
+  if(!analysis.shouldShow){
+    banner.classList.add('hidden');
+    return;
+  }
+  banner.className = 'weather-banner ' + (analysis.severity || '');
+  banner.classList.remove('weather-loading');
+  document.getElementById('wbIcon').textContent = analysis.icon;
+  document.getElementById('wbTitle').textContent = analysis.title;
+  document.getElementById('wbDetail').textContent = analysis.detail;
+}
+
+function openWeatherModal(){
+  const modal = document.getElementById('weatherModal');
+  const body = document.getElementById('weatherModalBody');
+  const prefs = getWeatherPrefs();
+
+  if(!weatherCache.data){
+    body.innerHTML = '<div class="weather-error">Weather data not loaded yet. Grant location or set your city.</div>';
+    modal.classList.add('active');
+    return;
+  }
+
+  const analysis = analyzeWeather(weatherCache.data);
+  const current = weatherCache.data.current;
+  const locName = prefs.location ? (prefs.location.name || 'Your location') : 'Unknown';
+
+  let html = '<div class="weather-current">' +
+    '<div class="weather-current-icon">' + analysis.icon + '</div>' +
+    '<div class="weather-current-temp">' + Math.round(current.temperature_2m) + '°C</div>' +
+    '<div class="weather-current-desc">' + weatherCodeToText(current.weather_code) + '</div>' +
+    '<div class="weather-current-loc">📍 ' + locName + '</div>' +
+    '</div>';
+
+  // Coach advice
+  let advice;
+  if(analysis.severity === 'danger') advice = analysis.detail + ". I'd move today's run indoors or shift to tomorrow.";
+  else if(analysis.severity === 'warn') advice = analysis.detail + '. Adjust the timing — your body will thank you.';
+  else if(analysis.severity === 'good') advice = 'Perfect conditions. No excuses today.';
+  else advice = analysis.detail + '.';
+  html += '<div class="weather-advice">💬 ' + advice + '</div>';
+
+  // Best windows
+  if(analysis.windows.length > 0){
+    html += '<div style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px">Best running windows</div>';
+    analysis.windows.slice(0, 3).forEach(w => {
+      html += '<div class="weather-window">' +
+        '<div class="weather-window-label">✓ Clear window</div>' +
+        '<div class="weather-window-time">' + formatTime(w.start) + ' — ' + formatTime(w.end) + '</div>' +
+        '<div class="weather-window-detail">' + Math.round(w.duration) + ' min · perfect for a session</div>' +
+        '</div>';
+    });
+  }
+
+  // Hourly next 12h
+  html += '<div style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.15em;margin:14px 0 8px">Next hours</div>';
+  html += '<div class="weather-hourly">';
+  analysis.upcoming.slice(0, 6).forEach(h => {
+    const cls = h.precip > 0.5 ? 'rain' : (h.temp > prefs.hotThreshold ? 'hot' : (h.temp < prefs.coldThreshold ? 'cold' : ''));
+    html += '<div class="weather-hour ' + cls + '">' +
+      '<div class="weather-hour-time">' + formatTime(h.hour) + '</div>' +
+      '<div class="weather-hour-icon">' + weatherCodeToIcon(h.code) + '</div>' +
+      '<div class="weather-hour-temp">' + Math.round(h.temp) + '°</div>' +
+      '</div>';
+  });
+  html += '</div>';
+
+  body.innerHTML = html;
+  modal.classList.add('active');
+}
+
+function openWeatherSettings(){
+  closeModal('weatherModal');
+  const prefs = getWeatherPrefs();
+  document.querySelectorAll('#prefHotRow .pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.val) === prefs.hotThreshold);
+    p.onclick = () => {
+      document.querySelectorAll('#prefHotRow .pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    };
+  });
+  document.querySelectorAll('#prefColdRow .pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.val) === prefs.coldThreshold);
+    p.onclick = () => {
+      document.querySelectorAll('#prefColdRow .pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    };
+  });
+  document.getElementById('weatherPrefsModal').classList.add('active');
+}
+
+function saveWeatherPrefs(){
+  const hot = document.querySelector('#prefHotRow .pill.active');
+  const cold = document.querySelector('#prefColdRow .pill.active');
+  if(hot) state.prefs.weatherHot = parseInt(hot.dataset.val);
+  if(cold) state.prefs.weatherCold = parseInt(cold.dataset.val);
+  save();
+  closeModal('weatherPrefsModal');
+  showToast('Weather preferences saved', 'success');
+  if(weatherCache.data) renderWeatherBanner(weatherCache.data);
+}
+
+function promptCity(){
+  closeModal('weatherModal');
+  const currentName = state.prefs.weatherLocation && state.prefs.weatherLocation.name ? state.prefs.weatherLocation.name : '';
+  const city = prompt('Enter your city (e.g., "Dublin" or "Mumbai"):', currentName);
+  if(!city || !city.trim()) return;
+
+  // Use Open-Meteo's free geocoding
+  fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(city.trim()) + '&count=1')
+    .then(r => r.json())
+    .then(data => {
+      if(!data.results || data.results.length === 0){
+        showToast('City not found. Try a different name.', 'warn');
+        return;
+      }
+      const r = data.results[0];
+      const displayName = r.name + (r.country ? ', ' + r.country : '');
+      saveWeatherLocation(r.latitude, r.longitude, displayName);
+      state.prefs.weatherLocationDenied = false;
+      save();
+      showToast('Location set: ' + displayName, 'success');
+      weatherCache.data = null;
+      weatherCache.fetchedAt = 0;
+      fetchWeather();
+    })
+    .catch(() => {
+      showToast('Could not find city. Check spelling.', 'warn');
+    });
+}
+
+function showLocationPromptIfNeeded(){
+  // Only show subtle prompt if user has run days coming up
+  const banner = document.getElementById('weatherBanner');
+  if(!banner) return;
+  banner.classList.remove('hidden', 'weather-loading');
+  banner.className = 'weather-banner';
+  document.getElementById('wbIcon').textContent = '📍';
+  document.getElementById('wbTitle').textContent = 'Weather coaching available';
+  document.getElementById('wbDetail').textContent = 'Tap to set your city';
+  banner.onclick = () => promptCity();
+}
+
+// Auto-refresh every 3 hours if app stays open
+setInterval(() => {
+  if(document.getElementById('mainApp') && !document.getElementById('mainApp').classList.contains('hidden')){
+    weatherCache.data = null;
+    weatherCache.fetchedAt = 0;
+    fetchWeather();
+  }
+}, 3 * 60 * 60 * 1000);
 // ==================== RENDER ALL ====================
 // ==================== V5.4 PATCH 9 — VITALS ====================
 function getRecoveryScore(){
@@ -3804,6 +4272,7 @@ function renderAll(){
   renderSessions();
   renderPBs();
   renderCmp();
+fetchWeather();
 }
 
 // ==================== INIT ====================
