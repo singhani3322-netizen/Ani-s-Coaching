@@ -4459,63 +4459,84 @@ function drawBrandHeader(ctx, dateStr, isPR){
 }
 
 function drawFlipFlopLogo(ctx, cx, cy, size, color){
-  // Custom-drawn flip-flop (sandal) — top-down view
+  // Custom-drawn BAREFOOT print — clean recognizable footprint
   ctx.save();
   ctx.translate(cx, cy);
 
-  // Sole (foot-shaped oval)
   ctx.fillStyle = color;
   ctx.shadowColor = color;
   ctx.shadowBlur = 12;
+
+  // Main foot body (heel + arch + ball)
   ctx.beginPath();
-  // Sole outline (roughly foot-shaped)
-  ctx.ellipse(0, 0, size * 0.42, size * 0.75, 0, 0, Math.PI * 2);
+  // Start at heel, curve up along outer edge to ball of foot
+  ctx.moveTo(-size * 0.16, size * 0.75);       // heel bottom-outer
+  ctx.bezierCurveTo(
+    -size * 0.36, size * 0.55,                  // outer heel curve
+    -size * 0.42, size * 0.05,                  // outer arch
+    -size * 0.32, -size * 0.35                  // outer ball
+  );
+  // Top of ball (before big toe area)
+  ctx.bezierCurveTo(
+    -size * 0.28, -size * 0.55,
+    -size * 0.10, -size * 0.60,
+    -size * 0.02, -size * 0.55                  // top curve
+  );
+  // Right side (inner arch to heel)
+  ctx.bezierCurveTo(
+    size * 0.20, -size * 0.50,
+    size * 0.28, -size * 0.10,                  // inner arch (concave)
+    size * 0.20, size * 0.30
+  );
+  ctx.bezierCurveTo(
+    size * 0.22, size * 0.55,
+    size * 0.10, size * 0.75,
+    -size * 0.02, size * 0.78                   // back to heel bottom
+  );
+  ctx.closePath();
   ctx.fill();
+
+  // Toes — 5 small circles above main foot
+  ctx.shadowBlur = 6;
+
+  // Big toe (largest, top-left area)
+  ctx.beginPath();
+  ctx.ellipse(-size * 0.15, -size * 0.68, size * 0.13, size * 0.15, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Second toe
+  ctx.beginPath();
+  ctx.ellipse(size * 0.02, -size * 0.72, size * 0.09, size * 0.11, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Middle toe
+  ctx.beginPath();
+  ctx.ellipse(size * 0.14, -size * 0.68, size * 0.08, size * 0.10, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Fourth toe
+  ctx.beginPath();
+  ctx.ellipse(size * 0.24, -size * 0.60, size * 0.07, size * 0.09, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pinky toe (smallest)
+  ctx.beginPath();
+  ctx.ellipse(size * 0.32, -size * 0.48, size * 0.06, size * 0.08, 0, 0, Math.PI * 2);
+  ctx.fill();
+
   ctx.shadowBlur = 0;
-
-  // Inner dark area
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
-  ctx.beginPath();
-  ctx.ellipse(0, 0, size * 0.35, size * 0.65, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Y-shaped strap
-  ctx.strokeStyle = color;
-  ctx.lineWidth = size * 0.09;
-  ctx.lineCap = 'round';
-  // Top part (Y junction)
-  const junctionY = -size * 0.15;
-  ctx.beginPath();
-  ctx.moveTo(-size * 0.22, -size * 0.55);
-  ctx.lineTo(0, junctionY);
-  ctx.lineTo(size * 0.22, -size * 0.55);
-  ctx.stroke();
-  // Vertical part going down between "toes"
-  ctx.beginPath();
-  ctx.moveTo(0, junctionY);
-  ctx.lineTo(0, size * 0.15);
-  ctx.stroke();
-
-  // Small toe strap pegs
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(-size * 0.22, -size * 0.55, size * 0.06, 0, Math.PI * 2);
-  ctx.arc(size * 0.22, -size * 0.55, size * 0.06, 0, Math.PI * 2);
-  ctx.fill();
-
   ctx.restore();
 }
-
 function drawSessionContent(ctx, data){
   const W = 1080, H = 1920;
 
   drawBrandHeader(ctx, data.dateStr, false);
 
-  let y = 620;
+  let y = 640;
 
-  // BIG distance with Bebas Neue (tall, distinctive)
+  // BIG distance — italic Bebas Neue for classy feel
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '400 340px "Bebas Neue", "SF Pro Display", -apple-system, sans-serif';
+  ctx.font = 'italic 400 320px "Bebas Neue", "SF Pro Display", -apple-system, sans-serif';
   ctx.textAlign = 'center';
   ctx.letterSpacing = '-4px';
 
@@ -4525,15 +4546,16 @@ function drawSessionContent(ctx, data){
   ctx.fillText(data.mainValue, W/2, y);
   ctx.shadowBlur = 0;
 
-  y += 30;
+  // Big vertical gap — no more overlap
+  y += 80;
 
-  // Unit label
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.font = '600 38px "Space Grotesk", sans-serif';
+  // Unit label — clearly separated
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.font = '600 36px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '8px';
   ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
 
-  y += 200;
+  y += 180;
 
   // Divider with color accent
   const dividerGrad = ctx.createLinearGradient(200, y, W-200, y);
@@ -4549,24 +4571,24 @@ function drawSessionContent(ctx, data){
 
   y += 100;
 
-  // Stats in horizontal row (elegant)
+  // Stats in horizontal row — italic for classy feel
   const stats = data.stats || [];
-  const statsToShow = stats.slice(0, 3); // Max 3 for clean layout
+  const statsToShow = stats.slice(0, 3);
   const colWidth = (W - 200) / statsToShow.length;
 
   statsToShow.forEach((stat, i) => {
     const cx = 100 + colWidth * i + colWidth / 2;
 
-    // Value
+    // Value in italic
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '700 68px "Bebas Neue", "SF Pro Display", sans-serif';
+    ctx.font = 'italic 400 64px "Bebas Neue", "SF Pro Display", sans-serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '0px';
     ctx.fillText(stat.value, cx, y);
 
-    // Label
+    // Label — upright bold (kept clean)
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.font = '600 24px "Space Grotesk", sans-serif';
+    ctx.font = '600 22px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '3px';
     ctx.fillText(stat.label.toUpperCase(), cx, y + 44);
   });
@@ -4603,32 +4625,32 @@ function drawWeeklyContent(ctx, data){
 
   let y = 480;
 
-  // "This Week" tag
+  // "This Week" tag — clean upright
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
   ctx.font = '700 32px "Space Grotesk", sans-serif';
   ctx.textAlign = 'center';
   ctx.letterSpacing = '10px';
   ctx.fillText('THIS WEEK', W/2, y);
 
-  y += 260;
+  y += 250;
 
-  // Big distance
+  // Big distance — italic
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '400 380px "Bebas Neue", -apple-system, sans-serif';
+  ctx.font = 'italic 400 360px "Bebas Neue", -apple-system, sans-serif';
   ctx.letterSpacing = '-6px';
   ctx.shadowColor = hexToRgba(data.color, 0.35);
   ctx.shadowBlur = 30;
   ctx.fillText(data.mainValue, W/2, y);
   ctx.shadowBlur = 0;
 
-  y += 30;
+  y += 85;
 
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  ctx.font = '600 40px "Space Grotesk", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '600 38px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '8px';
   ctx.fillText('KILOMETERS', W/2, y);
 
-  y += 180;
+  y += 170;
 
   // Divider
   const dividerGrad = ctx.createLinearGradient(200, y, W-200, y);
@@ -4644,7 +4666,7 @@ function drawWeeklyContent(ctx, data){
 
   y += 90;
 
-  // Stats grid — 2 rows
+  // Stats grid — italic values
   const stats = data.stats || [];
   const statsGrid = stats.slice(0, 4);
   const cols = 2;
@@ -4658,7 +4680,7 @@ function drawWeeklyContent(ctx, data){
     const cy = y + row * rowH;
 
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '700 58px "Bebas Neue", sans-serif';
+    ctx.font = 'italic 400 56px "Bebas Neue", sans-serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '0px';
     ctx.fillText(String(stat.value), cx, cy);
@@ -4687,9 +4709,9 @@ function drawPRContent(ctx, data){
 
   let y = 540;
 
-  // "NEW PR" badge with glow
+  // "NEW PR" — italic dramatic
   ctx.fillStyle = '#FFD700';
-  ctx.font = '400 100px "Bebas Neue", sans-serif';
+  ctx.font = 'italic 400 100px "Bebas Neue", sans-serif';
   ctx.textAlign = 'center';
   ctx.letterSpacing = '4px';
   ctx.shadowColor = 'rgba(255,215,0,0.5)';
@@ -4707,26 +4729,25 @@ function drawPRContent(ctx, data){
 
   y += 220;
 
-  // Big value
+  // Big value — italic
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '400 300px "Bebas Neue", sans-serif';
+  ctx.font = 'italic 400 280px "Bebas Neue", sans-serif';
   ctx.letterSpacing = '-4px';
   ctx.shadowColor = 'rgba(255,215,0,0.4)';
   ctx.shadowBlur = 30;
   ctx.fillText(data.mainValue, W/2, y);
   ctx.shadowBlur = 0;
 
-  y += 30;
+  y += 75;
 
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  ctx.font = '600 36px "Space Grotesk", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '600 34px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '8px';
   ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
 
   y += 140;
 
   if(data.previousValue){
-    // Divider
     const dividerGrad = ctx.createLinearGradient(250, y, W-250, y);
     dividerGrad.addColorStop(0, 'transparent');
     dividerGrad.addColorStop(0.5, 'rgba(255,215,0,0.3)');
@@ -4741,17 +4762,27 @@ function drawPRContent(ctx, data){
     y += 90;
 
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = '500 32px "Space Grotesk", sans-serif';
+    ctx.font = 'italic 500 32px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '0px';
     ctx.fillText('Previous: ' + data.previousValue, W/2, y);
 
     if(data.improvement){
       y += 65;
       ctx.fillStyle = '#FFD700';
-      ctx.font = '700 36px "Space Grotesk", sans-serif';
+      ctx.font = 'italic 700 36px "Space Grotesk", sans-serif';
       ctx.fillText(data.improvement, W/2, y);
     }
   }
+
+  y += 120;
+
+  if(data.caption && data.caption.trim()){
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 38px "Space Grotesk", "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 50);
+  }
+}
 
   y += 120;
 
@@ -4798,6 +4829,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight){
   }
   lines.push(line.trim());
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+}
 }
 // Open share modal for a specific session
 function openShareForSession(sessionId, kind){
@@ -6713,5 +6745,53 @@ document.querySelectorAll('.modal-bg').forEach(m => {
     else document.exitFullscreen();
   });
 })();
+// ==================== V5.4 Patch 14.2 — Share from Day Detail ====================
+// Extend showDayDetail to add share buttons for logged sessions
+const _origShowDayDetail = window.showDayDetail;
+window.showDayDetail = function(planItem, dayIdx, weekStartDate){
+  _origShowDayDetail(planItem, dayIdx, weekStartDate);
+
+  // Only add share buttons for LOGGED sessions
+  if(!planItem || planItem.type !== 'logged') return;
+
+  setTimeout(() => {
+    const body = document.getElementById('detailBody');
+    if(!body) return;
+    if(body.querySelector('.day-share-btn')) return; // already added
+
+    // Find where to insert (before the "made a mistake?" delete section or at end)
+    const deleteSection = body.querySelector('div[style*="Made a mistake"]');
+    const insertBefore = deleteSection ? deleteSection.parentElement : null;
+
+    // Create share section
+    const shareWrap = document.createElement('div');
+    shareWrap.style.cssText = 'margin-top:14px;padding-top:14px;border-top:1px solid var(--border)';
+    shareWrap.innerHTML = '<div style="font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:10px">Share This Session</div>';
+
+    planItem.sessions.forEach((s) => {
+      let btnLabel;
+      if(s.kind === 'run') btnLabel = '🎨 Share ' + capitalize(s.type) + ' Run';
+      else if(s.kind === 'gym') btnLabel = '🎨 Share ' + getGymLabel(s.type);
+      else btnLabel = '🎨 Share ' + s.name;
+
+      const btn = document.createElement('button');
+      btn.className = 'share-btn full day-share-btn';
+      btn.style.marginBottom = '6px';
+      btn.innerHTML = btnLabel;
+      btn.onclick = () => {
+        closeModal('detailModal');
+        setTimeout(() => openShareForSession(s.id, s.kind), 200);
+      };
+      shareWrap.appendChild(btn);
+    });
+
+    // Insert
+    if(insertBefore){
+      body.insertBefore(shareWrap, insertBefore);
+    } else {
+      body.appendChild(shareWrap);
+    }
+  }, 150);
+};
 </script>
 </body></html>
