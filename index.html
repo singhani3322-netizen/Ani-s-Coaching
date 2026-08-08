@@ -4799,7 +4799,6 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight){
   lines.push(line.trim());
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
 }
-}
 // Open share modal for a specific session
 function openShareForSession(sessionId, kind){
   const arr = kind === 'run' ? state.runs : kind === 'gym' ? state.gyms : state.activities;
