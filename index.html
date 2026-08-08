@@ -4,6 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Not Strava — Your Uncertified Coach</title>
 <script src="https://d1hilrkz3ka39e.cloudfront.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<link rel="stylesheet" href="https://d1hilrkz3ka39e.cloudfront.net/unpkg/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://d1hilrkz3ka39e.cloudfront.net/unpkg/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -596,6 +598,61 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .photo-remove{background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.3);color:var(--danger);padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;width:100%;display:none}
 .photo-remove.active{display:block}
 .photo-loading{text-align:center;padding:20px;color:var(--text-dim);font-size:12px}
+/* V5.4 Patch 14 — Live Map & Route Visualization */
+.map-toggle{position:absolute;top:20px;left:20px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px);transition:all 0.15s}
+.map-toggle:hover{background:rgba(0,0,0,0.8);border-color:var(--accent)}
+.map-toggle:active{transform:scale(0.94)}
+.map-toggle.active{background:var(--accent);border-color:var(--accent);color:#001210}
+
+/* Live map view */
+.live-session.map-mode .live-metrics,
+.live-session.map-mode .live-status{display:none}
+.live-session.map-mode{padding:0;background:#000}
+.live-session.map-mode .live-header{position:absolute;top:0;left:0;right:0;padding:20px;z-index:100;background:linear-gradient(180deg,rgba(0,0,0,0.7),transparent);pointer-events:none}
+.live-session.map-mode .live-header > *{pointer-events:auto}
+.live-session.map-mode .live-controls{position:absolute;bottom:0;left:0;right:0;padding:20px;z-index:100;max-width:none;background:linear-gradient(0deg,rgba(0,0,0,0.85),transparent)}
+
+.live-map-container{position:absolute;inset:0;background:#0F1419;z-index:1}
+.live-map-container.hidden{display:none}
+#liveMapDiv{width:100%;height:100%}
+
+.map-overlay-metrics{position:absolute;bottom:100px;left:20px;right:20px;background:rgba(15,20,25,0.92);backdrop-filter:blur(20px);border:1px solid var(--border-2);border-radius:16px;padding:14px 18px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+.map-metrics-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center}
+.map-metric-item{min-width:0}
+.map-metric-val{font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;line-height:1;color:var(--text);font-variant-numeric:tabular-nums}
+.map-metric-lbl{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px;font-weight:700}
+
+.map-recenter{position:absolute;bottom:200px;right:20px;background:rgba(15,20,25,0.92);backdrop-filter:blur(8px);border:1px solid var(--accent);color:var(--accent);width:52px;height:52px;border-radius:50%;font-size:22px;cursor:pointer;font-family:inherit;display:none;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+.map-recenter.active{display:flex}
+.map-recenter:active{transform:scale(0.92)}
+
+/* Map preview in session detail */
+.route-preview{width:100%;height:180px;background:var(--surface-2);border-radius:12px;overflow:hidden;margin:12px 0;position:relative;cursor:pointer}
+.route-preview:hover{outline:2px solid var(--accent)}
+.route-preview-map{width:100%;height:100%}
+.route-preview-expand{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;pointer-events:none;letter-spacing:0.05em}
+.route-preview-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-faint);font-size:12px;font-style:italic}
+
+/* Full-screen route modal */
+#routeModal .modal{max-width:600px;padding:0;overflow:hidden}
+#routeModal .modal-head{padding:16px 20px;border-bottom:1px solid var(--border);margin:0}
+.route-modal-map{width:100%;height:60vh;min-height:400px;background:var(--surface-2)}
+.route-modal-stats{padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-top:1px solid var(--border)}
+.rm-stat-val{font-size:15px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.rm-stat-lbl{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;font-weight:700}
+
+/* Leaflet map custom styles */
+.leaflet-container{background:#242A33 !important}
+.leaflet-popup-content-wrapper{background:var(--surface) !important;color:var(--text) !important;border-radius:10px !important}
+.leaflet-popup-tip{background:var(--surface) !important}
+.leaflet-control-attribution{background:rgba(0,0,0,0.6) !important;color:rgba(255,255,255,0.5) !important;font-size:9px !important;padding:2px 6px !important}
+.leaflet-control-attribution a{color:rgba(255,255,255,0.7) !important}
+.leaflet-control-zoom a{background:var(--surface) !important;color:var(--text) !important;border-color:var(--border) !important}
+.leaflet-bar{border:1px solid var(--border) !important}
+.custom-position-marker{background:#00D4AA;width:20px;height:20px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 20px rgba(0,212,170,0.7),0 0 0 4px rgba(0,212,170,0.3);animation:posPulse 2s infinite}
+@keyframes posPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.custom-start-marker{background:#FFD700;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(255,215,0,0.6)}
+.custom-km-marker{background:var(--surface);border:2px solid var(--accent);color:var(--accent);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,0.4)}
 </style>
 </head>
 <body>
@@ -1180,6 +1237,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="live-badge"><span class="live-dot"></span> <span id="liveBadgeText">TRACKING</span></div>
     <button class="live-minimize" onclick="minimizeLiveSession()" title="Minimize">−</button>
   </div>
+  <button class="map-toggle" id="mapToggleBtn" onclick="toggleMapMode()" title="Toggle map view">🗺️</button>
+  <div class="live-map-container hidden" id="liveMapContainer">
+    <div id="liveMapDiv"></div>
+    <div class="map-overlay-metrics" id="mapOverlayMetrics">
+      <div class="map-metrics-row">
+        <div class="map-metric-item">
+          <div class="map-metric-val" id="mapDist">0.00</div>
+          <div class="map-metric-lbl">km</div>
+        </div>
+        <div class="map-metric-item">
+          <div class="map-metric-val" id="mapTime">0:00</div>
+          <div class="map-metric-lbl">Time</div>
+        </div>
+        <div class="map-metric-item">
+          <div class="map-metric-val" id="mapPace">—</div>
+          <div class="map-metric-lbl">Pace/km</div>
+        </div>
+      </div>
+    </div>
+    <button class="map-recenter" id="mapRecenter" onclick="recenterMap()" title="Recenter">🎯</button>
+  </div>
   <div class="live-status" id="liveStatus">Getting GPS signal...</div>
   <div class="live-metrics">
     <div class="live-distance" id="liveDist">0.00</div>
@@ -1211,6 +1289,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="live-widget-time" id="widgetTime">0:00</div>
   </div>
   <div class="live-widget-expand">›</div>
+</div>
+<!-- Route Modal (V5.4 Patch 14) -->
+<div class="modal-bg" id="routeModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Your Route</div><button class="modal-close" onclick="closeModal('routeModal')">×</button></div>
+    <div class="route-modal-map" id="routeModalMap"></div>
+    <div class="route-modal-stats" id="routeModalStats"></div>
+  </div>
 </div>
 <div id="viz-controls" style="position:fixed;top:15px;right:15px;z-index:9999;display:flex;gap:8px">
   <button id="export-html-btn" class="viz-btn">Save HTML</button>
@@ -3810,6 +3896,227 @@ function finishSetup(withSample){
   setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
 
+// ==================== V5.4 PATCH 14 — GPS MAP VISUALIZATION ====================
+let liveMap = null;
+let liveMapLayer = null;
+let livePathLine = null;
+let livePositionMarker = null;
+let liveStartMarker = null;
+let liveKmMarkers = [];
+let mapFollowUser = true;
+let mapMode = false;
+
+function toggleMapMode(){
+  const container = document.getElementById('liveMapContainer');
+  const session = document.getElementById('liveSession');
+  const btn = document.getElementById('mapToggleBtn');
+
+  if(mapMode){
+    // Switch to dark stats view
+    container.classList.add('hidden');
+    session.classList.remove('map-mode');
+    btn.classList.remove('active');
+    btn.innerHTML = '🗺️';
+    mapMode = false;
+  } else {
+    // Switch to map view
+    container.classList.remove('hidden');
+    session.classList.add('map-mode');
+    btn.classList.add('active');
+    btn.innerHTML = '📊';
+    mapMode = true;
+    initLiveMap();
+    mapFollowUser = true;
+    document.getElementById('mapRecenter').classList.remove('active');
+    updateMapMetrics();
+  }
+}
+
+function initLiveMap(){
+  if(!window.L){
+    console.warn('Leaflet not loaded yet');
+    return;
+  }
+  if(liveMap){
+    // Map already exists — just resize and update
+    setTimeout(() => {
+      liveMap.invalidateSize();
+      centerMapOnUser();
+    }, 100);
+    return;
+  }
+
+  // Initial center: try to use last known position, or default
+  let center = [51.505, -0.09]; // London fallback
+  if(liveSession.lastPosition){
+    center = [liveSession.lastPosition.lat, liveSession.lastPosition.lon];
+  } else if(liveSession.route && liveSession.route.length > 0){
+    const first = liveSession.route[0];
+    center = [first.lat, first.lon];
+  }
+
+  liveMap = L.map('liveMapDiv', {
+    zoomControl: true,
+    attributionControl: true,
+    scrollWheelZoom: true,
+    doubleClickZoom: true,
+    boxZoom: false,
+    keyboard: false
+  }).setView(center, 16);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(liveMap);
+
+  // Detect user panning away (disable follow)
+  liveMap.on('dragstart', () => {
+    if(mapFollowUser){
+      mapFollowUser = false;
+      document.getElementById('mapRecenter').classList.add('active');
+    }
+  });
+
+  // Draw existing route path if we have one
+  drawLivePath();
+  drawLiveStartMarker();
+  updateLivePositionMarker();
+  drawKmMarkers();
+
+  // Force resize after render
+  setTimeout(() => liveMap.invalidateSize(), 150);
+}
+
+function drawLivePath(){
+  if(!liveMap || !liveSession.route || liveSession.route.length < 2) return;
+
+  const coords = liveSession.route.map(p => [p.lat, p.lon]);
+
+  // Choose color based on session type
+  const colorMap = {easy:'#4CAF50', moderate:'#FF9800', hard:'#EF5350'};
+  const color = colorMap[liveSession.sessionType] || '#00D4AA';
+
+  if(livePathLine){
+    livePathLine.setLatLngs(coords);
+  } else {
+    livePathLine = L.polyline(coords, {
+      color: color,
+      weight: 5,
+      opacity: 0.9,
+      lineCap: 'round',
+      lineJoin: 'round'
+    }).addTo(liveMap);
+  }
+}
+
+function drawLiveStartMarker(){
+  if(!liveMap || !liveSession.route || liveSession.route.length === 0) return;
+  if(liveStartMarker) return; // Already drawn
+
+  const start = liveSession.route[0];
+  const icon = L.divIcon({
+    className: 'custom-start-marker',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+  liveStartMarker = L.marker([start.lat, start.lon], {icon: icon}).addTo(liveMap);
+}
+
+function updateLivePositionMarker(){
+  if(!liveMap || !liveSession.lastPosition) return;
+
+  const pos = [liveSession.lastPosition.lat, liveSession.lastPosition.lon];
+
+  if(livePositionMarker){
+    livePositionMarker.setLatLng(pos);
+  } else {
+    const icon = L.divIcon({
+      className: 'custom-position-marker',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10]
+    });
+    livePositionMarker = L.marker(pos, {icon: icon}).addTo(liveMap);
+  }
+
+  if(mapFollowUser){
+    liveMap.setView(pos, liveMap.getZoom(), {animate: true, duration: 0.5});
+  }
+}
+
+function drawKmMarkers(){
+  if(!liveMap || !liveSession.route) return;
+
+  // Clear old markers
+  liveKmMarkers.forEach(m => liveMap.removeLayer(m));
+  liveKmMarkers = [];
+
+  // Walk through route and find km milestones
+  let cumDist = 0;
+  let nextKm = 1;
+  for(let i = 1; i < liveSession.route.length; i++){
+    const prev = liveSession.route[i-1];
+    const curr = liveSession.route[i];
+    const segDist = haversineDistance(prev.lat, prev.lon, curr.lat, curr.lon) / 1000;
+    cumDist += segDist;
+
+    while(cumDist >= nextKm && nextKm <= Math.floor(liveSession.distance)){
+      const icon = L.divIcon({
+        className: 'custom-km-marker',
+        html: nextKm,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+      const marker = L.marker([curr.lat, curr.lon], {icon: icon}).addTo(liveMap);
+      liveKmMarkers.push(marker);
+      nextKm++;
+    }
+  }
+}
+
+function centerMapOnUser(){
+  if(!liveMap || !liveSession.lastPosition) return;
+  liveMap.setView([liveSession.lastPosition.lat, liveSession.lastPosition.lon], 16, {animate: true});
+}
+
+function recenterMap(){
+  mapFollowUser = true;
+  document.getElementById('mapRecenter').classList.remove('active');
+  centerMapOnUser();
+}
+
+function updateMapMetrics(){
+  if(!liveSession.active) return;
+  const elapsed = liveSession.paused
+    ? (liveSession.pauseStart - liveSession.startTime - liveSession.pausedTime) / 1000
+    : (Date.now() - liveSession.startTime - liveSession.pausedTime) / 1000;
+
+  const dEl = document.getElementById('mapDist');
+  const tEl = document.getElementById('mapTime');
+  const pEl = document.getElementById('mapPace');
+  if(dEl) dEl.textContent = liveSession.distance.toFixed(2);
+  if(tEl) tEl.textContent = formatLiveTime(elapsed);
+  if(pEl) pEl.textContent = formatLivePace(liveSession.currentPaceSec);
+}
+
+function cleanupLiveMap(){
+  if(liveMap){
+    liveMap.remove();
+    liveMap = null;
+  }
+  liveMapLayer = null;
+  livePathLine = null;
+  livePositionMarker = null;
+  liveStartMarker = null;
+  liveKmMarkers = [];
+  mapFollowUser = true;
+  mapMode = false;
+  const container = document.getElementById('liveMapContainer');
+  const session = document.getElementById('liveSession');
+  const btn = document.getElementById('mapToggleBtn');
+  if(container) container.classList.add('hidden');
+  if(session) session.classList.remove('map-mode');
+  if(btn){ btn.classList.remove('active'); btn.innerHTML = '🗺️'; }
+}
 // ==================== V5.4 PATCH 13B — SHARE CARDS ====================
 let currentShareData = null;
 
