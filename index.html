@@ -565,6 +565,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .tab-section{display:none}
 .tab-section.active{display:block;animation:tabFade 0.2s ease-out}
 @keyframes tabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+/* V5.4 Patch 13B — Share Cards */
+.share-btn{background:linear-gradient(135deg,var(--accent),#00A88A);color:#001210;border:none;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.05em;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s}
+.share-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,212,170,0.25)}
+.share-btn:active{transform:scale(0.97)}
+.share-btn.full{width:100%;justify-content:center;padding:14px}
+.share-btn.small{padding:6px 10px;font-size:11px}
+
+/* Share preview modal */
+#shareModal .modal{max-width:420px}
+.share-preview-wrap{background:#000;border-radius:16px;padding:12px;margin-bottom:16px;text-align:center}
+.share-preview-canvas{max-width:100%;height:auto;border-radius:8px;display:block;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.share-caption-input{width:100%;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;resize:none;line-height:1.5}
+.share-caption-input:focus{outline:none;border-color:var(--accent)}
+.share-caption-hint{font-size:11px;color:var(--text-faint);margin-top:4px;display:flex;justify-content:space-between}
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.share-loading{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px}
+.share-loading-spinner{width:32px;height:32px;border:3px solid var(--surface-2);border-top-color:var(--accent);border-radius:50%;animation:shareSpin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes shareSpin{to{transform:rotate(360deg)}}
+
+/* PR celebration toast */
+.pr-toast{background:linear-gradient(135deg,#2A3241,#3A2600)!important;border-color:#FFD700!important}
+.pr-toast .toast-icon{background:#FFD700!important;color:#3A2600!important}
 </style>
 </head>
 <body>
@@ -1100,6 +1122,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div class="pill-row-5" id="prefColdRow"><div class="pill" data-val="0">0°C</div><div class="pill" data-val="5">5°C</div><div class="pill" data-val="10">10°C</div><div class="pill" data-val="15">15°C</div><div class="pill" data-val="18">18°C</div></div>
     </div>
     <button class="btn btn-primary btn-full mt-2" onclick="saveWeatherPrefs()">Save Preferences</button>
+  </div>
+</div>
+<!-- Share Modal (V5.4 Patch 13B) -->
+<div class="modal-bg" id="shareModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-title" id="shareModalTitle">Share Card</div><button class="modal-close" onclick="closeModal('shareModal')">×</button></div>
+    <div class="share-preview-wrap"><canvas id="shareCanvas" class="share-preview-canvas" width="1080" height="1920"></canvas></div>
+    <div class="field">
+      <label class="field-label">Add a caption (optional)</label>
+      <textarea class="share-caption-input" id="shareCaptionInput" rows="2" maxlength="80" placeholder="How did it feel? (max 80 chars)" oninput="updateSharePreview()"></textarea>
+      <div class="share-caption-hint"><span>Optional — leave blank for cleaner card</span><span id="shareCaptionCount">0 / 80</span></div>
+    </div>
+    <div class="share-actions">
+      <button class="btn btn-secondary" onclick="downloadShareCard()">📥 Download</button>
+      <button class="btn btn-primary" onclick="nativeShareCard()">📤 Share</button>
+    </div>
   </div>
 </div>
 <!-- Settings Modal -->
@@ -3755,6 +3794,606 @@ function finishSetup(withSample){
   setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
 
+// ==================== V5.4 PATCH 13B — SHARE CARDS ====================
+let currentShareData = null;
+
+// Colors for session types
+const SHARE_COLORS = {
+  easy: '#4CAF50', moderate: '#FF9800', hard: '#EF5350', long: '#B47CFF',
+  upper: '#B47CFF', lower: '#FF8A3D', push: '#B47CFF', pull: '#B47CFF',
+  legs: '#FF8A3D', full: '#FF6B9D', mobility: '#26D9C1', cardio: '#4DD0E1',
+  activity: '#FFD700', pr: '#FFD700', week: '#00D4AA'
+};
+
+function drawShareCard(ctx, data){
+  const W = 1080, H = 1920;
+
+  // Background gradient
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+  bgGrad.addColorStop(0, '#0F1419');
+  bgGrad.addColorStop(0.5, '#1A1F26');
+  bgGrad.addColorStop(1, '#242A33');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle accent glow (top right)
+  const glow = ctx.createRadialGradient(W * 0.85, H * 0.15, 0, W * 0.85, H * 0.15, 700);
+  glow.addColorStop(0, hexToRgba(data.color, 0.18));
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // Border
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(20, 20, W-40, H-40);
+
+  // Draw content based on type
+  if(data.type === 'session') drawSessionContent(ctx, data);
+  else if(data.type === 'weekly') drawWeeklyContent(ctx, data);
+  else if(data.type === 'pr') drawPRContent(ctx, data);
+}
+
+function drawSessionContent(ctx, data){
+  const W = 1080;
+  let y = 160;
+
+  // Header
+  ctx.fillStyle = '#E8EAED';
+  ctx.font = '800 42px -apple-system, "SF Pro Display", "Segoe UI", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '4px';
+  ctx.fillText('NOT STRAVA', 80, y);
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '500 28px -apple-system, sans-serif';
+  ctx.fillText(data.dateStr.toUpperCase(), 80, y + 40);
+
+  y += 260;
+
+  // Big distance number OR duration
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '800 260px -apple-system, "SF Pro Display", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(data.mainValue, W/2, y);
+
+  y += 40;
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '600 42px -apple-system, sans-serif';
+  ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
+
+  y += 130;
+
+  // Session type with colored dot
+  drawColoredDot(ctx, W/2 - 200, y - 20, 24, data.color);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '700 52px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(data.sessionLabel, W/2 - 160, y);
+
+  y += 100;
+
+  // Divider line
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(160, y);
+  ctx.lineTo(W-160, y);
+  ctx.stroke();
+
+  y += 80;
+
+  // Stats rows
+  const stats = data.stats || [];
+  stats.forEach((stat, i) => {
+    ctx.fillStyle = '#9AA0A6';
+    ctx.font = '600 32px -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(stat.label.toUpperCase(), 160, y);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 44px -apple-system, "SF Pro Display", sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(stat.value, W-160, y);
+
+    y += 70;
+  });
+
+  y += 40;
+
+  // Divider before caption (only if caption exists)
+  if(data.caption && data.caption.trim()){
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(160, y);
+    ctx.lineTo(W-160, y);
+    ctx.stroke();
+
+    y += 80;
+
+    // Caption in italic style
+    ctx.fillStyle = '#E8EAED';
+    ctx.font = 'italic 500 36px -apple-system, "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 200, 50);
+  }
+}
+
+function drawWeeklyContent(ctx, data){
+  const W = 1080;
+  let y = 160;
+
+  ctx.fillStyle = '#E8EAED';
+  ctx.font = '800 42px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('NOT STRAVA', 80, y);
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '500 26px -apple-system, sans-serif';
+  ctx.fillText(data.dateRange.toUpperCase(), 80, y + 40);
+
+  y += 240;
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '600 36px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('THIS WEEK', W/2, y);
+
+  y += 100;
+
+  // Big number
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '800 280px -apple-system, sans-serif';
+  ctx.fillText(data.mainValue, W/2, y + 100);
+
+  y += 160;
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '600 40px -apple-system, sans-serif';
+  ctx.fillText('KILOMETERS', W/2, y);
+
+  y += 140;
+
+  // Divider
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(160, y);
+  ctx.lineTo(W-160, y);
+  ctx.stroke();
+
+  y += 80;
+
+  // Stats
+  const stats = data.stats || [];
+  stats.forEach(stat => {
+    ctx.fillStyle = '#9AA0A6';
+    ctx.font = '600 30px -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(stat.label.toUpperCase(), 160, y);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 44px -apple-system, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(stat.value, W-160, y);
+
+    y += 68;
+  });
+
+  y += 60;
+
+  if(data.caption && data.caption.trim()){
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.beginPath();
+    ctx.moveTo(160, y);
+    ctx.lineTo(W-160, y);
+    ctx.stroke();
+    y += 70;
+    ctx.fillStyle = '#E8EAED';
+    ctx.font = 'italic 500 34px -apple-system, "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 200, 48);
+  }
+}
+
+function drawPRContent(ctx, data){
+  const W = 1080;
+  let y = 160;
+
+  // Golden trophy line
+  ctx.fillStyle = '#FFD700';
+  ctx.font = '800 42px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('🏆 NOT STRAVA', 80, y);
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '500 26px -apple-system, sans-serif';
+  ctx.fillText(data.dateStr.toUpperCase(), 80, y + 40);
+
+  y += 280;
+
+  // "NEW PR" tag
+  ctx.fillStyle = '#FFD700';
+  ctx.font = '800 60px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('NEW PR!', W/2, y);
+
+  y += 100;
+
+  // Category
+  ctx.fillStyle = '#E8EAED';
+  ctx.font = '700 44px -apple-system, sans-serif';
+  ctx.fillText(data.category, W/2, y);
+
+  y += 180;
+
+  // Big value
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '800 220px -apple-system, sans-serif';
+  ctx.fillText(data.mainValue, W/2, y);
+
+  y += 60;
+
+  ctx.fillStyle = '#9AA0A6';
+  ctx.font = '600 38px -apple-system, sans-serif';
+  ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
+
+  y += 140;
+
+  // Improvement details
+  if(data.previousValue){
+    ctx.strokeStyle = 'rgba(255,215,0,0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(200, y);
+    ctx.lineTo(W-200, y);
+    ctx.stroke();
+
+    y += 90;
+
+    ctx.fillStyle = '#9AA0A6';
+    ctx.font = '500 32px -apple-system, sans-serif';
+    ctx.fillText('Previous: ' + data.previousValue, W/2, y);
+
+    if(data.improvement){
+      y += 60;
+      ctx.fillStyle = '#FFD700';
+      ctx.font = '700 34px -apple-system, sans-serif';
+      ctx.fillText(data.improvement, W/2, y);
+    }
+  }
+
+  y += 100;
+
+  if(data.caption && data.caption.trim()){
+    ctx.strokeStyle = 'rgba(255,215,0,0.2)';
+    ctx.beginPath();
+    ctx.moveTo(160, y);
+    ctx.lineTo(W-160, y);
+    ctx.stroke();
+    y += 70;
+    ctx.fillStyle = '#E8EAED';
+    ctx.font = 'italic 500 34px "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 200, 48);
+  }
+}
+
+// Utility functions
+function drawColoredDot(ctx, x, y, radius, color){
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 20;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function hexToRgba(hex, alpha){
+  hex = hex.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = text.split(' ');
+  let line = '';
+  const lines = [];
+  for(let n = 0; n < words.length; n++){
+    const testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    if(metrics.width > maxWidth && n > 0){
+      lines.push(line.trim());
+      line = words[n] + ' ';
+    } else {
+      line = testLine;
+    }
+  }
+  lines.push(line.trim());
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+}
+// Open share modal for a specific session
+function openShareForSession(sessionId, kind){
+  const arr = kind === 'run' ? state.runs : kind === 'gym' ? state.gyms : state.activities;
+  const s = arr.find(x => x.id === sessionId);
+  if(!s) return;
+
+  const d = new Date(s.date);
+  const dateStr = d.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
+
+  let data = {
+    type: 'session',
+    dateStr: dateStr,
+    color: SHARE_COLORS[s.type] || SHARE_COLORS.easy,
+    caption: ''
+  };
+
+  if(kind === 'run'){
+    const paceSecPerKm = s.seconds / s.distance;
+    const kmh = (s.distance / (s.seconds / 3600)).toFixed(1);
+    data.mainValue = s.distance.toFixed(2);
+    data.mainUnit = 'Kilometers';
+    data.sessionLabel = capitalize(s.type) + ' Run';
+    data.stats = [
+      {label: 'Pace', value: formatLivePace(paceSecPerKm) + '/km'},
+      {label: 'Time', value: fmtTime(s.seconds)},
+      {label: 'Speed', value: kmh + ' km/h'}
+    ];
+  } else if(kind === 'gym'){
+    data.mainValue = s.duration;
+    data.mainUnit = 'Minutes';
+    data.sessionLabel = getGymLabel(s.type);
+    data.stats = [
+      {label: 'Type', value: getGymLabel(s.type)},
+      {label: 'Intensity', value: capitalize(s.intensity)}
+    ];
+  } else {
+    data.mainValue = s.duration;
+    data.mainUnit = 'Minutes';
+    data.sessionLabel = s.name;
+    data.stats = [
+      {label: 'Activity', value: s.name},
+      {label: 'Intensity', value: capitalize(s.intensity)}
+    ];
+  }
+
+  currentShareData = data;
+  document.getElementById('shareModalTitle').textContent = 'Share Session';
+  document.getElementById('shareCaptionInput').value = '';
+  document.getElementById('shareCaptionCount').textContent = '0 / 80';
+  updateSharePreview();
+  document.getElementById('shareModal').classList.add('active');
+}
+
+function openShareForWeek(){
+  const ws = weekStart(new Date());
+  const wsEnd = new Date(ws); wsEnd.setDate(wsEnd.getDate() + 6);
+  const wk = allSess().filter(s => new Date(s.date) >= ws);
+  const runs = wk.filter(s => s.kind === 'run');
+  const km = runs.reduce((a,r) => a+r.distance, 0);
+  const easyPct = runs.length > 0 ? Math.round((runs.filter(r=>r.type==='easy').length/runs.length)*100) : 0;
+
+  currentShareData = {
+    type: 'weekly',
+    dateRange: ws.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' — ' + wsEnd.toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    color: SHARE_COLORS.week,
+    mainValue: km.toFixed(1),
+    stats: [
+      {label: 'Runs', value: runs.length},
+      {label: 'Gym', value: wk.filter(s=>s.kind==='gym').length},
+      {label: 'Activities', value: wk.filter(s=>s.kind==='activity').length},
+      {label: 'Easy %', value: easyPct + '%'},
+      {label: 'Sessions', value: wk.length}
+    ],
+    caption: ''
+  };
+
+  document.getElementById('shareModalTitle').textContent = 'Share Week';
+  document.getElementById('shareCaptionInput').value = '';
+  document.getElementById('shareCaptionCount').textContent = '0 / 80';
+  updateSharePreview();
+  document.getElementById('shareModal').classList.add('active');
+}
+
+function openShareForPR(prData){
+  currentShareData = {
+    type: 'pr',
+    dateStr: new Date().toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'}),
+    color: SHARE_COLORS.pr,
+    category: prData.category,
+    mainValue: prData.value,
+    mainUnit: prData.unit || '',
+    previousValue: prData.previous || null,
+    improvement: prData.improvement || null,
+    caption: ''
+  };
+
+  document.getElementById('shareModalTitle').textContent = 'Share PR';
+  document.getElementById('shareCaptionInput').value = '';
+  document.getElementById('shareCaptionCount').textContent = '0 / 80';
+  updateSharePreview();
+  document.getElementById('shareModal').classList.add('active');
+}
+
+function updateSharePreview(){
+  if(!currentShareData) return;
+  const captionInput = document.getElementById('shareCaptionInput');
+  const caption = captionInput.value;
+  currentShareData.caption = caption;
+  document.getElementById('shareCaptionCount').textContent = caption.length + ' / 80';
+
+  const canvas = document.getElementById('shareCanvas');
+  const ctx = canvas.getContext('2d');
+  drawShareCard(ctx, currentShareData);
+}
+
+function downloadShareCard(){
+  const canvas = document.getElementById('shareCanvas');
+  const link = document.createElement('a');
+  const filename = 'notstrava_' + currentShareData.type + '_' + todayKey() + '.png';
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('Image downloaded', 'success');
+}
+
+async function nativeShareCard(){
+  const canvas = document.getElementById('shareCanvas');
+
+  if(!navigator.share){
+    downloadShareCard();
+    showToast('Downloaded (native share not available)', 'info');
+    return;
+  }
+
+  canvas.toBlob(async (blob) => {
+    if(!blob){ showToast('Share failed', 'warn'); return; }
+
+    const filename = 'notstrava_' + currentShareData.type + '.png';
+    const file = new File([blob], filename, {type: 'image/png'});
+
+    try {
+      if(navigator.canShare && navigator.canShare({files: [file]})){
+        await navigator.share({
+          files: [file],
+          title: 'Not Strava',
+          text: currentShareData.caption || 'From Not Strava'
+        });
+      } else {
+        // Fallback to download
+        downloadShareCard();
+      }
+    } catch(err){
+      if(err.name !== 'AbortError'){
+        console.error('Share failed:', err);
+        showToast('Share cancelled or failed', 'info');
+      }
+    }
+  }, 'image/png');
+}
+
+function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+// ==================== PR DETECTION (Patch 13B) ====================
+function detectPRs(newSession, kind){
+  if(kind !== 'run') return;
+
+  const prevRuns = state.runs.filter(r => r.id !== newSession.id);
+  if(prevRuns.length === 0) return;
+
+  const detected = [];
+
+  // Fastest pace by type
+  const sameTypeRuns = prevRuns.filter(r => r.type === newSession.type);
+  if(sameTypeRuns.length > 0){
+    const newPace = newSession.seconds / newSession.distance;
+    const bestPrevPace = Math.min(...sameTypeRuns.map(r => r.seconds / r.distance));
+    if(newPace < bestPrevPace && newSession.distance >= 2){
+      const improvement = Math.round(bestPrevPace - newPace);
+      detected.push({
+        category: 'Fastest ' + capitalize(newSession.type) + ' Pace',
+        value: formatLivePace(newPace),
+        unit: '/km',
+        previous: formatLivePace(bestPrevPace) + '/km',
+        improvement: improvement + ' sec/km faster'
+      });
+    }
+  }
+
+  // Longest run
+  const prevLongest = Math.max(...prevRuns.map(r => r.distance));
+  if(newSession.distance > prevLongest){
+    detected.push({
+      category: 'Longest Run',
+      value: newSession.distance.toFixed(2),
+      unit: 'km',
+      previous: prevLongest.toFixed(2) + ' km',
+      improvement: '+' + (newSession.distance - prevLongest).toFixed(2) + ' km further'
+    });
+  }
+
+  // Show PR toast for the biggest achievement
+  if(detected.length > 0){
+    const topPR = detected[0];
+    setTimeout(() => {
+      const t = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      document.getElementById('toastText').textContent = '🏆 New PR! ' + topPR.category + '. Tap to share.';
+      t.className = 'toast pr-toast';
+      icon.textContent = '★';
+      t.classList.add('show');
+      t.onclick = () => {
+        t.classList.remove('show');
+        t.onclick = null;
+        openShareForPR(topPR);
+      };
+      setTimeout(() => {
+        t.classList.remove('show');
+        t.onclick = null;
+      }, 6000);
+    }, 2500);
+  }
+}
+
+// Hook PR detection into saveRun (extends existing hook from Patch 12)
+const _prevSaveRun = window.saveRun;
+window.saveRun = function(){
+  const result = _prevSaveRun.apply(this, arguments);
+  if(state.runs.length > 0){
+    const lastRun = state.runs[state.runs.length - 1];
+    setTimeout(() => detectPRs(lastRun, 'run'), 1000);
+  }
+  return result;
+};
+
+// Add share button to session detail modal
+const _origShowSession = window.showSession;
+window.showSession = function(id, kind){
+  _origShowSession(id, kind);
+  setTimeout(() => {
+    const body = document.getElementById('detailBody');
+    if(!body) return;
+    // Add share button before the delete button
+    const deleteBtn = body.querySelector('.btn-danger');
+    if(deleteBtn){
+      const shareBtn = document.createElement('button');
+      shareBtn.className = 'share-btn full';
+      shareBtn.style.marginTop = '8px';
+      shareBtn.style.marginBottom = '8px';
+      shareBtn.innerHTML = '🎨 Share This Session';
+      shareBtn.onclick = () => {
+        closeModal('detailModal');
+        setTimeout(() => openShareForSession(id, kind), 200);
+      };
+      deleteBtn.parentNode.insertBefore(shareBtn, deleteBtn);
+    }
+  }, 100);
+};
+
+// Add share button to weekly recap
+const _origOpenWeeklyRecap = window.openWeeklyRecap;
+window.openWeeklyRecap = function(){
+  _origOpenWeeklyRecap();
+  setTimeout(() => {
+    const content = document.getElementById('recapContent');
+    if(!content) return;
+    if(content.querySelector('.share-btn')) return; // already added
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'share-btn full';
+    shareBtn.style.marginTop = '14px';
+    shareBtn.innerHTML = '🎨 Share This Week';
+    shareBtn.onclick = () => {
+      closeModal('recapModal');
+      setTimeout(() => openShareForWeek(), 200);
+    };
+    content.appendChild(shareBtn);
+  }, 100);
+};
 // ==================== V5.4 PATCH 13A — TABS ====================
 function switchMainTab(tab){
   const overview = document.getElementById('sectionOverview');
