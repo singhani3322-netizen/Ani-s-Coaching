@@ -587,6 +587,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 /* PR celebration toast */
 .pr-toast{background:linear-gradient(135deg,#2A3241,#3A2600)!important;border-color:#FFD700!important}
 .pr-toast .toast-icon{background:#FFD700!important;color:#3A2600!important}
+/* V5.4 Patch 13C-Lite — Photo Backgrounds */
+.photo-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.photo-btn{padding:11px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s}
+.photo-btn:hover{border-color:var(--accent);color:var(--accent)}
+.photo-btn:active{transform:scale(0.97)}
+.photo-btn.has-photo{border-color:var(--accent);background:rgba(0,212,170,0.08);color:var(--accent)}
+.photo-remove{background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.3);color:var(--danger);padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;width:100%;display:none}
+.photo-remove.active{display:block}
+.photo-loading{text-align:center;padding:20px;color:var(--text-dim);font-size:12px}
 </style>
 </head>
 <body>
@@ -1130,6 +1139,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title" id="shareModalTitle">Share Card</div><button class="modal-close" onclick="closeModal('shareModal')">×</button></div>
     <div class="share-preview-wrap"><canvas id="shareCanvas" class="share-preview-canvas" width="1080" height="1920"></canvas></div>
+<div class="photo-controls">
+      <label class="photo-btn" for="photoCameraInput"><span>📷</span> Take Photo</label>
+      <label class="photo-btn" for="photoGalleryInput"><span>🖼️</span> From Gallery</label>
+      <input type="file" id="photoCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoSelect(event)">
+      <input type="file" id="photoGalleryInput" accept="image/*" style="display:none" onchange="handlePhotoSelect(event)">
+    </div>
+    <button class="photo-remove" id="photoRemoveBtn" onclick="removePhoto()">✕ Remove Photo</button>
     <div class="field">
       <label class="field-label">Add a caption (optional)</label>
       <textarea class="share-caption-input" id="shareCaptionInput" rows="2" maxlength="80" placeholder="How did it feel? (max 80 chars)" oninput="updateSharePreview()"></textarea>
@@ -4220,6 +4236,153 @@ function openShareForPR(prData){
   document.getElementById('shareModal').classList.add('active');
 }
 
+// ==================== V5.4 Patch 13C-Lite — Photo Backgrounds ====================
+let sharePhotoImage = null;
+
+function handlePhotoSelect(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  // Validate size (max 10MB)
+  if(file.size > 10 * 1024 * 1024){
+    showToast('Image too large (max 10MB)', 'warn');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      sharePhotoImage = img;
+      currentShareData.hasPhoto = true;
+      updateSharePreview();
+      showPhotoRemoveButton(true);
+      showToast('Photo added', 'success', 2000);
+    };
+    img.onerror = function(){
+      showToast('Could not load image', 'warn');
+    };
+    img.src = e.target.result;
+  };
+  reader.onerror = function(){
+    showToast('Failed to read file', 'warn');
+  };
+  reader.readAsDataURL(file);
+
+  // Reset input so same file can be selected again if removed
+  event.target.value = '';
+}
+
+function removePhoto(){
+  sharePhotoImage = null;
+  if(currentShareData) currentShareData.hasPhoto = false;
+  updateSharePreview();
+  showPhotoRemoveButton(false);
+  showToast('Photo removed', 'info', 2000);
+}
+
+function showPhotoRemoveButton(show){
+  const btn = document.getElementById('photoRemoveBtn');
+  if(btn){
+    btn.classList.toggle('active', show);
+  }
+  // Also style the photo buttons
+  document.querySelectorAll('.photo-btn').forEach(b => {
+    b.classList.toggle('has-photo', show);
+  });
+}
+
+function drawPhotoBackground(ctx, img){
+  const W = 1080, H = 1920;
+
+  // Calculate scale to cover the entire canvas (like CSS cover)
+  const scale = Math.max(W / img.width, H / img.height);
+  const scaledW = img.width * scale;
+  const scaledH = img.height * scale;
+  const offsetX = (W - scaledW) / 2;
+  const offsetY = (H - scaledH) / 2;
+
+  // Draw photo
+  ctx.drawImage(img, offsetX, offsetY, scaledW, scaledH);
+
+  // Dark gradient overlay for text readability
+  const overlay = ctx.createLinearGradient(0, 0, 0, H);
+  overlay.addColorStop(0, 'rgba(0,0,0,0.55)');
+  overlay.addColorStop(0.4, 'rgba(0,0,0,0.45)');
+  overlay.addColorStop(1, 'rgba(0,0,0,0.75)');
+  ctx.fillStyle = overlay;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle color accent (using session color)
+  const color = currentShareData && currentShareData.color ? currentShareData.color : '#00D4AA';
+  const accent = ctx.createRadialGradient(W * 0.85, H * 0.15, 0, W * 0.85, H * 0.15, 700);
+  accent.addColorStop(0, hexToRgba(color, 0.15));
+  accent.addColorStop(1, 'transparent');
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, W, H);
+
+  // Thin border
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(20, 20, W-40, H-40);
+}
+
+// Override drawShareCard to support photo backgrounds
+const _originalDrawShareCard = drawShareCard;
+drawShareCard = function(ctx, data){
+  const W = 1080, H = 1920;
+  ctx.clearRect(0, 0, W, H);
+
+  if(sharePhotoImage && data.hasPhoto){
+    // Photo mode
+    drawPhotoBackground(ctx, sharePhotoImage);
+  } else {
+    // Regular gradient mode — replicate original background
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#0F1419');
+    bgGrad.addColorStop(0.5, '#1A1F26');
+    bgGrad.addColorStop(1, '#242A33');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    const glow = ctx.createRadialGradient(W * 0.85, H * 0.15, 0, W * 0.85, H * 0.15, 700);
+    glow.addColorStop(0, hexToRgba(data.color, 0.18));
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(20, 20, W-40, H-40);
+  }
+
+  // Draw content
+  if(data.type === 'session') drawSessionContent(ctx, data);
+  else if(data.type === 'weekly') drawWeeklyContent(ctx, data);
+  else if(data.type === 'pr') drawPRContent(ctx, data);
+};
+
+// Reset photo state when opening any share modal
+const _origOpenSession = window.openShareForSession;
+window.openShareForSession = function(sessionId, kind){
+  sharePhotoImage = null;
+  showPhotoRemoveButton(false);
+  _origOpenSession(sessionId, kind);
+};
+
+const _origOpenWeek = window.openShareForWeek;
+window.openShareForWeek = function(){
+  sharePhotoImage = null;
+  showPhotoRemoveButton(false);
+  _origOpenWeek();
+};
+
+const _origOpenPR = window.openShareForPR;
+window.openShareForPR = function(prData){
+  sharePhotoImage = null;
+  showPhotoRemoveButton(false);
+  _origOpenPR(prData);
+};
 function updateSharePreview(){
   if(!currentShareData) return;
   const captionInput = document.getElementById('shareCaptionInput');
