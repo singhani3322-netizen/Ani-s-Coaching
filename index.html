@@ -1,4 +1,4 @@
-<!DOCTYPE html>   
+<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -488,6 +488,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .weather-loc-prompt-title{font-size:13px;font-weight:700;margin-bottom:8px}
 .weather-loc-prompt-sub{font-size:11px;color:var(--text-dim);margin-bottom:12px}
 .weather-error{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.2);border-radius:10px;padding:14px;font-size:12px;color:var(--text-dim);line-height:1.5;text-align:center}
+/* V5.4 Patch 12 — GPS Live Tracker */
+.live-session{position:fixed;inset:0;background:linear-gradient(180deg,#0A0E13 0%,var(--bg) 100%);z-index:5000;display:none;flex-direction:column;padding:20px;overflow:hidden}
+.live-session.active{display:flex}
+.live-session.minimized{display:none}
+.live-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.3);color:var(--danger);font-size:10px;font-weight:800;padding:5px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.15em}
+.live-dot{width:8px;height:8px;background:var(--danger);border-radius:50%;animation:livePulse 1.4s infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.75)}}
+.live-minimize{background:transparent;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;padding:4px 10px;font-family:inherit;line-height:1}
+.live-status{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.2em;margin-top:4px;font-weight:700;text-align:center}
+.live-status.paused{color:var(--warn)}
+.live-status.searching{color:var(--warn);animation:livePulse 1.5s infinite}
+.live-metrics{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 0}
+.live-distance{font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-size:88px;font-weight:800;letter-spacing:-0.06em;line-height:0.9;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:2px}
+.live-distance-unit{font-size:16px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.2em;font-weight:700;margin-bottom:24px}
+.live-mid-metrics{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:340px;margin-bottom:24px}
+.live-metric-block{text-align:center}
+.live-metric-value{font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-size:36px;font-weight:800;letter-spacing:-0.03em;line-height:1;color:var(--text);font-variant-numeric:tabular-nums}
+.live-metric-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;font-weight:700;margin-top:6px}
+.live-target{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;width:100%;max-width:340px;font-size:12px;color:var(--text-dim);text-align:center;line-height:1.5}
+.live-target strong{color:var(--text);font-weight:700}
+.live-target.on-pace{border-color:rgba(76,175,80,0.35);background:rgba(76,175,80,0.05)}
+.live-target.on-pace strong{color:var(--easy)}
+.live-target.slow{border-color:rgba(255,176,32,0.35);background:rgba(255,176,32,0.05)}
+.live-target.fast{border-color:rgba(92,158,255,0.35);background:rgba(92,158,255,0.05)}
+.live-target.slow strong{color:var(--warn)}
+.live-target.fast strong{color:#5C9EFF}
+.live-warnings{width:100%;max-width:340px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.3);border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:11px;color:var(--warn);text-align:center;line-height:1.4;display:flex;align-items:center;justify-content:center;gap:6px}
+.live-warnings.hidden{display:none}
+.live-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:340px;margin:0 auto}
+.live-btn{padding:16px;border-radius:14px;border:none;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.live-btn:active{transform:scale(0.96)}
+.live-btn-pause{background:var(--warn);color:#3A2600}
+.live-btn-pause:hover{background:#E09010}
+.live-btn-resume{background:var(--accent);color:#001210}
+.live-btn-end{background:var(--danger);color:#3A0000;position:relative;overflow:hidden}
+.live-btn-end.holding::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.2);width:0%;transition:width 2s linear;pointer-events:none}
+.live-btn-end.holding.active::before{width:100%}
+.live-voice-toggle{position:absolute;top:20px;right:60px;background:transparent;border:1px solid var(--border);color:var(--text-dim);width:36px;height:36px;border-radius:50%;font-size:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center}
+.live-voice-toggle.on{border-color:var(--accent);color:var(--accent)}
+
+/* Floating widget when minimized */
+.live-widget{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:10px 14px;z-index:4999;display:none;align-items:center;gap:10px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 0 1px var(--accent-glow);max-width:calc(100vw - 40px);animation:widgetSlide 0.3s ease-out}
+.live-widget.active{display:flex}
+@keyframes widgetSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.live-widget-dot{width:8px;height:8px;background:var(--danger);border-radius:50%;animation:livePulse 1.4s infinite;flex-shrink:0}
+.live-widget-info{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.live-widget-dist{font-size:14px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.live-widget-time{font-size:10px;color:var(--text-dim);font-variant-numeric:tabular-nums}
+.live-widget-expand{color:var(--text-dim);font-size:16px;flex-shrink:0}
+
+/* Resume prompt banner */
+.resume-banner{background:linear-gradient(135deg,rgba(239,83,80,0.1),rgba(255,138,61,0.05));border:1px solid rgba(239,83,80,0.35);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.resume-banner.hidden{display:none}
+.resume-icon{width:32px;height:32px;background:var(--danger);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.resume-content{flex:1}
+.resume-title{font-size:13px;font-weight:800;margin-bottom:2px}
+.resume-body{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
+.resume-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* GPS accuracy indicator */
+.gps-accuracy{font-size:10px;color:var(--text-faint);margin-top:4px;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;text-align:center}
+.gps-accuracy.good{color:var(--easy)}
+.gps-accuracy.medium{color:var(--warn)}
+.gps-accuracy.poor{color:var(--danger)}
 </style>
 </head>
 <body>
@@ -633,6 +698,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   </div>
   
   <div class="container">
+<div class="resume-banner hidden" id="resumeBanner">
+      <div class="resume-icon">▶</div>
+      <div class="resume-content">
+        <div class="resume-title">Session in progress</div>
+        <div class="resume-body" id="resumeBody"></div>
+        <div class="resume-actions">
+          <button class="btn btn-primary btn-sm" onclick="resumeSession()">Resume</button>
+          <button class="btn btn-secondary btn-sm" onclick="endStaleSession()">End &amp; Save</button>
+          <button class="btn btn-ghost btn-sm" onclick="discardStaleSession()">Discard</button>
+        </div>
+      </div>
+    </div>
     <div class="reminder-banner hidden" id="reminderBanner">
       <div class="rb-icon">?</div>
       <div class="rb-content">
@@ -807,7 +884,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         <input type="hidden" id="runType" value="easy">
       </div>
       <div class="preview preview-empty" id="pacePreview">Enter distance and time</div>
-      <button class="btn btn-primary btn-full" onclick="saveRun()">Save Run</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn btn-primary" onclick="saveRun()">Save Run</button>
+        <button class="btn btn-secondary" onclick="startLiveSessionFromModal()">▶ Live Track</button>
+      </div>
     </div>
     <div id="gymForm" class="hidden">
       <div class="field"><label class="field-label">Duration (min)</label><input type="number" class="input" id="gymDur" placeholder="45"></div>
@@ -1015,7 +1095,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 </div>
 
 
+<div class="live-session" id="liveSession">
+  <div class="live-header">
+    <div class="live-badge"><span class="live-dot"></span> <span id="liveBadgeText">TRACKING</span></div>
+    <button class="live-minimize" onclick="minimizeLiveSession()" title="Minimize">−</button>
+  </div>
+  <div class="live-status" id="liveStatus">Getting GPS signal...</div>
+  <div class="live-metrics">
+    <div class="live-distance" id="liveDist">0.00</div>
+    <div class="live-distance-unit">Kilometers</div>
+    <div class="live-mid-metrics">
+      <div class="live-metric-block">
+        <div class="live-metric-value" id="liveTime">0:00</div>
+        <div class="live-metric-label">Time</div>
+      </div>
+      <div class="live-metric-block">
+        <div class="live-metric-value" id="livePace">—</div>
+        <div class="live-metric-label">Pace /km</div>
+      </div>
+    </div>
+    <div class="live-warnings hidden" id="liveWarnings"></div>
+    <div class="live-target" id="liveTarget">Getting your first data...</div>
+    <div class="gps-accuracy" id="gpsAccuracy"></div>
+  </div>
+  <div class="live-controls">
+    <button class="live-btn live-btn-pause" id="livePauseBtn" onclick="togglePause()">⏸ Pause</button>
+    <button class="live-btn live-btn-end" id="liveEndBtn">■ Hold to End</button>
+  </div>
+</div>
 
+<div class="live-widget" id="liveWidget" onclick="expandLiveSession()">
+  <div class="live-widget-dot"></div>
+  <div class="live-widget-info">
+    <div class="live-widget-dist"><span id="widgetDist">0.00</span> km</div>
+    <div class="live-widget-time" id="widgetTime">0:00</div>
+  </div>
+  <div class="live-widget-expand">›</div>
+</div>
 <div id="viz-controls" style="position:fixed;top:15px;right:15px;z-index:9999;display:flex;gap:8px">
   <button id="export-html-btn" class="viz-btn">Save HTML</button>
   <button id="fs-btn" class="viz-btn">⛶</button>
@@ -3608,6 +3724,276 @@ function finishSetup(withSample){
   setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
 
+// ==================== V5.4 PATCH 12 — GPS LIVE TRACKING ====================
+const LIVE_STORAGE_KEY = 'notstrava_live_session_v54';
+
+let liveSession = {
+  active: false,
+  paused: false,
+  startTime: null,
+  pausedTime: 0,
+  pauseStart: null,
+  distance: 0,
+  route: [],
+  lastPosition: null,
+  watchId: null,
+  timerInterval: null,
+  saveInterval: null,
+  wakeLock: null,
+  voiceOn: true,
+  lastKmAnnounced: 0,
+  targetPace: null,
+  targetDistance: null,
+  sessionType: 'easy',
+  currentPaceSec: null
+};
+
+function haversineDistance(lat1, lon1, lat2, lon2){
+  const R = 6371000; // Earth radius in meters
+  const toRad = deg => deg * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function formatLiveTime(seconds){
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if(h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  return m + ':' + String(s).padStart(2,'0');
+}
+
+function formatLivePace(secPerKm){
+  if(!secPerKm || !isFinite(secPerKm) || secPerKm <= 0 || secPerKm > 3600) return '—';
+  const m = Math.floor(secPerKm / 60);
+  const s = Math.floor(secPerKm % 60);
+  return m + ':' + String(s).padStart(2,'0');
+}
+
+function startLiveSession(sessionType, targetKm, targetPaceSec){
+  if(!navigator.geolocation){
+    showToast('GPS not supported on this device', 'warn');
+    return false;
+  }
+
+  liveSession = {
+    active: true,
+    paused: false,
+    startTime: Date.now(),
+    pausedTime: 0,
+    pauseStart: null,
+    distance: 0,
+    route: [],
+    lastPosition: null,
+    watchId: null,
+    timerInterval: null,
+    saveInterval: null,
+    wakeLock: null,
+    voiceOn: true,
+    lastKmAnnounced: 0,
+    targetPace: targetPaceSec || null,
+    targetDistance: targetKm || null,
+    sessionType: sessionType || 'easy',
+    currentPaceSec: null
+  };
+
+  document.getElementById('liveSession').classList.add('active');
+  document.getElementById('liveBadgeText').textContent = 'TRACKING';
+
+  // Show target info
+  if(targetKm && targetPaceSec){
+    speakLive('Session started. Target ' + targetKm.toFixed(1) + ' kilometers at ' + formatLivePace(targetPaceSec) + ' per kilometer.');
+  } else {
+    speakLive('Session started. Free run mode.');
+  }
+
+  // Start GPS
+  updateLiveStatus('Getting GPS signal...', 'searching');
+  liveSession.watchId = navigator.geolocation.watchPosition(
+    handleGPSUpdate,
+    handleGPSError,
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+  );
+
+  // Start timer
+  liveSession.timerInterval = setInterval(updateLiveTimer, 1000);
+
+  // Start auto-save
+  liveSession.saveInterval = setInterval(persistLiveSession, 30000);
+
+  // Request wake lock
+  requestWakeLock();
+
+  // Prevent accidental close
+  window.addEventListener('beforeunload', warnBeforeClose);
+
+  updateLiveDisplay();
+  return true;
+}
+
+function handleGPSUpdate(position){
+  if(!liveSession.active || liveSession.paused) return;
+
+  const { latitude, longitude, accuracy } = position.coords;
+  const now = Date.now();
+
+  // Update accuracy indicator
+  const accEl = document.getElementById('gpsAccuracy');
+  if(accEl){
+    let accCls = 'poor', accText = 'Poor GPS';
+    if(accuracy < 15){ accCls = 'good'; accText = 'GPS: Strong'; }
+    else if(accuracy < 30){ accCls = 'medium'; accText = 'GPS: OK'; }
+    accEl.className = 'gps-accuracy ' + accCls;
+    accEl.textContent = accText + ' (±' + Math.round(accuracy) + 'm)';
+  }
+
+  // If accuracy is very poor, warn but still record
+  if(accuracy > 50){
+    showLiveWarning('Weak GPS signal — data may be less accurate');
+  } else {
+    hideLiveWarning();
+  }
+
+  // First fix
+  if(!liveSession.lastPosition){
+    liveSession.lastPosition = { lat: latitude, lon: longitude, time: now, accuracy };
+    liveSession.route.push({ lat: latitude, lon: longitude, time: now, elapsed: 0 });
+    updateLiveStatus('Tracking', '');
+    return;
+  }
+
+  // Calculate distance from last point
+  const segmentDist = haversineDistance(
+    liveSession.lastPosition.lat, liveSession.lastPosition.lon,
+    latitude, longitude
+  );
+
+  // Filter out GPS jumps (>50m in <5sec = probably GPS noise, not real movement)
+  const timeDiff = (now - liveSession.lastPosition.time) / 1000;
+  const speedMs = segmentDist / timeDiff;
+  if(speedMs > 15){ // >54 km/h — impossible for running
+    // Skip this point
+    return;
+  }
+
+  // Only accept segments with decent accuracy
+  if(accuracy < 30 && segmentDist > 3){
+    liveSession.distance += segmentDist / 1000; // km
+    liveSession.lastPosition = { lat: latitude, lon: longitude, time: now, accuracy };
+
+    // Record route point (every 5 seconds worth)
+    const lastRoutePoint = liveSession.route[liveSession.route.length - 1];
+    const timeSinceLastPoint = (now - (liveSession.startTime + (lastRoutePoint.elapsed || 0) * 1000)) / 1000;
+    if(timeSinceLastPoint >= 5){
+      const elapsed = (now - liveSession.startTime - liveSession.pausedTime) / 1000;
+      liveSession.route.push({ lat: latitude, lon: longitude, time: now, elapsed });
+    }
+
+    // Calculate current pace (based on last ~60 seconds)
+    updateCurrentPace();
+
+    // Check km milestone
+    checkKilometerMilestone();
+  }
+
+  updateLiveDisplay();
+}
+
+function handleGPSError(err){
+  console.error('GPS error:', err);
+  if(err.code === 1){
+    showToast('Location permission denied — cannot track', 'warn');
+    endLiveSession(false);
+  } else if(err.code === 3){
+    updateLiveStatus('GPS timeout — retrying...', 'searching');
+  } else {
+    updateLiveStatus('GPS error — waiting for signal', 'searching');
+  }
+}
+
+function updateCurrentPace(){
+  if(liveSession.route.length < 2) return;
+  const elapsed = (Date.now() - liveSession.startTime - liveSession.pausedTime) / 1000;
+  if(elapsed < 30 || liveSession.distance < 0.05) return;
+  liveSession.currentPaceSec = elapsed / liveSession.distance;
+}
+
+function updateLiveTimer(){
+  if(!liveSession.active) return;
+  updateLiveDisplay();
+}
+
+function updateLiveDisplay(){
+  if(!liveSession.active) return;
+  const elapsed = liveSession.paused
+    ? (liveSession.pauseStart - liveSession.startTime - liveSession.pausedTime) / 1000
+    : (Date.now() - liveSession.startTime - liveSession.pausedTime) / 1000;
+
+  const distEl = document.getElementById('liveDist');
+  const timeEl = document.getElementById('liveTime');
+  const paceEl = document.getElementById('livePace');
+  const targetEl = document.getElementById('liveTarget');
+
+  if(distEl) distEl.textContent = liveSession.distance.toFixed(2);
+  if(timeEl) timeEl.textContent = formatLiveTime(elapsed);
+  if(paceEl) paceEl.textContent = formatLivePace(liveSession.currentPaceSec);
+
+  // Widget updates
+  const wd = document.getElementById('widgetDist');
+  const wt = document.getElementById('widgetTime');
+  if(wd) wd.textContent = liveSession.distance.toFixed(2);
+  if(wt) wt.textContent = formatLiveTime(elapsed);
+
+  // Target comparison
+  if(targetEl && liveSession.targetPace && liveSession.currentPaceSec){
+    const diff = liveSession.currentPaceSec - liveSession.targetPace;
+    let cls = 'on-pace', msg;
+    if(Math.abs(diff) < 10){
+      cls = 'on-pace';
+      msg = '<strong>✓ On pace</strong> · Target ' + formatLivePace(liveSession.targetPace) + '/km';
+    } else if(diff > 0){
+      cls = 'slow';
+      msg = '<strong>' + Math.round(diff) + 's slow</strong> · Target ' + formatLivePace(liveSession.targetPace) + '/km';
+    } else {
+      cls = 'fast';
+      msg = '<strong>' + Math.round(-diff) + 's fast</strong> · Target ' + formatLivePace(liveSession.targetPace) + '/km';
+    }
+    targetEl.className = 'live-target ' + cls;
+    targetEl.innerHTML = msg;
+    if(liveSession.targetDistance){
+      const remaining = Math.max(0, liveSession.targetDistance - liveSession.distance);
+      targetEl.innerHTML += '<br><span style="opacity:0.7">' + remaining.toFixed(2) + ' km to go</span>';
+    }
+  } else if(targetEl){
+    targetEl.className = 'live-target';
+    if(liveSession.currentPaceSec){
+      targetEl.innerHTML = 'Free run · <strong>' + liveSession.distance.toFixed(2) + ' km</strong> · avg ' + formatLivePace(liveSession.currentPaceSec) + '/km';
+    } else {
+      targetEl.textContent = 'Getting your first data...';
+    }
+  }
+}
+
+function updateLiveStatus(text, cls){
+  const el = document.getElementById('liveStatus');
+  if(!el) return;
+  el.textContent = text;
+  el.className = 'live-status ' + (cls || '');
+}
+
+function showLiveWarning(text){
+  const el = document.getElementById('liveWarnings');
+  if(!el) return;
+  el.classList.remove('hidden');
+  el.textContent = '⚠ ' + text;
+}
+
+function hideLiveWarning(){
+  const el = document.getElementById('liveWarnings');
+  if(el) el.classList.add('hidden');
+}
 // ==================== V5.4 PATCH 11 — WEATHER ====================
 // Weather state — kept separate from main state to avoid migration issues
 let weatherCache = { data: null, fetchedAt: 0, location: null };
@@ -4326,4 +4712,3 @@ document.querySelectorAll('.modal-bg').forEach(m => {
 })();
 </script>
 </body></html>
-      
