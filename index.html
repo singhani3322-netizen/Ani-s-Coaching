@@ -553,6 +553,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .gps-accuracy.good{color:var(--easy)}
 .gps-accuracy.medium{color:var(--warn)}
 .gps-accuracy.poor{color:var(--danger)}
+/* V5.4 Patch 13A — Tab Navigation */
+.main-tabs{position:sticky;top:60px;z-index:90;background:rgba(15,20,25,0.92);backdrop-filter:blur(20px);padding:12px 16px 8px;margin:0 -16px 14px;border-bottom:1px solid var(--border)}
+.main-tabs-inner{max-width:900px;margin:0 auto;display:flex;background:var(--surface-2);border-radius:12px;padding:4px;gap:2px}
+.main-tab{flex:1;padding:11px;text-align:center;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;color:var(--text-dim);background:transparent;border:none;transition:all 0.2s;font-family:inherit;letter-spacing:0.02em;position:relative}
+.main-tab.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.main-tab-count{display:inline-block;background:var(--accent);color:#001210;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.05em}
+.main-tab:not(.active) .main-tab-count{background:var(--surface);color:var(--text-dim)}
+
+/* Section content visibility */
+.tab-section{display:none}
+.tab-section.active{display:block;animation:tabFade 0.2s ease-out}
+@keyframes tabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -698,6 +710,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   </div>
   
   <div class="container">
+<div class="main-tabs">
+      <div class="main-tabs-inner">
+        <button class="main-tab active" id="tabOverview" onclick="switchMainTab('overview')">📍 Overview</button>
+        <button class="main-tab" id="tabInsights" onclick="switchMainTab('insights')">📊 Insights</button>
+      </div>
+    </div>
+
+    <div class="tab-section active" id="sectionOverview">
 <div class="resume-banner hidden" id="resumeBanner">
       <div class="resume-icon">▶</div>
       <div class="resume-content">
@@ -794,6 +814,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       </div>
     </div>
     
+<div class="card"><div class="card-header"><div class="card-title">Pace Progression</div></div><div class="chart-wrap"><canvas id="paceChart"></canvas></div></div>
+
+    </div><!-- END sectionOverview -->
+
+    <div class="tab-section" id="sectionInsights">
     <div class="card">
       <div class="card-header"><div class="card-title">Your Pace Zones</div></div>
       <div class="zones-grid" id="paceZones"></div>
@@ -820,8 +845,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div class="card-header"><div><div class="card-title">Training Load</div><div class="chart-summary" style="margin-top:8px"><div class="chart-big" id="loadNum">0</div><div class="chart-change" id="loadChange"></div></div></div></div>
       <div class="chart-wrap"><canvas id="loadChart"></canvas></div>
     </div>
-    
-    <div class="card"><div class="card-header"><div class="card-title">Pace Progression</div></div><div class="chart-wrap"><canvas id="paceChart"></canvas></div></div>
     
     <div class="card"><div class="card-header"><div class="card-title">Recent Sessions</div></div><div class="session-list" id="sessionList"></div></div>
     
@@ -856,8 +879,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
         <button class="btn btn-danger btn-sm" style="grid-column:1/-1" onclick="clearAll()">Clear All Data</button>
       </div>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-      <div style="font-size:10px;color:var(--text-faint);margin-top:12px;text-align:center">Version 5.3 · Data schema v53</div>
+      <div style="font-size:10px;color:var(--text-faint);margin-top:12px;text-align:center">Version 5.4 · Data schema v53</div>
     </div>
+
+    </div><!-- END sectionInsights -->
   </div>
 </div>
 
@@ -3730,6 +3755,45 @@ function finishSetup(withSample){
   setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
 
+// ==================== V5.4 PATCH 13A — TABS ====================
+function switchMainTab(tab){
+  const overview = document.getElementById('sectionOverview');
+  const insights = document.getElementById('sectionInsights');
+  const tabOverview = document.getElementById('tabOverview');
+  const tabInsights = document.getElementById('tabInsights');
+
+  if(tab === 'overview'){
+    overview.classList.add('active');
+    insights.classList.remove('active');
+    tabOverview.classList.add('active');
+    tabInsights.classList.remove('active');
+  } else {
+    insights.classList.add('active');
+    overview.classList.remove('active');
+    tabInsights.classList.add('active');
+    tabOverview.classList.remove('active');
+    // Re-render charts in insights when tab is opened (Chart.js sometimes doesn't render if hidden on init)
+    setTimeout(() => {
+      if(typeof renderLoadChart === 'function') renderLoadChart();
+    }, 50);
+  }
+  // Scroll to top of app
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  // Remember last tab
+  try { localStorage.setItem('notstrava_last_tab', tab); } catch(e){}
+}
+
+// Restore last active tab on load
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(() => {
+    try {
+      const lastTab = localStorage.getItem('notstrava_last_tab');
+      if(lastTab === 'insights'){
+        switchMainTab('insights');
+      }
+    } catch(e){}
+  }, 1500);
+});
 // ==================== V5.4 PATCH 12 — GPS LIVE TRACKING ====================
 const LIVE_STORAGE_KEY = 'notstrava_live_session_v54';
 
