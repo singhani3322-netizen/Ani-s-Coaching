@@ -3,6 +3,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Not Strava — Your Uncertified Coach</title>
+<link rel="preconnect" href="https://d1hilrkz3ka39e.cloudfront.net/fonts.googleapis.com">
+<link rel="preconnect" href="https://d1hilrkz3ka39e.cloudfront.net/fonts.gstatic.com" crossorigin>
+<link href="https://d1hilrkz3ka39e.cloudfront.net/fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://d1hilrkz3ka39e.cloudfront.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <link rel="stylesheet" href="https://d1hilrkz3ka39e.cloudfront.net/unpkg/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <script src="https://d1hilrkz3ka39e.cloudfront.net/unpkg/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -610,21 +613,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .live-session.map-mode{padding:0;background:#000}
 .live-session.map-mode .live-header{position:absolute;top:0;left:0;right:0;padding:20px;z-index:100;background:linear-gradient(180deg,rgba(0,0,0,0.7),transparent);pointer-events:none}
 .live-session.map-mode .live-header > *{pointer-events:auto}
-.live-session.map-mode .live-controls{position:absolute;bottom:0;left:0;right:0;padding:20px;z-index:100;max-width:none;background:linear-gradient(0deg,rgba(0,0,0,0.85),transparent)}
+.live-session.map-mode .live-controls{position:absolute;bottom:0;left:0;right:0;padding:16px 20px 20px;z-index:100;max-width:none;background:linear-gradient(0deg,rgba(0,0,0,0.9) 20%,rgba(0,0,0,0.6) 70%,transparent)}
 
 .live-map-container{position:absolute;inset:0;background:#0F1419;z-index:1}
 .live-map-container.hidden{display:none}
 #liveMapDiv{width:100%;height:100%}
 
-.map-overlay-metrics{position:absolute;bottom:100px;left:20px;right:20px;background:rgba(15,20,25,0.92);backdrop-filter:blur(20px);border:1px solid var(--border-2);border-radius:16px;padding:14px 18px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
-.map-metrics-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center}
-.map-metric-item{min-width:0}
-.map-metric-val{font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;line-height:1;color:var(--text);font-variant-numeric:tabular-nums}
-.map-metric-lbl{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px;font-weight:700}
+.map-overlay-metrics{position:absolute;bottom:96px;left:16px;right:16px;background:rgba(10,14,19,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:16px 20px;z-index:100;box-shadow:0 12px 32px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.02) inset}
+.map-metrics-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;align-items:center}
+.map-metric-item{min-width:0;text-align:center}
+.map-metric-item:first-child{text-align:left;border-right:1px solid rgba(255,255,255,0.08);padding-right:14px}
+.map-metric-val{font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.map-metric-item:first-child .map-metric-val{font-size:32px}
+.map-metric-lbl{font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.14em;margin-top:5px;font-weight:700}
 
-.map-recenter{position:absolute;bottom:200px;right:20px;background:rgba(15,20,25,0.92);backdrop-filter:blur(8px);border:1px solid var(--accent);color:var(--accent);width:52px;height:52px;border-radius:50%;font-size:22px;cursor:pointer;font-family:inherit;display:none;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
-.map-recenter.active{display:flex}
-.map-recenter:active{transform:scale(0.92)}
+.map-recenter{position:absolute;top:20px;right:20px;background:rgba(10,14,19,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:9px 14px;border-radius:24px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;display:none;align-items:center;gap:6px;z-index:110;box-shadow:0 4px 14px rgba(0,0,0,0.4);letter-spacing:0.05em;text-transform:uppercase;transition:all 0.2s}
+.map-recenter.active{display:inline-flex;animation:recenterFadeIn 0.25s ease-out}
+.map-recenter:active{transform:scale(0.94)}
+.map-recenter:hover{background:rgba(0,212,170,0.15);border-color:var(--accent);color:var(--accent)}
+@keyframes recenterFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
 /* Map preview in session detail */
 .route-preview{width:100%;height:180px;background:var(--surface-2);border-radius:12px;overflow:hidden;margin:12px 0;position:relative;cursor:pointer}
@@ -4384,279 +4391,375 @@ const SHARE_COLORS = {
   activity: '#FFD700', pr: '#FFD700', week: '#00D4AA'
 };
 
+// V5.4 Patch 14.1 — Premium Share Card Rendering
 function drawShareCard(ctx, data){
   const W = 1080, H = 1920;
+  ctx.clearRect(0, 0, W, H);
 
-  // Background gradient
-  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-  bgGrad.addColorStop(0, '#0F1419');
-  bgGrad.addColorStop(0.5, '#1A1F26');
-  bgGrad.addColorStop(1, '#242A33');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, W, H);
+  // Background: photo OR gradient
+  if(sharePhotoImage && data.hasPhoto){
+    drawPhotoBackground(ctx, sharePhotoImage);
+  } else {
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#0A0E13');
+    bgGrad.addColorStop(0.4, '#151A21');
+    bgGrad.addColorStop(1, '#0F1419');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
 
-  // Subtle accent glow (top right)
-  const glow = ctx.createRadialGradient(W * 0.85, H * 0.15, 0, W * 0.85, H * 0.15, 700);
-  glow.addColorStop(0, hexToRgba(data.color, 0.18));
-  glow.addColorStop(1, 'transparent');
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, W, H);
+    // Color accent glow
+    const glow = ctx.createRadialGradient(W * 0.85, H * 0.18, 0, W * 0.85, H * 0.18, 800);
+    glow.addColorStop(0, hexToRgba(data.color, 0.22));
+    glow.addColorStop(0.5, hexToRgba(data.color, 0.06));
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
 
-  // Border
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(20, 20, W-40, H-40);
+    // Secondary glow bottom-left
+    const glow2 = ctx.createRadialGradient(W * 0.15, H * 0.85, 0, W * 0.15, H * 0.85, 600);
+    glow2.addColorStop(0, hexToRgba(data.color, 0.08));
+    glow2.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow2;
+    ctx.fillRect(0, 0, W, H);
 
-  // Draw content based on type
+    // Elegant border
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(24, 24, W-48, H-48);
+  }
+
+  // Draw content
   if(data.type === 'session') drawSessionContent(ctx, data);
   else if(data.type === 'weekly') drawWeeklyContent(ctx, data);
   else if(data.type === 'pr') drawPRContent(ctx, data);
 }
 
-function drawSessionContent(ctx, data){
+function drawBrandHeader(ctx, dateStr, isPR){
   const W = 1080;
-  let y = 160;
 
-  // Header
-  ctx.fillStyle = '#E8EAED';
-  ctx.font = '800 42px -apple-system, "SF Pro Display", "Segoe UI", sans-serif';
+  // Flip-flop logo (custom drawn — Sandal/flip-flop shape)
+  const logoX = 80, logoY = 130;
+  drawFlipFlopLogo(ctx, logoX, logoY, 46, isPR ? '#FFD700' : '#00D4AA');
+
+  // NOT STRAVA text
+  ctx.fillStyle = isPR ? '#FFD700' : '#FFFFFF';
+  ctx.font = '800 44px "Space Grotesk", "Inter", -apple-system, sans-serif';
   ctx.textAlign = 'left';
-  ctx.letterSpacing = '4px';
-  ctx.fillText('NOT STRAVA', 80, y);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('NOT STRAVA', logoX + 64, logoY);
 
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '500 28px -apple-system, sans-serif';
-  ctx.fillText(data.dateStr.toUpperCase(), 80, y + 40);
+  // Date subtitle
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '500 22px "Space Grotesk", "Inter", sans-serif';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(dateStr.toUpperCase(), logoX + 64, logoY + 34);
 
-  y += 260;
+  // Reset baseline
+  ctx.textBaseline = 'alphabetic';
+}
 
-  // Big distance number OR duration
+function drawFlipFlopLogo(ctx, cx, cy, size, color){
+  // Custom-drawn flip-flop (sandal) — top-down view
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // Sole (foot-shaped oval)
+  ctx.fillStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  // Sole outline (roughly foot-shaped)
+  ctx.ellipse(0, 0, size * 0.42, size * 0.75, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Inner dark area
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, size * 0.35, size * 0.65, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Y-shaped strap
+  ctx.strokeStyle = color;
+  ctx.lineWidth = size * 0.09;
+  ctx.lineCap = 'round';
+  // Top part (Y junction)
+  const junctionY = -size * 0.15;
+  ctx.beginPath();
+  ctx.moveTo(-size * 0.22, -size * 0.55);
+  ctx.lineTo(0, junctionY);
+  ctx.lineTo(size * 0.22, -size * 0.55);
+  ctx.stroke();
+  // Vertical part going down between "toes"
+  ctx.beginPath();
+  ctx.moveTo(0, junctionY);
+  ctx.lineTo(0, size * 0.15);
+  ctx.stroke();
+
+  // Small toe strap pegs
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(-size * 0.22, -size * 0.55, size * 0.06, 0, Math.PI * 2);
+  ctx.arc(size * 0.22, -size * 0.55, size * 0.06, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawSessionContent(ctx, data){
+  const W = 1080, H = 1920;
+
+  drawBrandHeader(ctx, data.dateStr, false);
+
+  let y = 620;
+
+  // BIG distance with Bebas Neue (tall, distinctive)
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '800 260px -apple-system, "SF Pro Display", sans-serif';
+  ctx.font = '400 340px "Bebas Neue", "SF Pro Display", -apple-system, sans-serif';
   ctx.textAlign = 'center';
+  ctx.letterSpacing = '-4px';
+
+  // Subtle glow behind number
+  ctx.shadowColor = hexToRgba(data.color, 0.4);
+  ctx.shadowBlur = 30;
   ctx.fillText(data.mainValue, W/2, y);
+  ctx.shadowBlur = 0;
 
-  y += 40;
+  y += 30;
 
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '600 42px -apple-system, sans-serif';
+  // Unit label
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '600 38px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '8px';
   ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
 
-  y += 130;
+  y += 200;
 
-  // Session type with colored dot
-  drawColoredDot(ctx, W/2 - 200, y - 20, 24, data.color);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = '700 52px -apple-system, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText(data.sessionLabel, W/2 - 160, y);
+  // Divider with color accent
+  const dividerGrad = ctx.createLinearGradient(200, y, W-200, y);
+  dividerGrad.addColorStop(0, 'transparent');
+  dividerGrad.addColorStop(0.5, hexToRgba(data.color, 0.5));
+  dividerGrad.addColorStop(1, 'transparent');
+  ctx.strokeStyle = dividerGrad;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(200, y);
+  ctx.lineTo(W-200, y);
+  ctx.stroke();
 
   y += 100;
 
-  // Divider line
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(160, y);
-  ctx.lineTo(W-160, y);
-  ctx.stroke();
-
-  y += 80;
-
-  // Stats rows
+  // Stats in horizontal row (elegant)
   const stats = data.stats || [];
-  stats.forEach((stat, i) => {
-    ctx.fillStyle = '#9AA0A6';
-    ctx.font = '600 32px -apple-system, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(stat.label.toUpperCase(), 160, y);
+  const statsToShow = stats.slice(0, 3); // Max 3 for clean layout
+  const colWidth = (W - 200) / statsToShow.length;
 
+  statsToShow.forEach((stat, i) => {
+    const cx = 100 + colWidth * i + colWidth / 2;
+
+    // Value
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 44px -apple-system, "SF Pro Display", sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(stat.value, W-160, y);
+    ctx.font = '700 68px "Bebas Neue", "SF Pro Display", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '0px';
+    ctx.fillText(stat.value, cx, y);
 
-    y += 70;
+    // Label
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 24px "Space Grotesk", sans-serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(stat.label.toUpperCase(), cx, y + 44);
   });
 
-  y += 40;
+  y += 180;
 
-  // Divider before caption (only if caption exists)
+  // Caption in italic (if provided)
   if(data.caption && data.caption.trim()){
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-    ctx.lineWidth = 2;
+    const dividerGrad2 = ctx.createLinearGradient(300, y, W-300, y);
+    dividerGrad2.addColorStop(0, 'transparent');
+    dividerGrad2.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+    dividerGrad2.addColorStop(1, 'transparent');
+    ctx.strokeStyle = dividerGrad2;
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(160, y);
-    ctx.lineTo(W-160, y);
+    ctx.moveTo(300, y);
+    ctx.lineTo(W-300, y);
     ctx.stroke();
 
     y += 80;
 
-    // Caption in italic style
-    ctx.fillStyle = '#E8EAED';
-    ctx.font = 'italic 500 36px -apple-system, "Georgia", serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 40px "Space Grotesk", "Georgia", serif';
     ctx.textAlign = 'center';
-    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 200, 50);
+    ctx.letterSpacing = '0px';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 52);
   }
 }
 
 function drawWeeklyContent(ctx, data){
-  const W = 1080;
-  let y = 160;
+  const W = 1080, H = 1920;
 
-  ctx.fillStyle = '#E8EAED';
-  ctx.font = '800 42px -apple-system, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('NOT STRAVA', 80, y);
+  drawBrandHeader(ctx, data.dateRange, false);
 
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '500 26px -apple-system, sans-serif';
-  ctx.fillText(data.dateRange.toUpperCase(), 80, y + 40);
+  let y = 480;
 
-  y += 240;
-
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '600 36px -apple-system, sans-serif';
+  // "This Week" tag
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '700 32px "Space Grotesk", sans-serif';
   ctx.textAlign = 'center';
+  ctx.letterSpacing = '10px';
   ctx.fillText('THIS WEEK', W/2, y);
 
-  y += 100;
+  y += 260;
 
-  // Big number
+  // Big distance
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '800 280px -apple-system, sans-serif';
-  ctx.fillText(data.mainValue, W/2, y + 100);
+  ctx.font = '400 380px "Bebas Neue", -apple-system, sans-serif';
+  ctx.letterSpacing = '-6px';
+  ctx.shadowColor = hexToRgba(data.color, 0.35);
+  ctx.shadowBlur = 30;
+  ctx.fillText(data.mainValue, W/2, y);
+  ctx.shadowBlur = 0;
 
-  y += 160;
+  y += 30;
 
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '600 40px -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '600 40px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '8px';
   ctx.fillText('KILOMETERS', W/2, y);
 
-  y += 140;
+  y += 180;
 
   // Divider
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  const dividerGrad = ctx.createLinearGradient(200, y, W-200, y);
+  dividerGrad.addColorStop(0, 'transparent');
+  dividerGrad.addColorStop(0.5, hexToRgba(data.color, 0.5));
+  dividerGrad.addColorStop(1, 'transparent');
+  ctx.strokeStyle = dividerGrad;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(160, y);
-  ctx.lineTo(W-160, y);
+  ctx.moveTo(200, y);
+  ctx.lineTo(W-200, y);
   ctx.stroke();
 
-  y += 80;
+  y += 90;
 
-  // Stats
+  // Stats grid — 2 rows
   const stats = data.stats || [];
-  stats.forEach(stat => {
-    ctx.fillStyle = '#9AA0A6';
-    ctx.font = '600 30px -apple-system, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(stat.label.toUpperCase(), 160, y);
+  const statsGrid = stats.slice(0, 4);
+  const cols = 2;
+  const colW = (W - 200) / cols;
+  const rowH = 130;
+
+  statsGrid.forEach((stat, i) => {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+    const cx = 100 + colW * col + colW / 2;
+    const cy = y + row * rowH;
 
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 44px -apple-system, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(stat.value, W-160, y);
+    ctx.font = '700 58px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '0px';
+    ctx.fillText(String(stat.value), cx, cy);
 
-    y += 68;
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(stat.label.toUpperCase(), cx, cy + 40);
   });
 
-  y += 60;
+  y += Math.ceil(statsGrid.length / cols) * rowH + 60;
 
   if(data.caption && data.caption.trim()){
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-    ctx.beginPath();
-    ctx.moveTo(160, y);
-    ctx.lineTo(W-160, y);
-    ctx.stroke();
-    y += 70;
-    ctx.fillStyle = '#E8EAED';
-    ctx.font = 'italic 500 34px -apple-system, "Georgia", serif';
+    y += 20;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 38px "Space Grotesk", "Georgia", serif';
     ctx.textAlign = 'center';
-    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 200, 48);
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 50);
   }
 }
 
 function drawPRContent(ctx, data){
-  const W = 1080;
-  let y = 160;
+  const W = 1080, H = 1920;
 
-  // Golden trophy line
+  drawBrandHeader(ctx, data.dateStr, true);
+
+  let y = 540;
+
+  // "NEW PR" badge with glow
   ctx.fillStyle = '#FFD700';
-  ctx.font = '800 42px -apple-system, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('🏆 NOT STRAVA', 80, y);
-
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '500 26px -apple-system, sans-serif';
-  ctx.fillText(data.dateStr.toUpperCase(), 80, y + 40);
-
-  y += 280;
-
-  // "NEW PR" tag
-  ctx.fillStyle = '#FFD700';
-  ctx.font = '800 60px -apple-system, sans-serif';
+  ctx.font = '400 100px "Bebas Neue", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('NEW PR!', W/2, y);
+  ctx.letterSpacing = '4px';
+  ctx.shadowColor = 'rgba(255,215,0,0.5)';
+  ctx.shadowBlur = 40;
+  ctx.fillText('NEW PR', W/2, y);
+  ctx.shadowBlur = 0;
 
-  y += 100;
+  y += 90;
 
   // Category
-  ctx.fillStyle = '#E8EAED';
-  ctx.font = '700 44px -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = '600 42px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '2px';
   ctx.fillText(data.category, W/2, y);
 
-  y += 180;
+  y += 220;
 
   // Big value
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '800 220px -apple-system, sans-serif';
+  ctx.font = '400 300px "Bebas Neue", sans-serif';
+  ctx.letterSpacing = '-4px';
+  ctx.shadowColor = 'rgba(255,215,0,0.4)';
+  ctx.shadowBlur = 30;
   ctx.fillText(data.mainValue, W/2, y);
+  ctx.shadowBlur = 0;
 
-  y += 60;
+  y += 30;
 
-  ctx.fillStyle = '#9AA0A6';
-  ctx.font = '600 38px -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '600 36px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '8px';
   ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
 
   y += 140;
 
-  // Improvement details
   if(data.previousValue){
-    ctx.strokeStyle = 'rgba(255,215,0,0.25)';
+    // Divider
+    const dividerGrad = ctx.createLinearGradient(250, y, W-250, y);
+    dividerGrad.addColorStop(0, 'transparent');
+    dividerGrad.addColorStop(0.5, 'rgba(255,215,0,0.3)');
+    dividerGrad.addColorStop(1, 'transparent');
+    ctx.strokeStyle = dividerGrad;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(200, y);
-    ctx.lineTo(W-200, y);
+    ctx.moveTo(250, y);
+    ctx.lineTo(W-250, y);
     ctx.stroke();
 
     y += 90;
 
-    ctx.fillStyle = '#9AA0A6';
-    ctx.font = '500 32px -apple-system, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '500 32px "Space Grotesk", sans-serif';
+    ctx.letterSpacing = '0px';
     ctx.fillText('Previous: ' + data.previousValue, W/2, y);
 
     if(data.improvement){
-      y += 60;
+      y += 65;
       ctx.fillStyle = '#FFD700';
-      ctx.font = '700 34px -apple-system, sans-serif';
+      ctx.font = '700 36px "Space Grotesk", sans-serif';
       ctx.fillText(data.improvement, W/2, y);
     }
   }
 
-  y += 100;
+  y += 120;
 
   if(data.caption && data.caption.trim()){
-    ctx.strokeStyle = 'rgba(255,215,0,0.2)';
-    ctx.beginPath();
-    ctx.moveTo(160, y);
-    ctx.lineTo(W-160, y);
-    ctx.stroke();
-    y += 70;
-    ctx.fillStyle = '#E8EAED';
-    ctx.font = 'italic 500 34px "Georgia", serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 38px "Space Grotesk", "Georgia", serif';
     ctx.textAlign = 'center';
-    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 200, 48);
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 50);
   }
 }
 
@@ -4695,6 +4798,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight){
   }
   lines.push(line.trim());
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+}
 }
 // Open share modal for a specific session
 function openShareForSession(sessionId, kind){
