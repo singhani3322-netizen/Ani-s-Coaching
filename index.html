@@ -4117,6 +4117,262 @@ function cleanupLiveMap(){
   if(session) session.classList.remove('map-mode');
   if(btn){ btn.classList.remove('active'); btn.innerHTML = '🗺️'; }
 }
+// ==================== Post-Run Static Route Map ====================
+let routeModalMap = null;
+let previewMaps = {};
+
+function openRouteModal(routeData, sessionInfo){
+  if(!routeData || routeData.length < 2){
+    showToast('No route data for this session', 'warn');
+    return;
+  }
+
+  document.getElementById('routeModal').classList.add('active');
+
+  // Populate stats
+  const stats = document.getElementById('routeModalStats');
+  if(stats){
+    stats.innerHTML = 
+      '<div><div class="rm-stat-val">' + sessionInfo.distance.toFixed(2) + '</div><div class="rm-stat-lbl">km</div></div>' +
+      '<div><div class="rm-stat-val">' + fmtTime(sessionInfo.seconds) + '</div><div class="rm-stat-lbl">Time</div></div>' +
+      '<div><div class="rm-stat-val">' + pace(sessionInfo.distance, sessionInfo.seconds).replace('/km','') + '</div><div class="rm-stat-lbl">Pace/km</div></div>' +
+      '<div><div class="rm-stat-val">' + speed(sessionInfo.distance, sessionInfo.seconds) + '</div><div class="rm-stat-lbl">km/h</div></div>';
+  }
+
+  // Initialize map after modal opens (needs to be visible for Leaflet)
+  setTimeout(() => {
+    if(routeModalMap){
+      routeModalMap.remove();
+      routeModalMap = null;
+    }
+
+    routeModalMap = L.map('routeModalMap', {
+      zoomControl: true,
+      scrollWheelZoom: true
+    });
+
+    // Dark theme tiles for static view
+    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap © CARTO',
+      subdomains: 'abcd'
+    }).addTo(routeModalMap);
+
+    drawStaticRoute(routeModalMap, routeData, sessionInfo);
+  }, 200);
+}
+
+function drawStaticRoute(map, routeData, sessionInfo){
+  const coords = routeData.map(p => [p.lat, p.lon]);
+  if(coords.length < 2) return;
+
+  // Determine color from session type
+  const type = sessionInfo.type || 'easy';
+  const colorMap = {easy:'#4CAF50', moderate:'#FF9800', hard:'#EF5350'};
+  const color = colorMap[type] || '#00D4AA';
+
+  // Draw the path
+  const path = L.polyline(coords, {
+    color: color,
+    weight: 5,
+    opacity: 0.9,
+    lineCap: 'round',
+    lineJoin: 'round'
+  }).addTo(map);
+
+  // Start marker (green flag style)
+  const startIcon = L.divIcon({
+    className: 'custom-start-marker',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+  L.marker(coords[0], {icon: startIcon}).addTo(map).bindPopup('Start');
+
+  // End marker (red)
+  const endIcon = L.divIcon({
+    html: '<div style="background:#EF5350;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(239,83,80,0.6)"></div>',
+    className: '',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+  L.marker(coords[coords.length - 1], {icon: endIcon}).addTo(map).bindPopup('Finish');
+
+  // KM markers
+  let cumDist = 0;
+  let nextKm = 1;
+  for(let i = 1; i < routeData.length; i++){
+    const prev = routeData[i-1];
+    const curr = routeData[i];
+    const segDist = haversineDistance(prev.lat, prev.lon, curr.lat, curr.lon) / 1000;
+    cumDist += segDist;
+    while(cumDist >= nextKm && nextKm < sessionInfo.distance){
+      const kmIcon = L.divIcon({
+        className: 'custom-km-marker',
+        html: nextKm,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+      L.marker([curr.lat, curr.lon], {icon: kmIcon}).addTo(map);
+      nextKm++;
+    }
+  }
+
+  // Fit map to bounds
+  map.fitBounds(path.getBounds(), {padding: [30, 30]});
+}
+
+function drawRoutePreview(containerId, routeData, sessionInfo){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+
+  if(!routeData || routeData.length < 2){
+    container.innerHTML = '<div class="route-preview-empty">No GPS data</div>';
+    return;
+  }
+
+  container.innerHTML = '<div class="route-preview-map" id="' + containerId + 'Map"></div><div class="route-preview-expand">TAP TO EXPAND</div>';
+
+  setTimeout(() => {
+    if(previewMaps[containerId]){
+      previewMaps[containerId].remove();
+      delete previewMaps[containerId];
+    }
+
+    const map = L.map(containerId + 'Map', {
+      zoomControl: false,
+      scrollWheelZoom: false,
+      dragging: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    drawStaticRoute(map, routeData, sessionInfo);
+    previewMaps[containerId] = map;
+
+    // Make preview clickable to open full modal
+    container.onclick = () => openRouteModal(routeData, sessionInfo);
+  }, 100);
+}
+
+// ==================== Session Detail Integration ====================
+const _origShowSessionForRoute = window.showSession;
+window.showSession = function(id, kind){
+  _origShowSessionForRoute(id, kind);
+
+  // Only add route for GPS-tracked runs
+  if(kind !== 'run') return;
+
+  const run = state.runs.find(r => r.id === id);
+  if(!run || !run.route || run.route.length < 2) return;
+
+  setTimeout(() => {
+    const body = document.getElementById('detailBody');
+    if(!body) return;
+    if(body.querySelector('.route-preview')) return; // already added
+
+    // Insert route preview before the share button
+    const shareBtn = body.querySelector('.share-btn');
+    const routePreview = document.createElement('div');
+    routePreview.className = 'route-preview';
+    routePreview.id = 'sessionRoutePreview';
+    routePreview.innerHTML = '<div class="route-preview-map" id="sessionRoutePreviewMap"></div><div class="route-preview-expand">🗺️ TAP TO EXPAND</div>';
+
+    if(shareBtn){
+      shareBtn.parentNode.insertBefore(routePreview, shareBtn);
+    } else {
+      body.appendChild(routePreview);
+    }
+
+    // Small header
+    const label = document.createElement('div');
+    label.style.cssText = 'font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-top:12px;margin-bottom:4px';
+    label.textContent = 'GPS Route';
+    routePreview.parentNode.insertBefore(label, routePreview);
+
+    // Initialize preview map
+    setTimeout(() => {
+      const map = L.map('sessionRoutePreviewMap', {
+        zoomControl: false, scrollWheelZoom: false, dragging: false,
+        touchZoom: false, doubleClickZoom: false, boxZoom: false,
+        keyboard: false, attributionControl: false
+      });
+
+      L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd'
+      }).addTo(map);
+
+      drawStaticRoute(map, run.route, {
+        distance: run.distance,
+        seconds: run.seconds,
+        type: run.type
+      });
+
+      routePreview.onclick = () => openRouteModal(run.route, {
+        distance: run.distance,
+        seconds: run.seconds,
+        type: run.type
+      });
+    }, 200);
+  }, 200);
+};
+
+// Clean up map when live session ends
+const _origEndLive = endLiveSession;
+endLiveSession = function(saveData){
+  cleanupLiveMap();
+  _origEndLive(saveData);
+};
+// ==================== Hook GPS Updates to Refresh Live Map ====================
+// Extend handleGPSUpdate to also update the live map when in map mode
+const _origHandleGPS = handleGPSUpdate;
+handleGPSUpdate = function(position){
+  _origHandleGPS(position);
+
+  if(mapMode && liveMap){
+    // Draw start marker on first fix
+    if(liveSession.route.length === 1 && !liveStartMarker){
+      drawLiveStartMarker();
+    }
+
+    // Update position marker
+    updateLivePositionMarker();
+
+    // Update path
+    if(liveSession.route.length >= 2){
+      drawLivePath();
+    }
+
+    // Refresh km markers (only when we cross a new km)
+    const currentKmCount = Math.floor(liveSession.distance);
+    if(currentKmCount > liveKmMarkers.length){
+      drawKmMarkers();
+    }
+  }
+};
+
+// Update map metrics every second when in map mode
+const _origUpdateLiveTimer = updateLiveTimer;
+updateLiveTimer = function(){
+  _origUpdateLiveTimer();
+  if(mapMode) updateMapMetrics();
+};
+
+// Ensure map is cleaned up when discarding session
+window.addEventListener('beforeunload', function(){
+  if(liveMap){
+    try { liveMap.remove(); } catch(e){}
+    liveMap = null;
+  }
+});
 // ==================== V5.4 PATCH 13B — SHARE CARDS ====================
 let currentShareData = null;
 
