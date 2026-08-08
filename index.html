@@ -4700,7 +4700,6 @@ function drawWeeklyContent(ctx, data){
     ctx.textAlign = 'center';
     wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 50);
   }
-}
 
 function drawPRContent(ctx, data){
   const W = 1080, H = 1920;
@@ -4784,16 +4783,6 @@ function drawPRContent(ctx, data){
   }
 }
 
-  y += 120;
-
-  if(data.caption && data.caption.trim()){
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = 'italic 500 38px "Space Grotesk", "Georgia", serif';
-    ctx.textAlign = 'center';
-    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 50);
-  }
-}
-
 // Utility functions
 function drawColoredDot(ctx, x, y, radius, color){
   ctx.beginPath();
@@ -4829,7 +4818,6 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight){
   }
   lines.push(line.trim());
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
-}
 }
 // Open share modal for a specific session
 function openShareForSession(sessionId, kind){
