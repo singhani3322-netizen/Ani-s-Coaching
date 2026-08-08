@@ -2584,15 +2584,21 @@ function buildHeroBody(r, dotClass){
         <button class="h2-btn-icon" onclick="openSkipModal()" title="Not today" style="flex:1">✕ Skip</button>
       </div>
     `;
-  } else {
-    // Standard: 1 primary + 2 icon buttons
+} else {
+    // Standard: 1 primary + 2 icon buttons + optional live track
     const logType = plan && plan.type === 'gym' ? 'gym' 
                   : plan && plan.type === 'run' ? 'run' 
                   : plan && plan.type === 'activity' ? 'activity' 
                   : 'any';
+    // Show Live Track icon only for run days or 'any' (user's choice sessions)
+    const showLiveTrack = (plan && plan.type === 'run') || (logType === 'any' && !plan);
+    const liveBtn = showLiveTrack 
+      ? '<button class="h2-btn-icon" onclick="startLiveSessionFromHero()" title="Live track" style="color:var(--danger);border-color:rgba(239,83,80,0.4)">▶</button>' 
+      : '';
     buttonsHTML = `
       <div class="h2-buttons">
         <button class="h2-btn-primary" onclick="openLog('${logType}')">LOG SESSION</button>
+        ${liveBtn}
         <button class="h2-btn-icon" onclick="openQuickSession()" title="Quick session">⚡</button>
         <button class="h2-btn-icon" onclick="openSkipModal()" title="Not today">✕</button>
       </div>
@@ -3994,6 +4000,471 @@ function hideLiveWarning(){
   const el = document.getElementById('liveWarnings');
   if(el) el.classList.add('hidden');
 }
+// Voice synthesis
+function speakLive(text){
+  if(!liveSession.voiceOn) return;
+  if(!('speechSynthesis' in window)) return;
+  try {
+    // Cancel any pending utterances
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1.0;
+    utter.pitch = 1.0;
+    utter.volume = 1.0;
+    utter.lang = 'en-US';
+    window.speechSynthesis.speak(utter);
+  } catch(e){
+    console.warn('Speech failed:', e);
+  }
+}
+
+function checkKilometerMilestone(){
+  const currentKm = Math.floor(liveSession.distance);
+  if(currentKm > liveSession.lastKmAnnounced && currentKm >= 1){
+    liveSession.lastKmAnnounced = currentKm;
+    const elapsed = (Date.now() - liveSession.startTime - liveSession.pausedTime) / 1000;
+    const paceForThisKm = liveSession.currentPaceSec || (elapsed / liveSession.distance);
+    const paceMin = Math.floor(paceForThisKm / 60);
+    const paceSec = Math.floor(paceForThisKm % 60);
+    let announcement = 'Kilometer ' + currentKm + '. Pace ' + paceMin + ' ' + paceSec + '.';
+
+    // Add pace guidance if we have target
+    if(liveSession.targetPace){
+      const diff = paceForThisKm - liveSession.targetPace;
+      if(Math.abs(diff) < 10){
+        announcement += ' On target.';
+      } else if(diff > 15){
+        announcement += ' Pick it up.';
+      } else if(diff < -15){
+        announcement += ' Ease off.';
+      }
+    }
+
+    speakLive(announcement);
+  }
+}
+
+// Pause / Resume
+function togglePause(){
+  if(!liveSession.active) return;
+
+  if(liveSession.paused){
+    // Resume
+    liveSession.pausedTime += Date.now() - liveSession.pauseStart;
+    liveSession.pauseStart = null;
+    liveSession.paused = false;
+    liveSession.lastPosition = null; // Reset to avoid huge distance jump
+    updateLiveStatus('Tracking', '');
+    document.getElementById('livePauseBtn').innerHTML = '⏸ Pause';
+    document.getElementById('livePauseBtn').className = 'live-btn live-btn-pause';
+    speakLive('Resumed.');
+  } else {
+    // Pause
+    liveSession.pauseStart = Date.now();
+    liveSession.paused = true;
+    updateLiveStatus('Paused', 'paused');
+    document.getElementById('livePauseBtn').innerHTML = '▶ Resume';
+    document.getElementById('livePauseBtn').className = 'live-btn live-btn-resume';
+    speakLive('Paused.');
+  }
+}
+
+// End session with long-press
+let endHoldTimer = null;
+function setupEndButton(){
+  const btn = document.getElementById('liveEndBtn');
+  if(!btn) return;
+
+  const startHold = (e) => {
+    e.preventDefault();
+    if(endHoldTimer) return;
+    btn.classList.add('holding');
+    setTimeout(() => btn.classList.add('active'), 10);
+    endHoldTimer = setTimeout(() => {
+      confirmEndSession();
+    }, 2000);
+  };
+
+  const cancelHold = () => {
+    if(endHoldTimer){
+      clearTimeout(endHoldTimer);
+      endHoldTimer = null;
+    }
+    btn.classList.remove('holding', 'active');
+  };
+
+  btn.addEventListener('mousedown', startHold);
+  btn.addEventListener('touchstart', startHold, {passive: false});
+  btn.addEventListener('mouseup', cancelHold);
+  btn.addEventListener('mouseleave', cancelHold);
+  btn.addEventListener('touchend', cancelHold);
+  btn.addEventListener('touchcancel', cancelHold);
+}
+
+function confirmEndSession(){
+  const btn = document.getElementById('liveEndBtn');
+  if(btn) btn.classList.remove('holding', 'active');
+  endLiveSession(true);
+}
+
+function endLiveSession(saveData){
+  if(!liveSession.active) return;
+
+  const elapsed = liveSession.paused
+    ? (liveSession.pauseStart - liveSession.startTime - liveSession.pausedTime) / 1000
+    : (Date.now() - liveSession.startTime - liveSession.pausedTime) / 1000;
+  const finalDistance = liveSession.distance;
+  const finalSeconds = Math.round(elapsed);
+  const finalRoute = liveSession.route.slice();
+  const sessionType = liveSession.sessionType;
+
+  // Cleanup
+  if(liveSession.watchId) navigator.geolocation.clearWatch(liveSession.watchId);
+  if(liveSession.timerInterval) clearInterval(liveSession.timerInterval);
+  if(liveSession.saveInterval) clearInterval(liveSession.saveInterval);
+  if(liveSession.wakeLock){
+    try { liveSession.wakeLock.release(); } catch(e){}
+  }
+  window.removeEventListener('beforeunload', warnBeforeClose);
+
+  document.getElementById('liveSession').classList.remove('active');
+  document.getElementById('liveWidget').classList.remove('active');
+
+  liveSession.active = false;
+  clearPersistedSession();
+
+  if(!saveData){
+    speakLive('Session discarded.');
+    return;
+  }
+
+  // Auto-fill log form
+  if(finalDistance < 0.05){
+    showToast('Session too short to save', 'warn');
+    speakLive('Session too short to save.');
+    return;
+  }
+
+  speakLive('Session complete. ' + finalDistance.toFixed(2) + ' kilometers in ' + formatLiveTime(finalSeconds) + '.');
+
+  // Open log modal with pre-filled data
+  setTimeout(() => {
+    openLog('run');
+    setTimeout(() => {
+      document.getElementById('runDist').value = finalDistance.toFixed(2);
+      const totalSec = finalSeconds;
+      document.getElementById('runH').value = Math.floor(totalSec / 3600);
+      document.getElementById('runM').value = Math.floor((totalSec % 3600) / 60);
+      document.getElementById('runS').value = totalSec % 60;
+
+      // Set type
+      const typePills = document.querySelectorAll('#runForm .pill');
+      typePills.forEach(p => p.classList.remove('active'));
+      const targetPill = document.querySelector('#runForm .pill[data-val="' + sessionType + '"]');
+      if(targetPill){
+        targetPill.classList.add('active');
+        document.getElementById('runType').value = sessionType;
+      }
+
+      calcPacePreview();
+
+      // Store route for future use
+      window._pendingRoute = finalRoute;
+
+      showToast('Session ready to save!', 'success', 4000);
+    }, 300);
+  }, 500);
+}
+
+// Wake Lock
+async function requestWakeLock(){
+  if(!('wakeLock' in navigator)) return;
+  try {
+    liveSession.wakeLock = await navigator.wakeLock.request('screen');
+    liveSession.wakeLock.addEventListener('release', () => {
+      liveSession.wakeLock = null;
+    });
+  } catch(e){
+    console.warn('Wake lock failed:', e);
+    showLiveWarning('Screen may lock — keep phone active');
+  }
+}
+
+// Re-acquire wake lock when tab becomes visible again
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && liveSession.active && !liveSession.wakeLock){
+    requestWakeLock();
+  }
+});
+
+function warnBeforeClose(e){
+  if(liveSession.active){
+    e.preventDefault();
+    e.returnValue = 'Session in progress. Are you sure you want to leave?';
+    return e.returnValue;
+  }
+}
+
+// Minimize / expand
+function minimizeLiveSession(){
+  document.getElementById('liveSession').classList.remove('active');
+  document.getElementById('liveWidget').classList.add('active');
+}
+
+function expandLiveSession(){
+  document.getElementById('liveWidget').classList.remove('active');
+  document.getElementById('liveSession').classList.add('active');
+}
+// Auto-save mechanism
+function persistLiveSession(){
+  if(!liveSession.active) return;
+  const snapshot = {
+    startTime: liveSession.startTime,
+    pausedTime: liveSession.pausedTime,
+    paused: liveSession.paused,
+    pauseStart: liveSession.pauseStart,
+    distance: liveSession.distance,
+    route: liveSession.route,
+    lastKmAnnounced: liveSession.lastKmAnnounced,
+    targetPace: liveSession.targetPace,
+    targetDistance: liveSession.targetDistance,
+    sessionType: liveSession.sessionType,
+    savedAt: Date.now()
+  };
+  try {
+    localStorage.setItem(LIVE_STORAGE_KEY, JSON.stringify(snapshot));
+  } catch(e){
+    console.warn('Failed to persist session:', e);
+  }
+}
+
+function clearPersistedSession(){
+  try { localStorage.removeItem(LIVE_STORAGE_KEY); } catch(e){}
+}
+
+function checkForStaleSession(){
+  try {
+    const raw = localStorage.getItem(LIVE_STORAGE_KEY);
+    if(!raw) return;
+    const snapshot = JSON.parse(raw);
+    if(!snapshot || !snapshot.startTime) return;
+
+    const ageMinutes = (Date.now() - snapshot.savedAt) / 60000;
+    // Don't offer resume if session is very old (>2 hours) — likely dead
+    if(ageMinutes > 120){
+      clearPersistedSession();
+      return;
+    }
+
+    // Show resume banner
+    const banner = document.getElementById('resumeBanner');
+    const body = document.getElementById('resumeBody');
+    if(banner && body){
+      const elapsed = (snapshot.pauseStart || Date.now()) - snapshot.startTime - snapshot.pausedTime;
+      const elapsedMin = Math.round(elapsed / 60000);
+      body.innerHTML = 'You have a session from <strong>' + Math.round(ageMinutes) + ' min ago</strong>. ' +
+        '<strong>' + snapshot.distance.toFixed(2) + ' km</strong> · <strong>' + formatLiveTime(elapsed / 1000) + '</strong>.';
+      banner.classList.remove('hidden');
+    }
+  } catch(e){
+    console.warn('Failed to check stale session:', e);
+    clearPersistedSession();
+  }
+}
+
+function resumeSession(){
+  try {
+    const raw = localStorage.getItem(LIVE_STORAGE_KEY);
+    if(!raw){
+      hideResumeBanner();
+      return;
+    }
+    const snapshot = JSON.parse(raw);
+
+    // Restore session state
+    liveSession = {
+      active: true,
+      paused: snapshot.paused || false,
+      startTime: snapshot.startTime,
+      pausedTime: snapshot.pausedTime || 0,
+      pauseStart: snapshot.paused ? Date.now() : null, // Restart pause clock
+      distance: snapshot.distance || 0,
+      route: snapshot.route || [],
+      lastPosition: null,
+      watchId: null,
+      timerInterval: null,
+      saveInterval: null,
+      wakeLock: null,
+      voiceOn: true,
+      lastKmAnnounced: snapshot.lastKmAnnounced || 0,
+      targetPace: snapshot.targetPace,
+      targetDistance: snapshot.targetDistance,
+      sessionType: snapshot.sessionType || 'easy',
+      currentPaceSec: null
+    };
+
+    hideResumeBanner();
+    document.getElementById('liveSession').classList.add('active');
+
+    // Restart GPS
+    if(navigator.geolocation){
+      updateLiveStatus('Reconnecting GPS...', 'searching');
+      liveSession.watchId = navigator.geolocation.watchPosition(
+        handleGPSUpdate, handleGPSError,
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+      );
+    }
+
+    liveSession.timerInterval = setInterval(updateLiveTimer, 1000);
+    liveSession.saveInterval = setInterval(persistLiveSession, 30000);
+    requestWakeLock();
+    window.addEventListener('beforeunload', warnBeforeClose);
+
+    // Sync pause button state
+    if(liveSession.paused){
+      document.getElementById('livePauseBtn').innerHTML = '▶ Resume';
+      document.getElementById('livePauseBtn').className = 'live-btn live-btn-resume';
+      updateLiveStatus('Paused', 'paused');
+    }
+
+    updateLiveDisplay();
+    speakLive('Session resumed.');
+    showToast('Session resumed', 'success');
+  } catch(e){
+    console.error('Failed to resume:', e);
+    showToast('Failed to resume session', 'warn');
+    clearPersistedSession();
+    hideResumeBanner();
+  }
+}
+
+function endStaleSession(){
+  try {
+    const raw = localStorage.getItem(LIVE_STORAGE_KEY);
+    if(!raw){ hideResumeBanner(); return; }
+    const snapshot = JSON.parse(raw);
+
+    const elapsed = ((snapshot.pauseStart || snapshot.savedAt) - snapshot.startTime - snapshot.pausedTime) / 1000;
+    const finalDistance = snapshot.distance || 0;
+    const finalSeconds = Math.round(elapsed);
+    const sessionType = snapshot.sessionType || 'easy';
+
+    hideResumeBanner();
+    clearPersistedSession();
+
+    if(finalDistance < 0.05){
+      showToast('Session too short to save', 'warn');
+      return;
+    }
+
+    // Auto-fill log
+    openLog('run');
+    setTimeout(() => {
+      document.getElementById('runDist').value = finalDistance.toFixed(2);
+      document.getElementById('runH').value = Math.floor(finalSeconds / 3600);
+      document.getElementById('runM').value = Math.floor((finalSeconds % 3600) / 60);
+      document.getElementById('runS').value = finalSeconds % 60;
+      const targetPill = document.querySelector('#runForm .pill[data-val="' + sessionType + '"]');
+      if(targetPill){
+        document.querySelectorAll('#runForm .pill').forEach(p => p.classList.remove('active'));
+        targetPill.classList.add('active');
+        document.getElementById('runType').value = sessionType;
+      }
+      calcPacePreview();
+      window._pendingRoute = snapshot.route || [];
+      showToast('Session ready to save!', 'success');
+    }, 300);
+  } catch(e){
+    console.error('Failed to end stale:', e);
+    hideResumeBanner();
+    clearPersistedSession();
+  }
+}
+
+function discardStaleSession(){
+  if(!confirm('Discard this session? Data will be lost.')) return;
+  clearPersistedSession();
+  hideResumeBanner();
+  showToast('Session discarded', 'info');
+}
+
+function hideResumeBanner(){
+  const b = document.getElementById('resumeBanner');
+  if(b) b.classList.add('hidden');
+}
+// Start from hero — uses today's plan for target
+function startLiveSessionFromHero(){
+  const ws = weekStart(new Date());
+  const plan = generateWeeklyPlan(ws);
+  const todayIdx = dayOfWeekMonStart(new Date());
+  const today = plan[todayIdx];
+
+  let targetKm = null, targetPaceSec = null, sessionType = 'easy';
+
+  if(today && today.type === 'run'){
+    targetKm = today.distance;
+    sessionType = today.subtype || 'easy';
+    const zones = getPaceZones();
+    if(zones){
+      if(sessionType === 'easy') targetPaceSec = zones.easy.sec;
+      else if(sessionType === 'moderate') targetPaceSec = today.isLong ? zones.long.sec : zones.moderate.sec;
+      else if(sessionType === 'hard') targetPaceSec = zones.hard.sec;
+    }
+  }
+
+  if(!confirmLiveStart(targetKm, targetPaceSec, sessionType)) return;
+  startLiveSession(sessionType, targetKm, targetPaceSec);
+}
+
+// Start from log modal — uses form values (or free run)
+function startLiveSessionFromModal(){
+  const dist = parseFloat(document.getElementById('runDist').value);
+  const type = document.getElementById('runType').value || 'easy';
+  const zones = getPaceZones();
+  let targetPaceSec = null;
+  if(zones){
+    if(type === 'easy') targetPaceSec = zones.easy.sec;
+    else if(type === 'moderate') targetPaceSec = zones.moderate.sec;
+    else if(type === 'hard') targetPaceSec = zones.hard.sec;
+  }
+  const targetKm = dist > 0 ? dist : null;
+
+  closeModal('logModal');
+  if(!confirmLiveStart(targetKm, targetPaceSec, type)) return;
+  startLiveSession(type, targetKm, targetPaceSec);
+}
+
+function confirmLiveStart(targetKm, targetPaceSec, sessionType){
+  let msg = 'Start GPS tracking?\n\n';
+  msg += targetKm ? 'Target: ' + targetKm.toFixed(1) + ' km' : 'Free run mode';
+  if(targetPaceSec) msg += '\nPace: ' + formatLivePace(targetPaceSec) + '/km';
+  msg += '\n\nKeep this browser tab open during your run.';
+  return confirm(msg);
+}
+
+// Hook route saving into saveRun
+const _originalSaveRun = window.saveRun;
+window.saveRun = function(){
+  const result = _originalSaveRun.apply(this, arguments);
+  // If we had a pending route from live session, attach it to the last logged run
+  if(window._pendingRoute && state.runs.length > 0){
+    const lastRun = state.runs[state.runs.length - 1];
+    lastRun.route = window._pendingRoute;
+    lastRun.isLiveTracked = true;
+    save();
+    window._pendingRoute = null;
+    console.log('Route saved with run:', lastRun.route.length + ' points');
+  }
+  return result;
+};
+
+// Setup end button on load, check for stale sessions
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(() => {
+    setupEndButton();
+    checkForStaleSession();
+  }, 1500);
+});
 // ==================== V5.4 PATCH 11 — WEATHER ====================
 // Weather state — kept separate from main state to avoid migration issues
 let weatherCache = { data: null, fetchedAt: 0, location: null };
