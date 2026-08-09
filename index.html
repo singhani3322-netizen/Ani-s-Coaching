@@ -4159,7 +4159,7 @@ function openRouteModal(routeData, sessionInfo){
     });
 
     // Dark theme tiles for static view
-    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap © CARTO',
       subdomains: 'abcd'
@@ -4256,7 +4256,7 @@ function drawRoutePreview(containerId, routeData, sessionInfo){
       attributionControl: false
     });
 
-    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       subdomains: 'abcd'
     }).addTo(map);
@@ -4312,7 +4312,7 @@ window.showSession = function(id, kind){
         keyboard: false, attributionControl: false
       });
 
-      L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         subdomains: 'abcd'
       }).addTo(map);
