@@ -4718,6 +4718,129 @@ async function returnToStart(){
   showToast('Return path added!', 'success');
 }
 
+// ==================== V5.4 PATCH 15 — FOLLOW ROUTE DURING LIVE SESSION ====================
+
+// Start a live session following a saved route
+function startFollowRoute(routeId){
+  const route = loadSavedRoutes().find(r => r.id === routeId);
+  if(!route) return;
+
+  // Update route's lastUsed timestamp
+  route.lastUsed = new Date().toISOString();
+  const allRoutes = loadSavedRoutes();
+  const idx = allRoutes.findIndex(r => r.id === routeId);
+  if(idx >= 0){
+    allRoutes[idx] = route;
+    saveSavedRoutes(allRoutes);
+  }
+
+  // Determine session type + target pace from user's typical easy run
+  const zones = getPaceZones();
+  const sessionType = 'easy';
+  const targetPaceSec = zones ? zones.easy.sec : null;
+  const targetKm = route.distance;
+
+  // Store route to display during session
+  window._followingRoute = {
+    id: route.id,
+    name: route.name,
+    coords: route.coords.slice()
+  };
+
+  // Show confirmation
+  let msg = 'Follow "' + route.name + '"?\n\n';
+  msg += 'Distance: ' + route.distance.toFixed(2) + ' km\n';
+  if(targetPaceSec) msg += 'Suggested pace: ' + formatLivePace(targetPaceSec) + '/km\n';
+  msg += '\nKeep your browser tab open during the run.';
+
+  if(!confirm(msg)){
+    window._followingRoute = null;
+    return;
+  }
+
+  startLiveSession(sessionType, targetKm, targetPaceSec);
+}
+
+// Hook into initLiveMap to draw the followed route
+const _origInitLiveMap = initLiveMap;
+initLiveMap = function(){
+  _origInitLiveMap();
+
+  // If we have a route to follow, draw it on the live map
+  if(window._followingRoute && liveMap){
+    setTimeout(() => drawFollowedRouteOnLiveMap(), 300);
+  }
+};
+
+let followedRouteLine = null;
+
+function drawFollowedRouteOnLiveMap(){
+  if(!liveMap || !window._followingRoute) return;
+
+  // Remove previous line if any
+  if(followedRouteLine){
+    try { liveMap.removeLayer(followedRouteLine); } catch(e){}
+    followedRouteLine = null;
+  }
+
+  const coords = window._followingRoute.coords.map(c => [c.lat, c.lon]);
+  if(coords.length < 2) return;
+
+  // Draw route as grey dashed line
+  followedRouteLine = L.polyline(coords, {
+    color: '#9AA0A6',
+    weight: 5,
+    opacity: 0.7,
+    lineCap: 'round',
+    lineJoin: 'round',
+    dashArray: '12, 10',
+    className: 'follow-route-line'
+  }).addTo(liveMap);
+
+  // Move it below the live path (so live GPS trail draws on top)
+  if(followedRouteLine.bringToBack) followedRouteLine.bringToBack();
+
+  // Add start/end markers for the route
+  const startIcon = L.divIcon({
+    className: 'route-waypoint route-waypoint-start',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+  L.marker(coords[0], {icon: startIcon, interactive: false, zIndexOffset: -50}).addTo(liveMap);
+
+  const endIcon = L.divIcon({
+    className: 'route-waypoint route-waypoint-end',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+  L.marker(coords[coords.length - 1], {icon: endIcon, interactive: false, zIndexOffset: -50}).addTo(liveMap);
+
+  // Fit the map to show the entire route on first render (only once)
+  if(!liveSession.lastPosition){
+    liveMap.fitBounds(followedRouteLine.getBounds(), {padding: [40, 40]});
+  }
+}
+
+// Clear followed route when session ends
+const _origEndLiveForRoute = endLiveSession;
+endLiveSession = function(saveData){
+  window._followingRoute = null;
+  followedRouteLine = null;
+  _origEndLiveForRoute(saveData);
+};
+
+// Announce route info in voice
+const _origStartLiveForRoute = startLiveSession;
+startLiveSession = function(sessionType, targetKm, targetPaceSec){
+  const result = _origStartLiveForRoute(sessionType, targetKm, targetPaceSec);
+  if(window._followingRoute){
+    setTimeout(() => {
+      speakLive('Following route ' + window._followingRoute.name + '. ' + window._followingRoute.coords.length + ' waypoints.');
+    }, 2500);
+  }
+  return result;
+};
+
 // ==================== V5.4 PATCH 14 — GPS MAP VISUALIZATION ====================
 let liveMap = null;
 let liveMapLayer = null;
