@@ -585,28 +585,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .drawer-close{background:transparent;border:none;color:var(--text-dim);font-size:26px;cursor:pointer;font-family:inherit;padding:4px 10px;line-height:1}
 .drawer-map{flex:1;position:relative;background:#242A33}
 #drawerMapDiv{width:100%;height:100%}
-.drawer-metrics{position:absolute;top:16px;left:16px;right:16px;background:rgba(10,14,19,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 16px;z-index:100;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.drawer-metric{text-align:center}
-.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:26px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
-.drawer-metric-lbl{font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.14em;margin-top:4px;font-weight:700}
-.drawer-hint{position:absolute;bottom:100px;left:16px;right:16px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border-radius:10px;padding:10px 14px;font-size:12px;color:#fff;text-align:center;z-index:99;line-height:1.4}
+.drawer-metrics{position:absolute;top:12px;left:12px;right:12px;background:rgba(10,14,19,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,212,170,0.25);border-radius:14px;padding:12px 14px;z-index:200;display:flex;justify-content:space-around;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+.drawer-metric{text-align:center;flex:1;min-width:0}
+.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:28px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
+.drawer-metric-lbl{font-size:9px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.14em;margin-top:4px;font-weight:700}
+.drawer-hint{position:absolute;bottom:200px;left:12px;right:12px;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-radius:10px;padding:11px 14px;font-size:12px;color:#fff;text-align:center;z-index:150;line-height:1.4;pointer-events:none}
 .drawer-hint.hidden{display:none}
-.drawer-controls{position:absolute;bottom:16px;left:16px;right:16px;display:grid;grid-template-columns:1fr 1fr 2fr;gap:8px;z-index:100}
-.drawer-btn{padding:14px;border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* Bottom controls - two rows for clarity */
+.drawer-controls{position:absolute;bottom:12px;left:12px;right:12px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.drawer-controls-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.drawer-controls-row.primary{grid-template-columns:1fr}
+.drawer-btn{padding:14px 12px;border:none;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .drawer-btn:active{transform:scale(0.96)}
 .drawer-btn-undo{background:rgba(255,176,32,0.15);border:1px solid rgba(255,176,32,0.35);color:var(--warn)}
 .drawer-btn-clear{background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.35);color:var(--danger)}
-.drawer-btn-save{background:var(--accent);color:#001210}
-.drawer-btn-save:disabled{opacity:0.4;cursor:not-allowed}
-.drawer-loading{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:200}
-.drawer-loading.hidden{display:none}
-.drawer-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:shareSpin 0.8s linear infinite}
+.drawer-btn-loop{background:rgba(180,124,255,0.15);border:1px solid rgba(180,124,255,0.4);color:var(--upper)}
+.drawer-btn-return{background:rgba(77,208,225,0.15);border:1px solid rgba(77,208,225,0.4);color:var(--cardio)}
+.drawer-btn-loop:disabled,.drawer-btn-return:disabled,.drawer-btn-save:disabled{opacity:0.35;cursor:not-allowed}
+.drawer-btn-save{background:var(--accent);color:#001210;font-size:13px;padding:15px}
+
+/* You are here marker */
+.you-here-marker{background:#5C9EFF;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px rgba(92,158,255,0.3),0 0 15px rgba(92,158,255,0.7);animation:youHerePulse 2s infinite}
+@keyframes youHerePulse{0%,100%{box-shadow:0 0 0 3px rgba(92,158,255,0.3),0 0 15px rgba(92,158,255,0.7)}50%{box-shadow:0 0 0 8px rgba(92,158,255,0.15),0 0 20px rgba(92,158,255,0.5)}}
 
 /* Route waypoint markers */
 .route-waypoint{background:var(--accent);width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px rgba(0,212,170,0.6)}
 .route-waypoint-start{background:#FFD700;box-shadow:0 0 10px rgba(255,215,0,0.6)}
 .route-waypoint-end{background:#EF5350;box-shadow:0 0 10px rgba(239,83,80,0.6)}
-
 /* API key field */
 .api-key-input{width:100%;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;font-family:'SF Mono','Monaco','Consolas',monospace;letter-spacing:0.02em;word-break:break-all}
 .api-key-input:focus{outline:none;border-color:var(--accent)}
@@ -1397,9 +1403,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     </div>
     <div class="drawer-hint" id="drawerHint">Tap the map to add points. Roads will connect them automatically.</div>
     <div class="drawer-controls">
-      <button class="drawer-btn drawer-btn-undo" onclick="undoLastWaypoint()">↶ Undo</button>
-      <button class="drawer-btn drawer-btn-clear" onclick="clearRouteDrawer()">Clear</button>
-      <button class="drawer-btn drawer-btn-save" id="drawerSaveBtn" onclick="saveDrawnRoute()" disabled>Save Route</button>
+      <div class="drawer-controls-row">
+        <button class="drawer-btn drawer-btn-undo" onclick="undoLastWaypoint()">↶ Undo</button>
+        <button class="drawer-btn drawer-btn-clear" onclick="clearRouteDrawer()">Clear</button>
+      </div>
+      <div class="drawer-controls-row">
+        <button class="drawer-btn drawer-btn-loop" id="drawerLoopBtn" onclick="closeLoop()" disabled>◯ Close Loop</button>
+        <button class="drawer-btn drawer-btn-return" id="drawerReturnBtn" onclick="returnToStart()" disabled>⤺ Return to Start</button>
+      </div>
+      <div class="drawer-controls-row primary">
+        <button class="drawer-btn drawer-btn-save" id="drawerSaveBtn" onclick="saveDrawnRoute()" disabled>Save Route</button>
+      </div>
     </div>
     <div class="drawer-loading hidden" id="drawerLoading">
       <div class="drawer-spinner"></div>
@@ -4340,14 +4354,33 @@ function initDrawerMap(){
     addWaypoint(e.latlng.lat, e.latlng.lng);
   });
 
-  // Try to get user's actual location for better starting view
+  // Get user's actual location and show blue "you are here" marker
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
       pos => {
-        drawerMap.setView([pos.coords.latitude, pos.coords.longitude], 16);
+        const userLat = pos.coords.latitude;
+        const userLon = pos.coords.longitude;
+        drawerMap.setView([userLat, userLon], 16);
+
+        // Add pulsing "you are here" marker
+        const youIcon = L.divIcon({
+          className: 'you-here-marker',
+          iconSize: [18, 18],
+          iconAnchor: [9, 9]
+        });
+        const youMarker = L.marker([userLat, userLon], {
+          icon: youIcon,
+          interactive: false,
+          zIndexOffset: -100  // Keep it below tap targets
+        }).addTo(drawerMap);
+
+        // Store on drawerMap so we can access it later
+        drawerMap._youAreHereMarker = youMarker;
       },
-      err => { /* silent — use fallback */ },
-      { timeout: 5000, maximumAge: 300000 }
+      err => { 
+        console.log('Location not available for drawer:', err.code);
+      },
+      { timeout: 8000, maximumAge: 60000, enableHighAccuracy: true }
     );
   }
 
@@ -4475,6 +4508,21 @@ function updateDrawerDisplay(){
   document.getElementById('drawerDist').textContent = dist.toFixed(2);
   document.getElementById('drawerPoints').textContent = drawerWaypoints.length;
   document.getElementById('drawerSaveBtn').disabled = drawerWaypoints.length < 2;
+
+  // Loop button: need at least 3 points AND not already looped
+  const loopBtn = document.getElementById('drawerLoopBtn');
+  const returnBtn = document.getElementById('drawerReturnBtn');
+  if(loopBtn) loopBtn.disabled = drawerWaypoints.length < 3 || isDrawerLoopClosed();
+  if(returnBtn) returnBtn.disabled = drawerWaypoints.length < 2 || isDrawerLoopClosed();
+}
+
+// Check if last waypoint is close to first (already a loop)
+function isDrawerLoopClosed(){
+  if(drawerWaypoints.length < 3) return false;
+  const first = drawerWaypoints[0];
+  const last = drawerWaypoints[drawerWaypoints.length - 1];
+  const distMeters = haversineDistance(first.lat, first.lon, last.lat, last.lon);
+  return distMeters < 50;
 }
 
 function updateEndMarker(){
@@ -4561,6 +4609,86 @@ function saveDrawnRoute(){
   saveNewRoute(name, drawerRouteCoords.slice(), 'manual');
   closeRouteDrawer();
   renderMyRoutesList();
+}
+
+// ==================== V5.4 Patch 15.1 — Close Loop / Return to Start ====================
+
+// Close loop: route from last waypoint back to first via roads
+async function closeLoop(){
+  if(drawerWaypoints.length < 3){
+    showToast('Need at least 3 waypoints to close a loop', 'warn');
+    return;
+  }
+  if(isDrawerLoopClosed()){
+    showToast('Already a loop', 'info');
+    return;
+  }
+
+  const last = drawerWaypoints[drawerWaypoints.length - 1];
+  const first = drawerWaypoints[0];
+
+  showToast('Closing loop...', 'info', 2000);
+
+  // Fetch route from last back to first
+  await fetchRouteSegment(last, { lat: first.lat, lon: first.lon });
+
+  // Add first point as final waypoint (visually shows the loop is closed)
+  const icon = L.divIcon({
+    className: 'route-waypoint route-waypoint-end',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+  const marker = L.marker([first.lat, first.lon], {icon: icon}).addTo(drawerMap);
+  drawerWaypoints.push({ lat: first.lat, lon: first.lon, marker });
+
+  updateEndMarker();
+  updateDrawerDisplay();
+
+  document.getElementById('drawerHint').classList.add('hidden');
+  showToast('Loop closed!', 'success');
+}
+
+// Return to start: trace SAME path backwards (doubles distance)
+async function returnToStart(){
+  if(drawerWaypoints.length < 2){
+    showToast('Add at least 2 waypoints first', 'warn');
+    return;
+  }
+  if(isDrawerLoopClosed()){
+    showToast('Already a loop', 'info');
+    return;
+  }
+
+  showToast('Tracing return path...', 'info', 2000);
+
+  // The current route goes from waypoint 0 → last. To return, we walk waypoints in reverse.
+  // For each waypoint pair going backwards, fetch a route segment.
+  const reverseWaypoints = drawerWaypoints.slice().reverse();
+
+  // The trick: rather than reversing the road coords (which may not be valid backwards on one-way streets),
+  // we fetch new road segments in reverse order. This ensures roads support the direction.
+  for(let i = 1; i < reverseWaypoints.length; i++){
+    const from = reverseWaypoints[i-1];
+    const to = reverseWaypoints[i];
+    await fetchRouteSegment({lat: from.lat, lon: from.lon}, {lat: to.lat, lon: to.lon});
+  }
+
+  // Add markers for the return waypoints (skip the first since it duplicates the endpoint we started from)
+  // Actually — for clarity, we only add ONE final "end" marker at the starting point
+  const startPoint = drawerWaypoints[0];
+  const icon = L.divIcon({
+    className: 'route-waypoint route-waypoint-end',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+  const marker = L.marker([startPoint.lat, startPoint.lon], {icon: icon}).addTo(drawerMap);
+  drawerWaypoints.push({ lat: startPoint.lat, lon: startPoint.lon, marker });
+
+  updateEndMarker();
+  updateDrawerDisplay();
+
+  document.getElementById('drawerHint').classList.add('hidden');
+  showToast('Return path added!', 'success');
 }
 
 // ==================== V5.4 PATCH 14 — GPS MAP VISUALIZATION ====================
