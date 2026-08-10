@@ -559,10 +559,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .gps-accuracy.medium{color:var(--warn)}
 .gps-accuracy.poor{color:var(--danger)}
 /* V5.4 Patch 13A — Tab Navigation */
-.main-tabs{position:sticky;top:60px;z-index:90;background:rgba(15,20,25,0.92);backdrop-filter:blur(20px);padding:12px 16px 8px;margin:0 -16px 14px;border-bottom:1px solid var(--border)}
-.main-tabs-inner{max-width:900px;margin:0 auto;display:flex;background:var(--surface-2);border-radius:12px;padding:4px;gap:2px}
-.main-tab{flex:1;padding:11px;text-align:center;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;color:var(--text-dim);background:transparent;border:none;transition:all 0.2s;font-family:inherit;letter-spacing:0.02em;position:relative}
-.main-tab.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.main-tabs{position:sticky;top:60px;z-index:90;background:rgba(15,20,25,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 10px;margin:0 -16px 16px;border-bottom:1px solid var(--border)}
+.main-tabs-inner{max-width:900px;margin:0 auto;display:flex;background:var(--surface-2);border-radius:12px;padding:4px;gap:2px;border:1px solid rgba(255,255,255,0.03)}
+.main-tab{flex:1;padding:12px 8px;text-align:center;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-dim);background:transparent;border:none;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);font-family:'Space Grotesk','Inter',-apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:0.06em;text-transform:uppercase;position:relative}
+.main-tab.active{background:var(--surface);color:var(--text);font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.04) inset}
+.main-tab:not(.active):hover{color:var(--text)}
 .main-tab-count{display:inline-block;background:var(--accent);color:#001210;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.05em}
 .main-tab:not(.active) .main-tab-count{background:var(--surface);color:var(--text-dim)}
 
@@ -806,8 +807,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   <div class="container">
 <div class="main-tabs">
       <div class="main-tabs-inner">
-        <button class="main-tab active" id="tabOverview" onclick="switchMainTab('overview')">📍 Overview</button>
-        <button class="main-tab" id="tabInsights" onclick="switchMainTab('insights')">📊 Insights</button>
+        <button class="main-tab active" id="tabOverview" onclick="switchMainTab('overview')">Overview</button>
+        <button class="main-tab" id="tabInsights" onclick="switchMainTab('insights')">Insights</button>
       </div>
     </div>
 
@@ -6043,8 +6044,8 @@ function fetchWeather(){
   if(!banner) return;
 
   // If already fetched in last 3 hours, use cache
-  const threeHours = 3 * 60 * 60 * 1000;
-  if(weatherCache.data && (Date.now() - weatherCache.fetchedAt) < threeHours){
+  const oneHour = 60 * 60 * 1000;
+  if(weatherCache.data && (Date.now() - weatherCache.fetchedAt) < oneHour){
     renderWeatherBanner(weatherCache.data);
     return;
   }
@@ -6141,10 +6142,14 @@ function analyzeWeather(data){
   const hourly = data.hourly;
   const current = data.current;
 
-  // Find today's hours from current time onwards (next 18 hours)
+  // Reasonable running hours: 5am to 10pm
+  const RUN_HOUR_START = 5;
+  const RUN_HOUR_END = 22;
+
+  // Find today's hours from current time onwards (next 24 hours)
   const times = hourly.time.map(t => new Date(t));
   const nowIdx = times.findIndex(t => t.getHours() === currentHour && t.toDateString() === now.toDateString());
-  const relevantEnd = Math.min(nowIdx + 18, times.length);
+  const relevantEnd = Math.min(nowIdx + 24, times.length);
   const upcoming = [];
   for(let i = Math.max(0, nowIdx); i < relevantEnd; i++){
     upcoming.push({
@@ -6157,26 +6162,55 @@ function analyzeWeather(data){
     });
   }
 
-  // Find 45-min+ clear windows (running-friendly)
-  const windows = [];
-  let windowStart = null;
-  for(let i = 0; i < upcoming.length; i++){
-    const h = upcoming[i];
-    const isRunnable = h.precip < 0.5 && h.wind < 25 && h.temp <= prefs.hotThreshold && h.temp >= prefs.coldThreshold;
-    if(isRunnable){
-      if(!windowStart) windowStart = h.hour;
-    } else {
-      if(windowStart){
-        const duration = (upcoming[i-1].hour - windowStart) / 60000 + 60; // in minutes
-        if(duration >= 45) windows.push({ start: windowStart, end: upcoming[i-1].hour, duration });
-        windowStart = null;
+  // Helper to check if a Date is within reasonable running hours (same day only)
+  function isRunnableHour(date, today){
+    const h = date.getHours();
+    // Only same day
+    if(date.toDateString() !== today.toDateString()) return false;
+    return h >= RUN_HOUR_START && h < RUN_HOUR_END;
+  }
+
+  // Find 45-min+ clear windows TODAY within running hours only
+  function findWindowsForDay(hours, targetDate){
+    const windows = [];
+    let windowStart = null;
+    let lastHour = null;
+
+    for(let i = 0; i < hours.length; i++){
+      const h = hours[i];
+      const inRunHours = isRunnableHour(h.hour, targetDate);
+      const isRunnable = inRunHours && h.precip < 0.5 && h.wind < 25 && 
+                         h.temp <= prefs.hotThreshold && h.temp >= prefs.coldThreshold;
+
+      if(isRunnable){
+        if(!windowStart) windowStart = h.hour;
+        lastHour = h.hour;
+      } else {
+        if(windowStart && lastHour){
+          const duration = (lastHour - windowStart) / 60000 + 60;
+          if(duration >= 45) windows.push({ start: windowStart, end: new Date(lastHour.getTime() + 3600000), duration });
+          windowStart = null;
+          lastHour = null;
+        }
       }
     }
+    // Close final window if still open
+    if(windowStart && lastHour){
+      const duration = (lastHour - windowStart) / 60000 + 60;
+      if(duration >= 45) windows.push({ start: windowStart, end: new Date(lastHour.getTime() + 3600000), duration });
+    }
+    return windows;
   }
-  if(windowStart){
-    const last = upcoming[upcoming.length - 1].hour;
-    const duration = (last - windowStart) / 60000 + 60;
-    if(duration >= 45) windows.push({ start: windowStart, end: last, duration });
+
+  // Today's windows
+  const todayWindows = findWindowsForDay(upcoming, now);
+
+  // Tomorrow's windows (if today has none)
+  let tomorrowWindows = [];
+  if(todayWindows.length === 0){
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrowWindows = findWindowsForDay(upcoming, tomorrow);
   }
 
   // Current conditions
@@ -6188,12 +6222,14 @@ function analyzeWeather(data){
   const isHot = currentTemp > prefs.hotThreshold;
   const isCold = currentTemp < prefs.coldThreshold;
   const isWindy = currentWind > 25;
+  const isOutsideRunHours = currentHour < RUN_HOUR_START || currentHour >= RUN_HOUR_END;
 
-  // Check if any bad weather in next 18h
-  const anyRain = upcoming.some(h => h.precip > 0.5);
-  const heavyRainAllDay = upcoming.filter(h => h.precip > 2).length >= 8;
-  const allTooHot = upcoming.every(h => h.temp > prefs.hotThreshold);
-  const allTooCold = upcoming.every(h => h.temp < prefs.coldThreshold);
+  // Check upcoming today for rain (within running hours)
+  const todayHours = upcoming.filter(h => h.hour.toDateString() === now.toDateString() && isRunnableHour(h.hour, now));
+  const anyRainToday = todayHours.some(h => h.precip > 0.5);
+  const heavyRainAllDay = todayHours.filter(h => h.precip > 2).length >= 8;
+  const allTooHot = todayHours.length > 0 && todayHours.every(h => h.temp > prefs.hotThreshold);
+  const allTooCold = todayHours.length > 0 && todayHours.every(h => h.temp < prefs.coldThreshold);
 
   // Determine banner message + severity
   let icon, title, detail, severity = '', shouldShow = false;
@@ -6203,50 +6239,78 @@ function analyzeWeather(data){
     if(isRaining){
       icon = '🌧️';
       title = `Raining now · ${Math.round(currentTemp)}°C`;
-      if(windows.length > 0){
-        const w = windows.find(x => x.start > now);
-        if(w) detail = `Best window: ${formatTime(w.start)} — ${formatTime(w.end)}`;
-        else detail = 'No clear window today · treadmill?';
+      if(todayWindows.length > 0){
+        const w = todayWindows.find(x => x.start > now);
+        if(w) detail = `Best window today: ${formatTime(w.start)} — ${formatTime(w.end)}`;
+        else detail = 'No clear window later today · treadmill?';
+        severity = 'warn';
+      } else if(tomorrowWindows.length > 0){
+        const w = tomorrowWindows[0];
+        detail = `Try tomorrow: ${formatTime(w.start)} · or treadmill today`;
         severity = 'warn';
       } else {
-        detail = heavyRainAllDay ? 'Wet all day · consider treadmill or tomorrow' : 'Light rain — your call';
+        detail = heavyRainAllDay ? 'Wet all day · treadmill recommended' : 'Light rain — treadmill or your call';
         severity = heavyRainAllDay ? 'danger' : 'warn';
       }
     } else if(isHot){
       icon = '🔥';
       title = `Hot · ${Math.round(currentTemp)}°C (your limit: ${prefs.hotThreshold}°C)`;
-      if(windows.length > 0){
-        const w = windows.find(x => x.start > now);
+      if(todayWindows.length > 0){
+        const w = todayWindows.find(x => x.start > now);
         if(w) detail = `Better at ${formatTime(w.start)} (${Math.round(getTempAtHour(upcoming, w.start))}°C)`;
-        else detail = 'No cooler window today';
+        else detail = 'No cooler window today · treadmill option';
+      } else if(tomorrowWindows.length > 0){
+        detail = `Try tomorrow ${formatTime(tomorrowWindows[0].start)} · or treadmill today`;
       } else {
-        detail = allTooHot ? 'Hot all day · run at dawn or dusk' : 'Wait for evening';
+        detail = allTooHot ? 'Hot all day · treadmill or dawn' : 'Wait for evening';
       }
       severity = 'warn';
     } else if(isCold){
       icon = '🥶';
       title = `Cold · ${Math.round(currentTemp)}°C (your limit: ${prefs.coldThreshold}°C)`;
-      detail = allTooCold ? 'Cold all day · layer up or gym' : 'Warmer later — check forecast';
+      if(todayWindows.length > 0){
+        const w = todayWindows.find(x => x.start > now);
+        if(w) detail = `Warmer at ${formatTime(w.start)}`;
+        else detail = 'Cold all day · layer up or treadmill';
+      } else {
+        detail = allTooCold ? 'Cold all day · layer up or treadmill' : 'Warmer later — check forecast';
+      }
       severity = 'warn';
     } else if(isWindy){
       icon = '💨';
       title = `Windy · ${Math.round(currentWind)} km/h`;
-      detail = 'Loop route recommended — no headwind on returns';
+      detail = 'Loop route recommended · or treadmill';
       severity = 'warn';
     }
-  } else if(anyRain){
-    // Not raining now but rain incoming
+  } else if(isOutsideRunHours){
+    // Outside running hours (11pm-5am)
+    shouldShow = true;
+    icon = '🌙';
+    title = `${Math.round(currentTemp)}°C · Late for a run`;
+    if(tomorrowWindows.length > 0){
+      const w = tomorrowWindows[0];
+      detail = `Tomorrow's window: ${formatTime(w.start)} — ${formatTime(w.end)}`;
+    } else {
+      detail = 'Check forecast for tomorrow';
+    }
+    severity = '';
+  } else if(anyRainToday){
+    // Not raining now but rain incoming during run hours
     shouldShow = true;
     icon = '🌦️';
-    const rainStart = upcoming.find(h => h.precip > 0.5);
+    const rainStart = todayHours.find(h => h.precip > 0.5 && h.hour > now);
     if(rainStart){
-      const hoursUntilRain = Math.round((rainStart.hour - now) / 3600000);
       title = `Clear now · ${Math.round(currentTemp)}°C`;
-      detail = `Rain expected around ${formatTime(rainStart.hour)} — run soon`;
+      detail = `Rain expected ${formatTime(rainStart.hour)} — run soon`;
       severity = '';
+    } else {
+      icon = weatherCodeToIcon(currentCode);
+      title = `${weatherCodeToText(currentCode)} · ${Math.round(currentTemp)}°C`;
+      detail = 'Good conditions right now';
+      severity = 'good';
     }
   } else {
-    // Perfect weather — subtle positive banner
+    // Perfect weather
     shouldShow = true;
     icon = weatherCodeToIcon(currentCode);
     title = `${weatherCodeToText(currentCode)} · ${Math.round(currentTemp)}°C`;
@@ -6254,7 +6318,10 @@ function analyzeWeather(data){
     severity = 'good';
   }
 
-  return { icon, title, detail, severity, shouldShow, windows, upcoming, current };
+  // Combine today + tomorrow windows for modal display
+  const allWindows = todayWindows.concat(tomorrowWindows.slice(0, 2));
+
+  return { icon, title, detail, severity, shouldShow, windows: allWindows, upcoming, current, todayWindows, tomorrowWindows };
 }
 
 function getTempAtHour(upcoming, targetHour){
@@ -6415,14 +6482,14 @@ function showLocationPromptIfNeeded(){
   banner.onclick = () => promptCity();
 }
 
-// Auto-refresh every 3 hours if app stays open
+// Auto-refresh every hour if app stays open
 setInterval(() => {
   if(document.getElementById('mainApp') && !document.getElementById('mainApp').classList.contains('hidden')){
     weatherCache.data = null;
     weatherCache.fetchedAt = 0;
     fetchWeather();
   }
-}, 3 * 60 * 60 * 1000);
+}, 60 * 60 * 1000);
 // ==================== RENDER ALL ====================
 // ==================== V5.4 PATCH 9 — VITALS ====================
 function getRecoveryScore(){
