@@ -4011,6 +4011,557 @@ function finishSetup(withSample){
   const welcomeMsg = name ? `Welcome ${name}. Uncertified but here.` : 'Not Strava ready.';
   setTimeout(() => showToast(welcomeMsg, 'success', 4000), 500);
 }
+// ==================== V5.4 PATCH 15 — CUSTOM ROUTES ====================
+const ROUTES_STORAGE_KEY = 'notstrava_saved_routes_v54';
+
+// Load saved routes from localStorage
+function loadSavedRoutes(){
+  try {
+    const raw = localStorage.getItem(ROUTES_STORAGE_KEY);
+    if(!raw) return [];
+    return JSON.parse(raw);
+  } catch(e){
+    console.error('Failed to load routes:', e);
+    return [];
+  }
+}
+
+// Save routes to localStorage
+function saveSavedRoutes(routes){
+  try {
+    localStorage.setItem(ROUTES_STORAGE_KEY, JSON.stringify(routes));
+  } catch(e){
+    console.error('Failed to save routes:', e);
+    showToast('Failed to save route', 'warn');
+  }
+}
+
+// Calculate total distance of a coordinate array
+function calculateRouteDistance(coords){
+  if(!coords || coords.length < 2) return 0;
+  let total = 0;
+  for(let i = 1; i < coords.length; i++){
+    total += haversineDistance(coords[i-1].lat, coords[i-1].lon, coords[i].lat, coords[i].lon);
+  }
+  return total / 1000; // km
+}
+
+// Detect if route is a loop (start close to end)
+function isLoopRoute(coords){
+  if(!coords || coords.length < 3) return false;
+  const start = coords[0];
+  const end = coords[coords.length - 1];
+  const distMeters = haversineDistance(start.lat, start.lon, end.lat, end.lon);
+  return distMeters < 100; // within 100m = loop
+}
+
+// Save a new route
+function saveNewRoute(name, coords, source){
+  const routes = loadSavedRoutes();
+  const distance = calculateRouteDistance(coords);
+  const route = {
+    id: 'route_' + Date.now(),
+    name: name.trim(),
+    coords: coords,
+    distance: distance,
+    isLoop: isLoopRoute(coords),
+    created: new Date().toISOString(),
+    lastUsed: null,
+    source: source || 'manual' // 'manual' or 'run'
+  };
+  routes.push(route);
+  saveSavedRoutes(routes);
+  showToast('Route "' + name + '" saved!', 'success');
+  updateRoutesQuickCount();
+  return route;
+}
+
+// Delete a route
+function deleteRoute(routeId){
+  if(!confirm('Delete this route? Cannot be undone.')) return;
+  const routes = loadSavedRoutes().filter(r => r.id !== routeId);
+  saveSavedRoutes(routes);
+  showToast('Route deleted', 'info');
+  renderMyRoutesList();
+  updateRoutesQuickCount();
+}
+
+// Rename a route
+function renameRoute(routeId){
+  const routes = loadSavedRoutes();
+  const route = routes.find(r => r.id === routeId);
+  if(!route) return;
+  const newName = prompt('New name for this route:', route.name);
+  if(!newName || !newName.trim() || newName === route.name) return;
+  route.name = newName.trim();
+  saveSavedRoutes(routes);
+  showToast('Route renamed', 'success');
+  renderMyRoutesList();
+}
+
+// Update the count badge on the hero
+function updateRoutesQuickCount(){
+  const el = document.getElementById('routesQuickCount');
+  if(el){
+    const count = loadSavedRoutes().length;
+    el.textContent = count;
+  }
+}
+
+// Render the "My Routes" list in Insights tab
+function renderMyRoutesList(){
+  const container = document.getElementById('myRoutesList');
+  if(!container) return;
+  const routes = loadSavedRoutes();
+
+  if(routes.length === 0){
+    container.innerHTML = '<div class="route-empty">No saved routes yet.<br>Draw one on the map or save from a past run.</div>';
+    return;
+  }
+
+  // Sort by most recent (lastUsed if exists, else created)
+  routes.sort((a, b) => {
+    const aDate = new Date(a.lastUsed || a.created);
+    const bDate = new Date(b.lastUsed || b.created);
+    return bDate - aDate;
+  });
+
+  container.innerHTML = routes.map(r => {
+    const badges = [];
+    if(r.isLoop) badges.push('Loop');
+    if(r.source === 'run') badges.push('From run');
+    else badges.push('Custom');
+    return '<div class="route-item" onclick="openRouteDetail(\'' + r.id + '\')">' +
+      '<div class="route-info">' +
+      '<div class="route-name">' + escapeHtml(r.name) + '</div>' +
+      '<div class="route-meta"><span>' + badges.join(' · ') + '</span></div>' +
+      '</div>' +
+      '<div class="route-dist">' + r.distance.toFixed(2) + ' km</div>' +
+      '</div>';
+  }).join('');
+}
+
+// Escape HTML to prevent injection when using user-provided route names
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Open route detail — reuses the route modal from Patch 14
+function openRouteDetail(routeId){
+  const route = loadSavedRoutes().find(r => r.id === routeId);
+  if(!route) return;
+
+  // Convert route coords to a format compatible with our existing route modal
+  const routeData = route.coords.map(c => ({ lat: c.lat, lon: c.lon, elapsed: 0 }));
+  const sessionInfo = {
+    distance: route.distance,
+    seconds: 0,
+    type: 'easy'
+  };
+
+  openRouteModal(routeData, sessionInfo);
+
+  // Update the modal title and add action buttons
+  setTimeout(() => {
+    const modalTitle = document.querySelector('#routeModal .modal-title');
+    if(modalTitle) modalTitle.textContent = route.name;
+
+    // Add action buttons below stats
+    const stats = document.getElementById('routeModalStats');
+    if(stats && !stats.parentElement.querySelector('.route-detail-actions')){
+      const actions = document.createElement('div');
+      actions.className = 'route-detail-actions';
+      actions.style.cssText = 'padding:14px 20px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px';
+      actions.innerHTML = 
+        '<button class="btn btn-primary btn-sm" onclick="closeModal(\'routeModal\');startFollowRoute(\'' + routeId + '\')">▶ Follow Route</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="renameRoute(\'' + routeId + '\')">Rename</button>' +
+        '<button class="btn btn-danger btn-sm" style="grid-column:1/-1" onclick="deleteRoute(\'' + routeId + '\');closeModal(\'routeModal\')">Delete Route</button>';
+      stats.parentElement.appendChild(actions);
+    }
+  }, 300);
+}
+
+// Called from hero card — switches to Insights tab and scrolls to routes
+function openMyRoutesFromHero(){
+  switchMainTab('insights');
+  setTimeout(() => {
+    const card = document.getElementById('myRoutesList');
+    if(card) card.parentElement.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 400);
+}
+
+// Save current run as a route (called from session detail)
+function saveRunAsRoute(sessionId){
+  const run = state.runs.find(r => r.id === sessionId);
+  if(!run || !run.route || run.route.length < 2){
+    showToast('No GPS data for this run', 'warn');
+    return;
+  }
+  const defaultName = 'Route ' + new Date(run.date).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  const name = prompt('Name this route:', defaultName);
+  if(!name || !name.trim()) return;
+  saveNewRoute(name, run.route.map(p => ({lat: p.lat, lon: p.lon})), 'run');
+  closeModal('detailModal');
+}
+
+// Hook "Save as Route" button into session detail modal
+const _origShowSessionForRoutes = window.showSession;
+window.showSession = function(id, kind){
+  _origShowSessionForRoutes(id, kind);
+  if(kind !== 'run') return;
+  const run = state.runs.find(r => r.id === id);
+  if(!run || !run.route || run.route.length < 2) return;
+
+  setTimeout(() => {
+    const body = document.getElementById('detailBody');
+    if(!body) return;
+    if(body.querySelector('.save-as-route-btn')) return; // already added
+
+    // Find the share button to insert before it
+    const shareBtn = body.querySelector('.share-btn');
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn btn-secondary btn-full save-as-route-btn';
+    saveBtn.style.cssText = 'margin-top:6px;margin-bottom:6px';
+    saveBtn.innerHTML = '💾 Save as Route';
+    saveBtn.onclick = () => saveRunAsRoute(id);
+
+    if(shareBtn){
+      shareBtn.parentNode.insertBefore(saveBtn, shareBtn);
+    } else {
+      body.appendChild(saveBtn);
+    }
+  }, 250);
+};
+
+// Extend renderAll to also render routes list
+const _origRenderAllForRoutes = window.renderAll;
+window.renderAll = function(){
+  _origRenderAllForRoutes();
+  renderMyRoutesList();
+  updateRoutesQuickCount();
+};
+
+// Hook API key save into settings
+const _origOpenSettings = window.openSettings;
+window.openSettings = function(){
+  _origOpenSettings();
+  const keyInput = document.getElementById('setOrsKey');
+  if(keyInput) keyInput.value = state.prefs.orsKey || '';
+};
+
+const _origSaveSettings = window.saveSettings;
+window.saveSettings = function(){
+  const keyInput = document.getElementById('setOrsKey');
+  if(keyInput) state.prefs.orsKey = keyInput.value.trim();
+  _origSaveSettings();
+};
+
+// ==================== V5.4 PATCH 15 — ROUTE DRAWER ====================
+let drawerMap = null;
+let drawerWaypoints = []; // Array of {lat, lon, marker}
+let drawerRouteCoords = []; // Full coordinate path (with road-snapped segments)
+let drawerPolyline = null;
+let drawerIsFetching = false;
+
+function openRouteDrawer(){
+  const apiKey = state.prefs.orsKey;
+  if(!apiKey || apiKey.length < 20){
+    if(confirm('You need an OpenRouteService API key to draw routes with road-snapping.\n\nOpen Settings to add your key?')){
+      openSettings();
+    }
+    return;
+  }
+
+  drawerWaypoints = [];
+  drawerRouteCoords = [];
+  drawerPolyline = null;
+
+  document.getElementById('routeDrawer').classList.add('active');
+  document.getElementById('drawerSaveBtn').disabled = true;
+  document.getElementById('drawerHint').classList.remove('hidden');
+  document.getElementById('drawerHint').textContent = 'Tap the map to add points. Roads will connect them automatically.';
+  document.getElementById('drawerDist').textContent = '0.00';
+  document.getElementById('drawerPoints').textContent = '0';
+
+  setTimeout(() => initDrawerMap(), 100);
+}
+
+function closeRouteDrawer(){
+  if(drawerWaypoints.length > 0 && !confirm('Discard this route?')) return;
+
+  document.getElementById('routeDrawer').classList.remove('active');
+
+  // Clean up map
+  if(drawerMap){
+    try { drawerMap.remove(); } catch(e){}
+    drawerMap = null;
+  }
+  drawerWaypoints = [];
+  drawerRouteCoords = [];
+  drawerPolyline = null;
+}
+
+function initDrawerMap(){
+  if(!window.L){
+    showToast('Map library not loaded', 'warn');
+    return;
+  }
+
+  // Determine starting center
+  let center = [53.3498, -6.2603]; // Dublin fallback
+  if(state.prefs.weatherLocation){
+    center = [state.prefs.weatherLocation.lat, state.prefs.weatherLocation.lon];
+  } else if(state.runs.length > 0){
+    const recentRun = state.runs.filter(r => r.route && r.route.length > 0).pop();
+    if(recentRun) center = [recentRun.route[0].lat, recentRun.route[0].lon];
+  }
+
+  if(drawerMap){
+    try { drawerMap.remove(); } catch(e){}
+  }
+
+  drawerMap = L.map('drawerMapDiv', {
+    zoomControl: true,
+    scrollWheelZoom: true,
+    doubleClickZoom: false,
+    attributionControl: true
+  }).setView(center, 15);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(drawerMap);
+
+  // Tap map to add waypoint
+  drawerMap.on('click', (e) => {
+    if(drawerIsFetching) return;
+    addWaypoint(e.latlng.lat, e.latlng.lng);
+  });
+
+  // Try to get user's actual location for better starting view
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        drawerMap.setView([pos.coords.latitude, pos.coords.longitude], 16);
+      },
+      err => { /* silent — use fallback */ },
+      { timeout: 5000, maximumAge: 300000 }
+    );
+  }
+
+  setTimeout(() => drawerMap.invalidateSize(), 200);
+}
+
+async function addWaypoint(lat, lon){
+  // Add waypoint marker
+  const icon = L.divIcon({
+    className: drawerWaypoints.length === 0 ? 'route-waypoint route-waypoint-start' : 'route-waypoint',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+  const marker = L.marker([lat, lon], {icon: icon}).addTo(drawerMap);
+  drawerWaypoints.push({ lat, lon, marker });
+
+  // If this is the first waypoint, just add it
+  if(drawerWaypoints.length === 1){
+    drawerRouteCoords = [{ lat, lon }];
+    updateDrawerDisplay();
+    document.getElementById('drawerHint').textContent = 'Great! Now tap another point to route between them.';
+    return;
+  }
+
+  // Otherwise, fetch route from previous waypoint to this one
+  const prev = drawerWaypoints[drawerWaypoints.length - 2];
+  await fetchRouteSegment(prev, { lat, lon });
+  updateDrawerDisplay();
+
+  // Hide hint after 3+ waypoints
+  if(drawerWaypoints.length >= 3){
+    document.getElementById('drawerHint').classList.add('hidden');
+  }
+
+  // Update last waypoint icon to be "end"
+  updateEndMarker();
+}
+
+// Fetch route segment from OpenRouteService
+async function fetchRouteSegment(from, to){
+  const apiKey = state.prefs.orsKey;
+  if(!apiKey){
+    showToast('API key missing', 'warn');
+    return;
+  }
+
+  document.getElementById('drawerLoading').classList.remove('hidden');
+  drawerIsFetching = true;
+
+  try {
+    // ORS Directions API — foot-walking profile
+    const url = 'https://api.openrouteservice.org/v2/directions/foot-walking?' +
+      'api_key=' + apiKey +
+      '&start=' + from.lon + ',' + from.lat +
+      '&end=' + to.lon + ',' + to.lat;
+
+    const response = await fetch(url);
+
+    if(!response.ok){
+      const err = await response.json().catch(() => ({}));
+      if(response.status === 403){
+        showToast('Invalid API key. Check Settings.', 'warn', 5000);
+      } else if(response.status === 429){
+        showToast('Daily limit reached (2000 requests)', 'warn', 5000);
+      } else {
+        showToast('Route service error: ' + (err.error?.message || response.status), 'warn');
+      }
+      // Fallback: straight line
+      drawerRouteCoords.push({ lat: to.lat, lon: to.lon });
+      renderDrawerPolyline();
+      return;
+    }
+
+    const data = await response.json();
+
+    if(!data.features || !data.features[0] || !data.features[0].geometry){
+      showToast('No route found — using straight line', 'warn');
+      drawerRouteCoords.push({ lat: to.lat, lon: to.lon });
+      renderDrawerPolyline();
+      return;
+    }
+
+    // Extract coordinates from GeoJSON [lon, lat] pairs
+    const geoCoords = data.features[0].geometry.coordinates;
+    // Skip first point (already in route) and add all following
+    for(let i = 1; i < geoCoords.length; i++){
+      drawerRouteCoords.push({
+        lat: geoCoords[i][1],
+        lon: geoCoords[i][0]
+      });
+    }
+
+    renderDrawerPolyline();
+  } catch(e){
+    console.error('Route fetch error:', e);
+    showToast('Network error — check connection', 'warn');
+    // Fallback to straight line
+    drawerRouteCoords.push({ lat: to.lat, lon: to.lon });
+    renderDrawerPolyline();
+  } finally {
+    drawerIsFetching = false;
+    document.getElementById('drawerLoading').classList.add('hidden');
+  }
+}
+
+function renderDrawerPolyline(){
+  if(drawerRouteCoords.length < 2) return;
+  const latlngs = drawerRouteCoords.map(c => [c.lat, c.lon]);
+
+  if(drawerPolyline){
+    drawerPolyline.setLatLngs(latlngs);
+  } else {
+    drawerPolyline = L.polyline(latlngs, {
+      color: '#00D4AA',
+      weight: 5,
+      opacity: 0.9,
+      lineCap: 'round',
+      lineJoin: 'round'
+    }).addTo(drawerMap);
+  }
+}
+
+function updateDrawerDisplay(){
+  const dist = calculateRouteDistance(drawerRouteCoords);
+  document.getElementById('drawerDist').textContent = dist.toFixed(2);
+  document.getElementById('drawerPoints').textContent = drawerWaypoints.length;
+  document.getElementById('drawerSaveBtn').disabled = drawerWaypoints.length < 2;
+}
+
+function updateEndMarker(){
+  // Set all markers to default, then set start (yellow) and end (red)
+  drawerWaypoints.forEach((wp, i) => {
+    let cls = 'route-waypoint';
+    if(i === 0) cls = 'route-waypoint route-waypoint-start';
+    else if(i === drawerWaypoints.length - 1) cls = 'route-waypoint route-waypoint-end';
+    const newIcon = L.divIcon({
+      className: cls,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7]
+    });
+    wp.marker.setIcon(newIcon);
+  });
+}
+
+function undoLastWaypoint(){
+  if(drawerWaypoints.length === 0) return;
+  const removed = drawerWaypoints.pop();
+  drawerMap.removeLayer(removed.marker);
+
+  if(drawerWaypoints.length === 0){
+    // No waypoints left
+    drawerRouteCoords = [];
+    if(drawerPolyline){
+      drawerMap.removeLayer(drawerPolyline);
+      drawerPolyline = null;
+    }
+    updateDrawerDisplay();
+    document.getElementById('drawerHint').classList.remove('hidden');
+    document.getElementById('drawerHint').textContent = 'Tap the map to add points.';
+    return;
+  }
+
+  // Need to rebuild route from remaining waypoints (can't easily "undo" a segment)
+  // Simple approach: rebuild from scratch
+  rebuildRouteFromWaypoints();
+}
+
+async function rebuildRouteFromWaypoints(){
+  if(drawerWaypoints.length === 0) return;
+  drawerRouteCoords = [{ lat: drawerWaypoints[0].lat, lon: drawerWaypoints[0].lon }];
+  if(drawerPolyline){
+    drawerMap.removeLayer(drawerPolyline);
+    drawerPolyline = null;
+  }
+
+  for(let i = 1; i < drawerWaypoints.length; i++){
+    await fetchRouteSegment(drawerWaypoints[i-1], drawerWaypoints[i]);
+  }
+
+  updateEndMarker();
+  updateDrawerDisplay();
+}
+
+function clearRouteDrawer(){
+  if(drawerWaypoints.length === 0) return;
+  if(!confirm('Clear all waypoints and start over?')) return;
+
+  drawerWaypoints.forEach(wp => drawerMap.removeLayer(wp.marker));
+  drawerWaypoints = [];
+  drawerRouteCoords = [];
+  if(drawerPolyline){
+    drawerMap.removeLayer(drawerPolyline);
+    drawerPolyline = null;
+  }
+  updateDrawerDisplay();
+  document.getElementById('drawerHint').classList.remove('hidden');
+  document.getElementById('drawerHint').textContent = 'Tap the map to add points.';
+}
+
+function saveDrawnRoute(){
+  if(drawerRouteCoords.length < 2){
+    showToast('Add at least 2 points first', 'warn');
+    return;
+  }
+
+  const dist = calculateRouteDistance(drawerRouteCoords);
+  const defaultName = dist.toFixed(1) + 'K Route';
+  const name = prompt('Name this route:', defaultName);
+  if(!name || !name.trim()) return;
+
+  saveNewRoute(name, drawerRouteCoords.slice(), 'manual');
+  closeRouteDrawer();
+  renderMyRoutesList();
+}
 
 // ==================== V5.4 PATCH 14 — GPS MAP VISUALIZATION ====================
 let liveMap = null;
