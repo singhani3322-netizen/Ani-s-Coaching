@@ -566,6 +566,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .main-tab:not(.active):hover{color:var(--text)}
 .main-tab-count{display:inline-block;background:var(--accent);color:#001210;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.05em}
 .main-tab:not(.active) .main-tab-count{background:var(--surface);color:var(--text-dim)}
+/* V5.4 Patch 15 — Custom Routes */
+.routes-list{display:flex;flex-direction:column;gap:8px}
+.route-item{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s}
+.route-item:hover{border-color:var(--accent);background:rgba(0,212,170,0.05)}
+.route-info{flex:1;min-width:0}
+.route-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.route-meta{font-size:11px;color:var(--text-dim);display:flex;gap:10px;flex-wrap:wrap}
+.route-dist{font-size:16px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;flex-shrink:0}
+.route-empty{text-align:center;padding:24px 16px;color:var(--text-faint);font-size:13px;line-height:1.6}
+.route-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+
+/* Route drawer (full screen) */
+.route-drawer{position:fixed;inset:0;background:#0F1419;z-index:5000;display:none;flex-direction:column}
+.route-drawer.active{display:flex}
+.drawer-header{background:rgba(10,14,19,0.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;z-index:100}
+.drawer-title{font-size:14px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase}
+.drawer-close{background:transparent;border:none;color:var(--text-dim);font-size:26px;cursor:pointer;font-family:inherit;padding:4px 10px;line-height:1}
+.drawer-map{flex:1;position:relative;background:#242A33}
+#drawerMapDiv{width:100%;height:100%}
+.drawer-metrics{position:absolute;top:16px;left:16px;right:16px;background:rgba(10,14,19,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 16px;z-index:100;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.drawer-metric{text-align:center}
+.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:26px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
+.drawer-metric-lbl{font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.14em;margin-top:4px;font-weight:700}
+.drawer-hint{position:absolute;bottom:100px;left:16px;right:16px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border-radius:10px;padding:10px 14px;font-size:12px;color:#fff;text-align:center;z-index:99;line-height:1.4}
+.drawer-hint.hidden{display:none}
+.drawer-controls{position:absolute;bottom:16px;left:16px;right:16px;display:grid;grid-template-columns:1fr 1fr 2fr;gap:8px;z-index:100}
+.drawer-btn{padding:14px;border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.drawer-btn:active{transform:scale(0.96)}
+.drawer-btn-undo{background:rgba(255,176,32,0.15);border:1px solid rgba(255,176,32,0.35);color:var(--warn)}
+.drawer-btn-clear{background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.35);color:var(--danger)}
+.drawer-btn-save{background:var(--accent);color:#001210}
+.drawer-btn-save:disabled{opacity:0.4;cursor:not-allowed}
+.drawer-loading{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:200}
+.drawer-loading.hidden{display:none}
+.drawer-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:shareSpin 0.8s linear infinite}
+
+/* Route waypoint markers */
+.route-waypoint{background:var(--accent);width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px rgba(0,212,170,0.6)}
+.route-waypoint-start{background:#FFD700;box-shadow:0 0 10px rgba(255,215,0,0.6)}
+.route-waypoint-end{background:#EF5350;box-shadow:0 0 10px rgba(239,83,80,0.6)}
+
+/* API key field */
+.api-key-input{width:100%;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;font-family:'SF Mono','Monaco','Consolas',monospace;letter-spacing:0.02em;word-break:break-all}
+.api-key-input:focus{outline:none;border-color:var(--accent)}
+.api-key-help{font-size:11px;color:var(--text-faint);margin-top:6px;line-height:1.4}
+.api-key-help a{color:var(--accent);text-decoration:none}
+
+/* Follow route indicator */
+.follow-route-line{stroke-dasharray:10,8;opacity:0.7}
 
 /* Section content visibility */
 .tab-section{display:none}
@@ -950,6 +999,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
       <div id="cmpBox"></div>
     </div>
     
+<div class="card">
+      <div class="card-header">
+        <div class="card-title">My Routes</div>
+        <button class="btn btn-primary btn-sm" onclick="openRouteDrawer()">+ New</button>
+      </div>
+      <div id="myRoutesList" class="routes-list"></div>
+    </div>
     <div class="card"><div class="card-header"><div><div class="card-title">Weekly Recap</div></div><button class="btn btn-secondary btn-sm" onclick="openWeeklyRecap()">View</button></div></div>
     
     <div class="card">
@@ -1233,6 +1289,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="field"><label class="field-label">Gym split</label><select class="select" id="setSplit"><option value="ul">Upper/Lower</option><option value="ppl">Push/Pull/Legs</option><option value="auto">Coach decides</option></select></div>
     <div class="field"><label class="field-label">Work day time (min)</label><select class="select" id="setWorkTime"><option>30</option><option>45</option><option>60</option><option>75</option><option>90</option></select></div>
     <div class="field"><label class="field-label">Off day time (min)</label><select class="select" id="setOffTime"><option>45</option><option>60</option><option>90</option><option>120</option><option>150</option></select></div>
+
+<div class="field">
+      <label class="field-label">OpenRouteService API Key (for custom routes)</label>
+      <input type="text" class="api-key-input" id="setOrsKey" placeholder="Paste your ORS API key here">
+      <div class="api-key-help">Free at <a href="https://openrouteservice.org/dev/#/signup" target="_blank">openrouteservice.org</a> · 2000 requests/day</div>
+    </div>
     <div class="field"><label class="field-label">Goal</label><select class="select" id="setGoalS"><option value="weightloss">Lose weight</option><option value="muscle">Build muscle</option><option value="running">Faster running</option><option value="balance">Balance both</option><option value="fitness">General fitness</option></select></div>
     <button class="btn btn-primary btn-full" onclick="saveSettings()">Save</button>
   </div>
@@ -1296,6 +1358,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="live-widget-time" id="widgetTime">0:00</div>
   </div>
   <div class="live-widget-expand">›</div>
+</div>
+<!-- Route Drawer (V5.4 Patch 15) -->
+<div class="route-drawer" id="routeDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">Draw Route</div>
+    <button class="drawer-close" onclick="closeRouteDrawer()">×</button>
+  </div>
+  <div class="drawer-map">
+    <div id="drawerMapDiv"></div>
+    <div class="drawer-metrics">
+      <div class="drawer-metric">
+        <div class="drawer-metric-val" id="drawerDist">0.00</div>
+        <div class="drawer-metric-lbl">Kilometers</div>
+      </div>
+      <div class="drawer-metric">
+        <div class="drawer-metric-val" id="drawerPoints">0</div>
+        <div class="drawer-metric-lbl">Waypoints</div>
+      </div>
+    </div>
+    <div class="drawer-hint" id="drawerHint">Tap the map to add points. Roads will connect them automatically.</div>
+    <div class="drawer-controls">
+      <button class="drawer-btn drawer-btn-undo" onclick="undoLastWaypoint()">↶ Undo</button>
+      <button class="drawer-btn drawer-btn-clear" onclick="clearRouteDrawer()">Clear</button>
+      <button class="drawer-btn drawer-btn-save" id="drawerSaveBtn" onclick="saveDrawnRoute()" disabled>Save Route</button>
+    </div>
+    <div class="drawer-loading hidden" id="drawerLoading">
+      <div class="drawer-spinner"></div>
+    </div>
+  </div>
 </div>
 <!-- Route Modal (V5.4 Patch 14) -->
 <div class="modal-bg" id="routeModal">
