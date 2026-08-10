@@ -577,33 +577,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .route-empty{text-align:center;padding:24px 16px;color:var(--text-faint);font-size:13px;line-height:1.6}
 .route-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 
-/* Route drawer (full screen) */
-.route-drawer{position:fixed;inset:0;background:#0F1419;z-index:5000;display:none;flex-direction:column}
+/* Route Drawer — Clean Flexbox Layout (V5.4 Patch 15.2) */
+.route-drawer{position:fixed;inset:0;background:#0F1419;z-index:5000;display:none;flex-direction:column;overflow:hidden}
 .route-drawer.active{display:flex}
-.drawer-header{background:rgba(10,14,19,0.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;z-index:100}
-.drawer-title{font-size:14px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase}
-.drawer-close{background:transparent;border:none;color:var(--text-dim);font-size:26px;cursor:pointer;font-family:inherit;padding:4px 10px;line-height:1}
-.drawer-map{flex:1;position:relative;background:#242A33}
-#drawerMapDiv{width:100%;height:100%}
-.drawer-metrics{position:absolute;top:12px;left:12px;right:12px;background:rgba(10,14,19,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,212,170,0.25);border-radius:14px;padding:12px 14px;z-index:200;display:flex;justify-content:space-around;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
-.drawer-metric{text-align:center;flex:1;min-width:0}
-.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:28px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
-.drawer-metric-lbl{font-size:9px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.14em;margin-top:4px;font-weight:700}
-.drawer-hint{position:absolute;bottom:200px;left:12px;right:12px;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-radius:10px;padding:11px 14px;font-size:12px;color:#fff;text-align:center;z-index:150;line-height:1.4;pointer-events:none}
-.drawer-hint.hidden{display:none}
 
-/* Bottom controls - two rows for clarity */
-.drawer-controls{position:absolute;bottom:12px;left:12px;right:12px;z-index:200;display:flex;flex-direction:column;gap:8px}
-.drawer-controls-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.drawer-controls-row.primary{grid-template-columns:1fr}
-.drawer-btn{padding:14px 12px;border:none;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
-.drawer-btn:active{transform:scale(0.96)}
-.drawer-btn-undo{background:rgba(255,176,32,0.15);border:1px solid rgba(255,176,32,0.35);color:var(--warn)}
-.drawer-btn-clear{background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.35);color:var(--danger)}
-.drawer-btn-loop{background:rgba(180,124,255,0.15);border:1px solid rgba(180,124,255,0.4);color:var(--upper)}
-.drawer-btn-return{background:rgba(77,208,225,0.15);border:1px solid rgba(77,208,225,0.4);color:var(--cardio)}
-.drawer-btn-loop:disabled,.drawer-btn-return:disabled,.drawer-btn-save:disabled{opacity:0.35;cursor:not-allowed}
-.drawer-btn-save{background:var(--accent);color:#001210;font-size:13px;padding:15px}
+/* TOP BAR — fixed height, contains header + metrics + action buttons */
+.drawer-top{flex-shrink:0;background:#0A0E13;border-bottom:1px solid var(--border);padding:10px 14px 12px;z-index:100}
+.drawer-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.drawer-title{font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)}
+.drawer-close{background:transparent;border:none;color:var(--text);font-size:28px;cursor:pointer;font-family:inherit;padding:0 4px;line-height:1}
+
+/* Metrics row — big numbers side by side */
+.drawer-metrics-row{display:flex;justify-content:space-around;align-items:center;gap:20px;padding:8px 0 12px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:10px}
+.drawer-metric{text-align:center;flex:1}
+.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:36px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
+.drawer-metric-lbl{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.14em;margin-top:4px;font-weight:700}
+
+/* Action row — 4 sleek buttons */
+.drawer-action-row{display:grid;grid-template-columns:auto auto 1fr 1fr;gap:6px}
+.drawer-mini-btn{padding:8px 12px;border-radius:8px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:4px;border:1px solid;white-space:nowrap}
+.drawer-mini-btn:active{transform:scale(0.95)}
+.drawer-mini-btn:disabled{opacity:0.3;cursor:not-allowed}
+.drawer-mini-btn.undo{background:rgba(255,176,32,0.1);border-color:rgba(255,176,32,0.3);color:var(--warn);min-width:38px}
+.drawer-mini-btn.clear{background:rgba(239,83,80,0.1);border-color:rgba(239,83,80,0.3);color:var(--danger);min-width:38px}
+.drawer-mini-btn.loop{background:rgba(180,124,255,0.12);border-color:rgba(180,124,255,0.35);color:var(--upper)}
+.drawer-mini-btn.return{background:rgba(77,208,225,0.12);border-color:rgba(77,208,225,0.35);color:var(--cardio)}
+
+/* MAP WRAPPER — fills all remaining space */
+.drawer-map-wrap{flex:1;position:relative;background:#242A33;min-height:0}
+#drawerMapDiv{width:100%;height:100%}
+.drawer-hint{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);border-radius:20px;padding:8px 16px;font-size:12px;color:#fff;text-align:center;z-index:150;pointer-events:none;font-weight:600;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-hint.hidden{display:none}
+.drawer-loading{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:200}
+.drawer-loading.hidden{display:none}
+.drawer-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:shareSpin 0.8s linear infinite}
+
+/* BOTTOM BAR — just the save button */
+.drawer-bottom{flex-shrink:0;background:#0A0E13;border-top:1px solid var(--border);padding:12px 14px}
+.drawer-save-btn{width:100%;padding:16px;border:none;border-radius:12px;background:var(--accent);color:#001210;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.15s}
+.drawer-save-btn:active{transform:scale(0.98)}
+.drawer-save-btn:disabled{opacity:0.35;cursor:not-allowed;background:var(--surface-2);color:var(--text-faint)}
 
 /* You are here marker */
 .you-here-marker{background:#5C9EFF;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px rgba(92,158,255,0.3),0 0 15px rgba(92,158,255,0.7);animation:youHerePulse 2s infinite}
@@ -613,6 +626,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .route-waypoint{background:var(--accent);width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px rgba(0,212,170,0.6)}
 .route-waypoint-start{background:#FFD700;box-shadow:0 0 10px rgba(255,215,0,0.6)}
 .route-waypoint-end{background:#EF5350;box-shadow:0 0 10px rgba(239,83,80,0.6)}
+
 /* API key field */
 .api-key-input{width:100%;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;font-family:'SF Mono','Monaco','Consolas',monospace;letter-spacing:0.02em;word-break:break-all}
 .api-key-input:focus{outline:none;border-color:var(--accent)}
@@ -1383,38 +1397,50 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
   </div>
   <div class="live-widget-expand">›</div>
 </div>
-<!-- Route Drawer (V5.4 Patch 15) -->
+<!-- Route Drawer (V5.4 Patch 15 — Rebuilt Layout) -->
 <div class="route-drawer" id="routeDrawer">
-  <div class="drawer-header">
-    <div class="drawer-title">Draw Route</div>
-    <button class="drawer-close" onclick="closeRouteDrawer()">×</button>
-  </div>
-  <div class="drawer-map">
-    <div id="drawerMapDiv"></div>
-    <div class="drawer-metrics">
+
+  <!-- TOP BAR: Header + Metrics + Action buttons -->
+  <div class="drawer-top">
+    <div class="drawer-header-row">
+      <div class="drawer-title">Draw Route</div>
+      <button class="drawer-close" onclick="closeRouteDrawer()">×</button>
+    </div>
+
+    <div class="drawer-metrics-row">
       <div class="drawer-metric">
         <div class="drawer-metric-val" id="drawerDist">0.00</div>
-        <div class="drawer-metric-lbl">Kilometers</div>
+        <div class="drawer-metric-lbl">km</div>
       </div>
       <div class="drawer-metric">
         <div class="drawer-metric-val" id="drawerPoints">0</div>
-        <div class="drawer-metric-lbl">Waypoints</div>
+        <div class="drawer-metric-lbl">Points</div>
       </div>
     </div>
-    <div class="drawer-hint" id="drawerHint">Tap the map to add points. Roads will connect them automatically.</div>
-    <div class="drawer-controls">
-      <div class="drawer-controls-row">
-        <button class="drawer-btn drawer-btn-undo" onclick="undoLastWaypoint()">↶ Undo</button>
-        <button class="drawer-btn drawer-btn-clear" onclick="clearRouteDrawer()">Clear</button>
-      </div>
-      <div class="drawer-controls-row">
-        <button class="drawer-btn drawer-btn-loop" id="drawerLoopBtn" onclick="closeLoop()" disabled>◯ Close Loop</button>
-        <button class="drawer-btn drawer-btn-return" id="drawerReturnBtn" onclick="returnToStart()" disabled>⤺ Return to Start</button>
-      </div>
-      <div class="drawer-controls-row primary">
-        <button class="drawer-btn drawer-btn-save" id="drawerSaveBtn" onclick="saveDrawnRoute()" disabled>Save Route</button>
-      </div>
+
+    <div class="drawer-action-row">
+      <button class="drawer-mini-btn undo" onclick="undoLastWaypoint()" title="Undo">↶</button>
+      <button class="drawer-mini-btn clear" onclick="clearRouteDrawer()" title="Clear">✕</button>
+      <button class="drawer-mini-btn loop" id="drawerLoopBtn" onclick="closeLoop()" disabled title="Close Loop">◯ Loop</button>
+      <button class="drawer-mini-btn return" id="drawerReturnBtn" onclick="returnToStart()" disabled title="Return to Start">⤺ Return</button>
     </div>
+  </div>
+
+  <!-- MIDDLE: Map (fills remaining space) -->
+  <div class="drawer-map-wrap">
+    <div id="drawerMapDiv"></div>
+    <div class="drawer-hint" id="drawerHint">Tap the map to add points</div>
+    <div class="drawer-loading hidden" id="drawerLoading">
+      <div class="drawer-spinner"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR: Save button -->
+  <div class="drawer-bottom">
+    <button class="drawer-save-btn" id="drawerSaveBtn" onclick="saveDrawnRoute()" disabled>Save Route</button>
+  </div>
+
+</div>
     <div class="drawer-loading hidden" id="drawerLoading">
       <div class="drawer-spinner"></div>
     </div>
