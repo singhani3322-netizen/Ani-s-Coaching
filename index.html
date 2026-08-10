@@ -587,11 +587,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .drawer-title{font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)}
 .drawer-close{background:transparent;border:none;color:var(--text);font-size:28px;cursor:pointer;font-family:inherit;padding:0 4px;line-height:1}
 
-/* Metrics row — big numbers side by side */
-.drawer-metrics-row{display:flex;justify-content:space-around;align-items:center;gap:20px;padding:8px 0 12px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:10px}
-.drawer-metric{text-align:center;flex:1}
-.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:36px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
-.drawer-metric-lbl{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.14em;margin-top:4px;font-weight:700}
+/* Metrics row — compact numbers side by side */
+.drawer-metrics-row{display:flex;justify-content:center;align-items:baseline;gap:24px;padding:2px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:8px}
+.drawer-metric{text-align:center;display:flex;align-items:baseline;gap:6px}
+.drawer-metric-val{font-family:'Bebas Neue','SF Pro Display',sans-serif;font-size:24px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
+.drawer-metric-lbl{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.14em;font-weight:700}
 
 /* Action row — 4 sleek buttons */
 .drawer-action-row{display:grid;grid-template-columns:auto auto 1fr 1fr;gap:6px}
