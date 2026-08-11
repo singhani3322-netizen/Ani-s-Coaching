@@ -688,25 +688,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .map-toggle:active{transform:scale(0.94)}
 .map-toggle.active{background:var(--accent);border-color:var(--accent);color:#001210}
 
-/* Live map view */
+/* Live map view — keep stats visible even with map active */
+.live-session.map-mode{padding:0;background:#000}
 .live-session.map-mode .live-metrics,
 .live-session.map-mode .live-status{display:none}
-.live-session.map-mode{padding:0;background:#000}
-.live-session.map-mode .live-header{position:absolute;top:0;left:0;right:0;padding:20px;z-index:100;background:linear-gradient(180deg,rgba(0,0,0,0.7),transparent);pointer-events:none}
+.live-session.map-mode .live-header{position:absolute;top:0;left:0;right:0;padding:16px 20px;z-index:200;background:linear-gradient(180deg,rgba(0,0,0,0.85),rgba(0,0,0,0.4) 70%,transparent);pointer-events:none}
 .live-session.map-mode .live-header > *{pointer-events:auto}
-.live-session.map-mode .live-controls{position:absolute;bottom:0;left:0;right:0;padding:16px 20px 20px;z-index:100;max-width:none;background:linear-gradient(0deg,rgba(0,0,0,0.9) 20%,rgba(0,0,0,0.6) 70%,transparent)}
+.live-session.map-mode .live-controls{position:absolute;bottom:0;left:0;right:0;padding:16px 20px 20px;z-index:200;max-width:none;background:linear-gradient(0deg,rgba(0,0,0,0.92) 30%,rgba(0,0,0,0.5) 80%,transparent)}
 
 .live-map-container{position:absolute;inset:0;background:#0F1419;z-index:1}
 .live-map-container.hidden{display:none}
 #liveMapDiv{width:100%;height:100%}
 
-.map-overlay-metrics{position:absolute;bottom:96px;left:16px;right:16px;background:rgba(10,14,19,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:16px 20px;z-index:100;box-shadow:0 12px 32px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.02) inset}
-.map-metrics-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;align-items:center}
+.map-overlay-metrics{position:absolute;bottom:100px;left:12px;right:12px;background:rgba(10,14,19,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(0,212,170,0.25);border-radius:16px;padding:14px 18px;z-index:180;box-shadow:0 12px 32px rgba(0,0,0,0.6)}
+.map-metrics-row{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:14px;align-items:center}
 .map-metric-item{min-width:0;text-align:center}
-.map-metric-item:first-child{text-align:left;border-right:1px solid rgba(255,255,255,0.08);padding-right:14px}
-.map-metric-val{font-family:'SF Pro Display','Inter',-apple-system,sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
-.map-metric-item:first-child .map-metric-val{font-size:32px}
-.map-metric-lbl{font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.14em;margin-top:5px;font-weight:700}
+.map-metric-item:first-child{text-align:left;border-right:1px solid rgba(255,255,255,0.1);padding-right:14px}
+.map-metric-val{font-family:'Bebas Neue','SF Pro Display',-apple-system,sans-serif;font-size:32px;font-weight:400;letter-spacing:-0.02em;line-height:1;color:#fff;font-variant-numeric:tabular-nums;font-style:italic}
+.map-metric-item:first-child .map-metric-val{font-size:44px}
+.map-metric-lbl{font-size:9px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.14em;margin-top:5px;font-weight:700}
 
 .map-recenter{position:absolute;top:80px;left:50%;transform:translateX(-50%);background:rgba(10,14,19,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:24px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;display:none;align-items:center;gap:6px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.6);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
 .map-recenter.visible{display:inline-flex;animation:recenterFadeIn 0.25s ease-out}
@@ -4724,6 +4724,10 @@ async function returnToStart(){
 function startFollowRoute(routeId){
   const route = loadSavedRoutes().find(r => r.id === routeId);
   if(!route) return;
+  if(!route.coords || route.coords.length < 2){
+    showToast('This route has no path data', 'warn');
+    return;
+  }
 
   // Update route's lastUsed timestamp
   route.lastUsed = new Date().toISOString();
@@ -4734,7 +4738,6 @@ function startFollowRoute(routeId){
     saveSavedRoutes(allRoutes);
   }
 
-  // Determine session type + target pace from user's typical easy run
   const zones = getPaceZones();
   const sessionType = 'easy';
   const targetPaceSec = zones ? zones.easy.sec : null;
@@ -4747,35 +4750,61 @@ function startFollowRoute(routeId){
     coords: route.coords.slice()
   };
 
-  // Show confirmation
   let msg = 'Follow "' + route.name + '"?\n\n';
   msg += 'Distance: ' + route.distance.toFixed(2) + ' km\n';
   if(targetPaceSec) msg += 'Suggested pace: ' + formatLivePace(targetPaceSec) + '/km\n';
-  msg += '\nKeep your browser tab open during the run.';
+  msg += '\nMap will show your route as a grey dashed line.\nKeep your browser tab open during the run.';
 
   if(!confirm(msg)){
     window._followingRoute = null;
     return;
   }
 
-  startLiveSession(sessionType, targetKm, targetPaceSec);
+  const started = startLiveSession(sessionType, targetKm, targetPaceSec);
+  if(!started){
+    window._followingRoute = null;
+    return;
+  }
+
+  // Auto-open the map view so user immediately sees their route
+  setTimeout(() => {
+    if(!mapMode && liveSession.active){
+      toggleMapMode();
+    }
+  }, 800);
 }
 
 // Hook into initLiveMap to draw the followed route
 const _origInitLiveMap = initLiveMap;
 initLiveMap = function(){
+  const wasFirst = !liveMap;
   _origInitLiveMap();
 
-  // If we have a route to follow, draw it on the live map
-  if(window._followingRoute && liveMap){
-    setTimeout(() => drawFollowedRouteOnLiveMap(), 300);
+  // If we have a route to follow, draw it AFTER map is fully initialized
+  if(window._followingRoute){
+    // Multiple retry attempts because Leaflet initialization is async
+    setTimeout(() => {
+      if(liveMap && window._followingRoute) drawFollowedRouteOnLiveMap();
+    }, 200);
+    setTimeout(() => {
+      if(liveMap && window._followingRoute && !followedRouteLine) drawFollowedRouteOnLiveMap();
+    }, 800);
   }
 };
 
 let followedRouteLine = null;
 
 function drawFollowedRouteOnLiveMap(){
-  if(!liveMap || !window._followingRoute) return;
+  if(!liveMap || !window._followingRoute){
+    console.log('drawFollowedRoute skipped - liveMap:', !!liveMap, 'route:', !!window._followingRoute);
+    return;
+  }
+
+  const coords = window._followingRoute.coords.map(c => [c.lat, c.lon]);
+  if(coords.length < 2){
+    console.log('drawFollowedRoute: not enough coords');
+    return;
+  }
 
   // Remove previous line if any
   if(followedRouteLine){
@@ -4783,47 +4812,62 @@ function drawFollowedRouteOnLiveMap(){
     followedRouteLine = null;
   }
 
-  const coords = window._followingRoute.coords.map(c => [c.lat, c.lon]);
-  if(coords.length < 2) return;
-
-  // Draw route as grey dashed line
+  // Draw route as grey dashed line — MORE VISIBLE now
   followedRouteLine = L.polyline(coords, {
     color: '#9AA0A6',
-    weight: 5,
-    opacity: 0.7,
+    weight: 6,
+    opacity: 0.85,
     lineCap: 'round',
     lineJoin: 'round',
-    dashArray: '12, 10',
-    className: 'follow-route-line'
+    dashArray: '14, 10'
   }).addTo(liveMap);
 
   // Move it below the live path (so live GPS trail draws on top)
   if(followedRouteLine.bringToBack) followedRouteLine.bringToBack();
 
-  // Add start/end markers for the route
+  // Add start marker (yellow)
   const startIcon = L.divIcon({
     className: 'route-waypoint route-waypoint-start',
-    iconSize: [14, 14],
-    iconAnchor: [7, 7]
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
   });
-  L.marker(coords[0], {icon: startIcon, interactive: false, zIndexOffset: -50}).addTo(liveMap);
+  const startMarker = L.marker(coords[0], {icon: startIcon, interactive: false, zIndexOffset: -50}).addTo(liveMap);
 
+  // Add end marker (red)
   const endIcon = L.divIcon({
     className: 'route-waypoint route-waypoint-end',
-    iconSize: [14, 14],
-    iconAnchor: [7, 7]
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
   });
-  L.marker(coords[coords.length - 1], {icon: endIcon, interactive: false, zIndexOffset: -50}).addTo(liveMap);
+  const endMarker = L.marker(coords[coords.length - 1], {icon: endIcon, interactive: false, zIndexOffset: -50}).addTo(liveMap);
 
-  // Fit the map to show the entire route on first render (only once)
+  // Store markers so we can clean them up
+  liveMap._followMarkers = [startMarker, endMarker];
+
+  // Fit map to show the entire route (only on initial draw)
   if(!liveSession.lastPosition){
-    liveMap.fitBounds(followedRouteLine.getBounds(), {padding: [40, 40]});
+    try {
+      liveMap.fitBounds(followedRouteLine.getBounds(), {padding: [50, 50], maxZoom: 16});
+    } catch(e){
+      console.warn('fitBounds failed:', e);
+    }
   }
-}
 
+  console.log('Followed route drawn:', coords.length, 'points');
+}
 // Clear followed route when session ends
 const _origEndLiveForRoute = endLiveSession;
 endLiveSession = function(saveData){
+  // Clean up follow route visuals
+  if(liveMap && liveMap._followMarkers){
+    liveMap._followMarkers.forEach(m => {
+      try { liveMap.removeLayer(m); } catch(e){}
+    });
+    liveMap._followMarkers = null;
+  }
+  if(followedRouteLine && liveMap){
+    try { liveMap.removeLayer(followedRouteLine); } catch(e){}
+  }
   window._followingRoute = null;
   followedRouteLine = null;
   _origEndLiveForRoute(saveData);
@@ -5099,11 +5143,10 @@ function openRouteModal(routeData, sessionInfo){
       scrollWheelZoom: true
     });
 
-    // Dark theme tiles for static view
-    L.tileLayer('https://d1hilrkz3ka39e.cloudfront.net/tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Standard OpenStreetMap tiles (reliable, same as live map)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '© OpenStreetMap © CARTO',
-      subdomains: 'abcd'
+      attribution: '© OpenStreetMap'
     }).addTo(routeModalMap);
 
     drawStaticRoute(routeModalMap, routeData, sessionInfo);
