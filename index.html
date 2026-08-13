@@ -2509,15 +2509,18 @@ function getRecommendation(){
     activity = 'Rest Required'; detail = `${consec} days in a row`;
     reason = `Your body's asking${nameP}.`;
     cls = 'warn';
-  } else if(hardCount >= 2){
+  } else if(hardCount >= 2 && (!todayPlan || todayPlan.type === 'rest')){
+    // Only override with "Easy or Rest" if there's no plan or it's a rest day
     activity = 'Easy or Rest'; detail = 'Easy 3-5km, or take today off';
     reason = `${hardCount} intense sessions in 3 days. Ease off.`;
     cls = 'warn';
-  } else if(yHeavyLeg){
+  } else if(yHeavyLeg && (!todayPlan || todayPlan.type === 'rest' || (todayPlan.type === 'gym' && (todayPlan.subtype === 'lower' || todayPlan.subtype === 'legs')))){
+    // Only warn about leg recovery if today would also stress legs
     activity = 'Upper Body Gym'; detail = 'Upper body or very easy short run';
     reason = "Legs recovering from heavy work.";
     cls = 'warn';
-  } else if(yLeg || yHard){
+  } else if((yLeg || yHard) && (!todayPlan || todayPlan.type === 'rest')){
+    // Only suggest easy if there's no other plan
     activity = 'Easy Session'; detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Upper Body`;
     reason = yHard ? "Yesterday was hard. Today, easy." : "Post-leg-day. Running stays easy.";
   } else if(todayPlan && todayPlan.type === 'run'){
@@ -2526,11 +2529,19 @@ function getRecommendation(){
     const km = todayPlan.distance + compBonus;
     detail = `${km.toFixed(1)}km at ${todayPlan.pace}/km · ~${Math.round(todayPlan.duration)} min${compText}`;
     reason = generateSessionReason(todayPlan, isWorkDay(todayIdx), timeBudget, nameP);
+    if(hardCount >= 2 && todayPlan.subtype !== 'easy'){
+      reason += ' ⚠ High load in last 3 days — consider easier pace or shorter distance.';
+      cls = 'warn';
+    }
   } else if(todayPlan && todayPlan.type === 'gym'){
     activity = todayPlan.label;
     detail = `${todayPlan.duration} min · ${todayPlan.intensity} intensity`;
     reason = generateSessionReason(todayPlan, isWorkDay(todayIdx), timeBudget, nameP);
     if(state.prefs.focus && state.prefs.focus.length > 0) reason += ` Focus: ${state.prefs.focus.join(', ')}.`;
+    if(hardCount >= 2){
+      reason += ' ⚠ Heads up: high load in last 3 days — go moderate not heavy.';
+      cls = 'warn';
+    }
   } else {
     activity = 'Your Choice';
     detail = `Easy Run ${getDistanceRecommendation('easy').toFixed(1)}km OR Full Body`;
