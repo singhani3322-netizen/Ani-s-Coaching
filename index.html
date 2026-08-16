@@ -5513,7 +5513,7 @@ function switchTemplate(template){
 // Restore last template on init
 try {
   const saved = localStorage.getItem('notstrava_last_template');
-  if(saved && ['bold','balanced','minimal'].includes(saved)){
+  if(saved && ['bold','balanced','minimal','poster','split','card'].includes(saved)){
     currentTemplate = saved;
   }
 } catch(e){}
@@ -6333,6 +6333,9 @@ drawShareCard = function(ctx, data){
   if(data.type === 'session'){
     if(currentTemplate === 'balanced') drawSessionBalanced(ctx, data);
     else if(currentTemplate === 'minimal') drawSessionMinimal(ctx, data);
+    else if(currentTemplate === 'poster') drawSessionPoster(ctx, data);
+    else if(currentTemplate === 'split') drawSessionSplit(ctx, data);
+    else if(currentTemplate === 'card') drawSessionCard(ctx, data);
     else drawSessionContent(ctx, data); // 'bold' — default
   }
   else if(data.type === 'weekly') drawWeeklyContent(ctx, data);
@@ -6553,6 +6556,283 @@ function drawSessionMinimal(ctx, data){
     ctx.shadowBlur = 12;
     wrapText(ctx, '"' + data.caption.trim() + '"', W/2, H - 40, W - 180, 40);
     ctx.shadowBlur = 0;
+  }
+}
+// V5.4 Patch 16B.1 — Template: POSTER (magazine cover style)
+function drawSessionPoster(ctx, data){
+  const W = 1080, H = 1920;
+  const hasRoute = hasRouteData(data);
+
+  drawBrandHeader(ctx, data.dateStr, false);
+
+  let y = 400;
+
+  // Huge session type as headline
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'italic 400 200px "Bebas Neue", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '4px';
+  ctx.shadowColor = hexToRgba(data.color, 0.5);
+  ctx.shadowBlur = 40;
+  const sessionText = data.sessionLabel.toUpperCase();
+  // Split into 2 lines if too long
+  if(sessionText.length > 10){
+    const words = sessionText.split(' ');
+    const line1 = words.slice(0, Math.ceil(words.length/2)).join(' ');
+    const line2 = words.slice(Math.ceil(words.length/2)).join(' ');
+    ctx.fillText(line1, W/2, y);
+    y += 180;
+    ctx.fillText(line2, W/2, y);
+  } else {
+    ctx.fillText(sessionText, W/2, y);
+  }
+  ctx.shadowBlur = 0;
+
+  y += 100;
+
+  // Big distance
+  ctx.fillStyle = data.color;
+  ctx.font = 'italic 400 240px "Bebas Neue", sans-serif';
+  ctx.letterSpacing = '-4px';
+  ctx.shadowColor = hexToRgba(data.color, 0.4);
+  ctx.shadowBlur = 30;
+  ctx.fillText(data.mainValue + ' km', W/2, y + 200);
+  ctx.shadowBlur = 0;
+
+  y += 320;
+
+  // Compact stats line
+  const stats = data.stats.slice(0, 3);
+  const statLine = stats.map(s => s.value).join('   ·   ');
+  const labelLine = stats.map(s => s.label.toUpperCase()).join('   ·   ');
+
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.font = 'italic 400 56px "Bebas Neue", sans-serif';
+  ctx.letterSpacing = '1px';
+  ctx.fillText(statLine, W/2, y);
+  y += 46;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '600 20px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '3px';
+  ctx.fillText(labelLine, W/2, y);
+
+  y += 100;
+
+  // Small route in bottom center if available
+  if(hasRoute){
+    drawRouteShape(ctx, data.route, 280, y, W - 560, 280, data.color);
+    y += 320;
+  }
+
+  // Caption
+  if(data.caption && data.caption.trim()){
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 34px "Space Grotesk", "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 46);
+  }
+}
+
+// V5.4 Patch 16B.1 — Template: SPLIT (route top half, stats bottom half)
+function drawSessionSplit(ctx, data){
+  const W = 1080, H = 1920;
+  const hasRoute = hasRouteData(data);
+
+  drawBrandHeader(ctx, data.dateStr, false);
+
+  // TOP HALF: Route shape (or session hero if no route)
+  const topStart = 260;
+  const topHeight = 720;
+
+  if(hasRoute){
+    // Label
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '4px';
+    ctx.fillText('YOUR ROUTE', W/2, topStart + 10);
+
+    drawRouteShape(ctx, data.route, 80, topStart + 40, W - 160, topHeight - 40, data.color);
+  } else {
+    // Big session label as hero
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'italic 400 170px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '3px';
+    ctx.shadowColor = hexToRgba(data.color, 0.4);
+    ctx.shadowBlur = 40;
+    ctx.fillText(data.sessionLabel.toUpperCase(), W/2, topStart + 400);
+    ctx.shadowBlur = 0;
+  }
+
+  // Divider line separating top/bottom
+  const dividerY = topStart + topHeight + 20;
+  const dividerGrad = ctx.createLinearGradient(80, dividerY, W-80, dividerY);
+  dividerGrad.addColorStop(0, 'transparent');
+  dividerGrad.addColorStop(0.5, hexToRgba(data.color, 0.6));
+  dividerGrad.addColorStop(1, 'transparent');
+  ctx.strokeStyle = dividerGrad;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(80, dividerY);
+  ctx.lineTo(W-80, dividerY);
+  ctx.stroke();
+
+  // BOTTOM HALF: Stats and info
+  let y = dividerY + 80;
+
+  // Big distance
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'italic 400 220px "Bebas Neue", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '-3px';
+  ctx.shadowColor = hexToRgba(data.color, 0.4);
+  ctx.shadowBlur = 25;
+  ctx.fillText(data.mainValue, W/2, y);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '600 28px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '8px';
+  ctx.fillText('KM', W/2, y + 45);
+
+  y += 130;
+
+  // Stats row
+  const stats = data.stats.slice(0, 3);
+  const colWidth = (W - 200) / stats.length;
+  stats.forEach((stat, i) => {
+    const cx = 100 + colWidth * i + colWidth / 2;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'italic 400 52px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(stat.value, cx, y);
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.font = '600 20px "Space Grotesk", sans-serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(stat.label.toUpperCase(), cx, y + 40);
+  });
+
+  y += 130;
+
+  if(data.caption && data.caption.trim()){
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 32px "Space Grotesk", "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 44);
+  }
+}
+
+// V5.4 Patch 16B.1 — Template: CARD (everything in a centered panel)
+function drawSessionCard(ctx, data){
+  const W = 1080, H = 1920;
+  const hasRoute = hasRouteData(data);
+
+  drawBrandHeader(ctx, data.dateStr, false);
+
+  // Card panel dimensions
+  const cardPadding = 60;
+  const cardX = cardPadding;
+  const cardY = 320;
+  const cardW = W - cardPadding * 2;
+  const cardH = H - cardY - 220;
+
+  // Draw semi-transparent card background
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  if(ctx.roundRect){
+    ctx.roundRect(cardX, cardY, cardW, cardH, 24);
+  } else {
+    ctx.rect(cardX, cardY, cardW, cardH);
+  }
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // Subtle color accent line at top of card
+  ctx.save();
+  const topLine = ctx.createLinearGradient(cardX, 0, cardX + cardW, 0);
+  topLine.addColorStop(0, 'transparent');
+  topLine.addColorStop(0.5, hexToRgba(data.color, 0.8));
+  topLine.addColorStop(1, 'transparent');
+  ctx.strokeStyle = topLine;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(cardX + 40, cardY + 24);
+  ctx.lineTo(cardX + cardW - 40, cardY + 24);
+  ctx.stroke();
+  ctx.restore();
+
+  let y = cardY + 100;
+
+  // Session type
+  ctx.fillStyle = data.color;
+  ctx.font = '700 26px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '8px';
+  ctx.fillText(data.sessionLabel.toUpperCase(), W/2, y);
+
+  y += 100;
+
+  // Big distance
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'italic 400 240px "Bebas Neue", sans-serif';
+  ctx.letterSpacing = '-3px';
+  ctx.shadowColor = hexToRgba(data.color, 0.4);
+  ctx.shadowBlur = 30;
+  ctx.fillText(data.mainValue, W/2, y);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '600 28px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '8px';
+  ctx.fillText('KILOMETERS', W/2, y + 45);
+
+  y += 120;
+
+  // Divider inside card
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cardX + 60, y);
+  ctx.lineTo(cardX + cardW - 60, y);
+  ctx.stroke();
+  y += 60;
+
+  // Stats row inside card
+  const stats = data.stats.slice(0, 3);
+  const colWidth = (cardW - 40) / stats.length;
+  stats.forEach((stat, i) => {
+    const cx = cardX + 20 + colWidth * i + colWidth / 2;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'italic 400 54px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(stat.value, cx, y);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 20px "Space Grotesk", sans-serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(stat.label.toUpperCase(), cx, y + 40);
+  });
+
+  y += 130;
+
+  // Route in card (small)
+  if(hasRoute){
+    const routeSize = 360;
+    drawRouteShape(ctx, data.route, W/2 - routeSize/2, y, routeSize, routeSize, data.color);
+    y += routeSize + 20;
+  }
+
+  // Caption
+  if(data.caption && data.caption.trim()){
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 30px "Space Grotesk", "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y + 30, cardW - 120, 42);
   }
 }
 
