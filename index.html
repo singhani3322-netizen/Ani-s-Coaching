@@ -665,6 +665,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .share-caption-input{width:100%;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;resize:none;line-height:1.5}
 .share-caption-input:focus{outline:none;border-color:var(--accent)}
 .share-caption-hint{font-size:11px;color:var(--text-faint);margin-top:4px;display:flex;justify-content:space-between}
+/* V5.4 Patch 16B — Template Switcher */
+.template-switcher{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.template-switcher::-webkit-scrollbar{display:none}
+.template-option{flex-shrink:0;background:var(--surface-2);border:2px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;font-family:inherit;color:var(--text-dim);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:80px}
+.template-option:hover{border-color:var(--text-faint);color:var(--text)}
+.template-option.active{border-color:var(--accent);background:rgba(0,212,170,0.1);color:var(--accent)}
+.template-option:active{transform:scale(0.96)}
+.template-preview{width:44px;height:78px;border-radius:5px;background:var(--surface);position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05)}
+.template-option.active .template-preview{border-color:var(--accent)}
+
+/* Mini preview visualizations */
+.tp-bold::before{content:'';position:absolute;top:20%;left:50%;transform:translateX(-50%);width:20px;height:12px;background:currentColor;color:var(--text);border-radius:2px}
+.tp-bold::after{content:'';position:absolute;bottom:20%;left:20%;right:20%;height:2px;background:rgba(255,255,255,0.2);box-shadow:0 4px 0 rgba(255,255,255,0.15),0 8px 0 rgba(255,255,255,0.1)}
+.tp-balanced::before{content:'';position:absolute;top:15%;left:15%;right:15%;bottom:45%;background:rgba(0,212,170,0.3);border-radius:3px}
+.tp-balanced::after{content:'';position:absolute;bottom:15%;left:15%;right:15%;height:2px;background:rgba(255,255,255,0.25);box-shadow:0 4px 0 rgba(255,255,255,0.2),0 8px 0 rgba(255,255,255,0.15),0 12px 0 rgba(255,255,255,0.1)}
+.tp-minimal::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(180,124,255,0.4),rgba(0,212,170,0.2))}
+.tp-minimal::after{content:'';position:absolute;bottom:20%;left:20%;width:14px;height:3px;background:rgba(255,255,255,0.6);box-shadow:0 6px 0 rgba(255,255,255,0.3)}
 .share-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .share-loading{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px}
 .share-loading-spinner{width:32px;height:32px;border:3px solid var(--surface-2);border-top-color:var(--accent);border-radius:50%;animation:shareSpin 0.8s linear infinite;margin:0 auto 12px}
@@ -1305,6 +1322,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
     <div class="modal-handle"></div>
     <div class="modal-head"><div class="modal-title" id="shareModalTitle">Share Card</div><button class="modal-close" onclick="closeModal('shareModal')">×</button></div>
     <div class="share-preview-wrap"><canvas id="shareCanvas" class="share-preview-canvas" width="1080" height="1920"></canvas></div>
+<div class="template-switcher" id="templateSwitcher">
+      <button class="template-option active" data-template="bold" onclick="switchTemplate('bold')">
+        <div class="template-preview tp-bold"></div>
+        <span>Bold</span>
+      </button>
+      <button class="template-option" data-template="balanced" onclick="switchTemplate('balanced')">
+        <div class="template-preview tp-balanced"></div>
+        <span>Balanced</span>
+      </button>
+      <button class="template-option" data-template="minimal" onclick="switchTemplate('minimal')">
+        <div class="template-preview tp-minimal"></div>
+        <span>Minimal</span>
+      </button>
+    </div>
 <div class="photo-controls">
       <label class="photo-btn" for="photoCameraInput"><span>📷</span> Take Photo</label>
       <label class="photo-btn" for="photoGalleryInput"><span>🖼️</span> From Gallery</label>
@@ -5445,6 +5476,28 @@ window.addEventListener('beforeunload', function(){
 });
 // ==================== V5.4 PATCH 13B — SHARE CARDS ====================
 let currentShareData = null;
+// V5.4 Patch 16B — Template System
+let currentTemplate = 'bold'; // 'bold' | 'balanced' | 'minimal'
+
+function switchTemplate(template){
+  currentTemplate = template;
+  // Update button states
+  document.querySelectorAll('.template-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.template === template);
+  });
+  // Remember choice
+  try { localStorage.setItem('notstrava_last_template', template); } catch(e){}
+  // Re-render preview
+  updateSharePreview();
+}
+
+// Restore last template on init
+try {
+  const saved = localStorage.getItem('notstrava_last_template');
+  if(saved && ['bold','balanced','minimal'].includes(saved)){
+    currentTemplate = saved;
+  }
+} catch(e){}
 // V5.4 Patch 16A — Prompt to share after logging
 function promptShareAfterLog(sessionId, kind){
   // Check if user has dismissed share prompts before
@@ -6186,25 +6239,35 @@ function showPhotoRemoveButton(show){
 function drawPhotoBackground(ctx, img){
   const W = 1080, H = 1920;
 
-  // Calculate scale to cover the entire canvas (like CSS cover)
+  // Scale to cover
   const scale = Math.max(W / img.width, H / img.height);
   const scaledW = img.width * scale;
   const scaledH = img.height * scale;
   const offsetX = (W - scaledW) / 2;
   const offsetY = (H - scaledH) / 2;
-
-  // Draw photo
   ctx.drawImage(img, offsetX, offsetY, scaledW, scaledH);
 
-  // Dark gradient overlay for text readability
+  // Overlay strength varies by template
+  let topAlpha, midAlpha, botAlpha;
+  if(currentTemplate === 'minimal'){
+    // Very subtle — photo shines through
+    topAlpha = 0.25; midAlpha = 0.15; botAlpha = 0.45;
+  } else if(currentTemplate === 'balanced'){
+    // Medium — photo visible, text still readable
+    topAlpha = 0.40; midAlpha = 0.30; botAlpha = 0.55;
+  } else {
+    // Bold — heavier darkening for maximum text pop
+    topAlpha = 0.55; midAlpha = 0.45; botAlpha = 0.75;
+  }
+
   const overlay = ctx.createLinearGradient(0, 0, 0, H);
-  overlay.addColorStop(0, 'rgba(0,0,0,0.55)');
-  overlay.addColorStop(0.4, 'rgba(0,0,0,0.45)');
-  overlay.addColorStop(1, 'rgba(0,0,0,0.75)');
+  overlay.addColorStop(0, `rgba(0,0,0,${topAlpha})`);
+  overlay.addColorStop(0.4, `rgba(0,0,0,${midAlpha})`);
+  overlay.addColorStop(1, `rgba(0,0,0,${botAlpha})`);
   ctx.fillStyle = overlay;
   ctx.fillRect(0, 0, W, H);
 
-  // Subtle color accent (using session color)
+  // Subtle color accent (all templates)
   const color = currentShareData && currentShareData.color ? currentShareData.color : '#00D4AA';
   const accent = ctx.createRadialGradient(W * 0.85, H * 0.15, 0, W * 0.85, H * 0.15, 700);
   accent.addColorStop(0, hexToRgba(color, 0.15));
@@ -6212,10 +6275,10 @@ function drawPhotoBackground(ctx, img){
   ctx.fillStyle = accent;
   ctx.fillRect(0, 0, W, H);
 
-  // Thin border
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(20, 20, W-40, H-40);
+  // Border — subtle for all
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(24, 24, W-48, H-48);
 }
 
 // Override drawShareCard to support photo backgrounds
@@ -6247,11 +6310,235 @@ drawShareCard = function(ctx, data){
     ctx.strokeRect(20, 20, W-40, H-40);
   }
 
-  // Draw content
-  if(data.type === 'session') drawSessionContent(ctx, data);
+  // Draw content — session type uses template variants
+  if(data.type === 'session'){
+    if(currentTemplate === 'balanced') drawSessionBalanced(ctx, data);
+    else if(currentTemplate === 'minimal') drawSessionMinimal(ctx, data);
+    else drawSessionContent(ctx, data); // 'bold' — default
+  }
   else if(data.type === 'weekly') drawWeeklyContent(ctx, data);
   else if(data.type === 'pr') drawPRContent(ctx, data);
 };
+// V5.4 Patch 16B — Template: BALANCED (stats systematic, route prominent)
+function drawSessionBalanced(ctx, data){
+  const W = 1080, H = 1920;
+  const hasRoute = hasRouteData(data);
+
+  drawBrandHeader(ctx, data.dateStr, false);
+
+  let y = 300;
+
+  // Route/photo highlighted — LARGE central visual
+  if(hasRoute){
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '4px';
+    ctx.fillText('YOUR ROUTE', W/2, y);
+    y += 30;
+
+    // Big route box (about 45% of image height)
+    const routeHeight = 620;
+    drawRouteShape(ctx, data.route, 60, y, W - 120, routeHeight, data.color);
+    y += routeHeight + 30;
+  } else {
+    // No route — show session type in bigger area
+    y += 200;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = 'italic 400 100px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '2px';
+    ctx.shadowColor = hexToRgba(data.color, 0.4);
+    ctx.shadowBlur = 30;
+    ctx.fillText(data.sessionLabel.toUpperCase(), W/2, y);
+    ctx.shadowBlur = 0;
+    y += 320;
+  }
+
+  // Stats as systematic list
+  const stats = [
+    {label: 'Distance', value: data.mainValue + ' km'},
+    ...data.stats
+  ];
+
+  // Divider
+  const dividerGrad = ctx.createLinearGradient(120, y, W-120, y);
+  dividerGrad.addColorStop(0, 'transparent');
+  dividerGrad.addColorStop(0.5, hexToRgba(data.color, 0.5));
+  dividerGrad.addColorStop(1, 'transparent');
+  ctx.strokeStyle = dividerGrad;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(120, y);
+  ctx.lineTo(W-120, y);
+  ctx.stroke();
+  y += 60;
+
+  // Systematic stats layout — label left, value right
+  const rowHeight = 90;
+  stats.slice(0, 4).forEach((stat, i) => {
+    // Label (left)
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '600 30px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(stat.label.toUpperCase(), 140, y);
+
+    // Value (right, italic Bebas)
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'italic 400 52px "Bebas Neue", "SF Pro Display", sans-serif';
+    ctx.textAlign = 'right';
+    ctx.letterSpacing = '0px';
+    ctx.fillText(stat.value, W - 140, y);
+
+    y += rowHeight;
+
+    // Subtle separator between rows
+    if(i < stats.slice(0, 4).length - 1){
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(140, y - 40);
+      ctx.lineTo(W - 140, y - 40);
+      ctx.stroke();
+    }
+  });
+
+  // Caption at bottom
+  if(data.caption && data.caption.trim()){
+    y += 30;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 500 34px "Space Grotesk", "Georgia", serif';
+    ctx.textAlign = 'center';
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 46);
+  }
+}
+
+// V5.4 Patch 16B — Template: MINIMAL (photo/route dominates, tiny text)
+function drawSessionMinimal(ctx, data){
+  const W = 1080, H = 1920;
+  const hasRoute = hasRouteData(data);
+  const hasPhoto = sharePhotoImage && data.hasPhoto;
+
+  // If NO photo AND has route → make route the main visual filling the top
+  if(!hasPhoto && hasRoute){
+    // Big route as backdrop area
+    const routeHeight = 1000;
+    drawRouteShape(ctx, data.route, 40, 200, W - 80, routeHeight, data.color);
+  }
+
+  // Stats block — bottom-left area, subtle but readable
+  const blockX = 80;
+  let y = H - 480;
+
+  // Big distance
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'italic 400 180px "Bebas Neue", "SF Pro Display", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '-2px';
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 20;
+  ctx.fillText(data.mainValue, blockX, y);
+
+  // "km"
+  const distMetrics = ctx.measureText(data.mainValue);
+  ctx.font = '600 42px "Space Grotesk", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.fillText(' km', blockX + distMetrics.width + 10, y);
+  ctx.shadowBlur = 0;
+
+  y += 50;
+
+  // "in TIME"
+  const timeStat = data.stats.find(s => s.label === 'Time');
+  if(timeStat){
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.font = '500 36px "Space Grotesk", sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 12;
+    ctx.fillText('in ' + timeStat.value, blockX, y);
+    ctx.shadowBlur = 0;
+  }
+
+  y += 60;
+
+  // Small pace/speed line
+  const paceStat = data.stats.find(s => s.label === 'Pace');
+  if(paceStat){
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '500 26px "Space Grotesk", sans-serif';
+    ctx.letterSpacing = '1px';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 10;
+    ctx.fillText(paceStat.value + ' pace', blockX, y);
+    ctx.shadowBlur = 0;
+  }
+
+  y += 45;
+
+  // Date
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '600 22px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '3px';
+  ctx.shadowColor = 'rgba(0,0,0,0.7)';
+  ctx.shadowBlur = 8;
+  ctx.fillText(data.dateStr.toUpperCase(), blockX, y);
+  ctx.shadowBlur = 0;
+
+  // Brand mark bottom-left
+  const brandY = H - 100;
+  drawFlipFlopLogo(ctx, blockX + 20, brandY, 34, data.color);
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = '800 24px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '3px';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,0.7)';
+  ctx.shadowBlur = 8;
+  ctx.fillText('NOT STRAVA', blockX + 60, brandY);
+  ctx.shadowBlur = 0;
+  ctx.textBaseline = 'alphabetic';
+
+  // Route shape in bottom-right corner (subtle, small)
+  if(hasRoute && hasPhoto){
+    // Small route thumbnail in corner
+    const cornerSize = 260;
+    const cornerX = W - cornerSize - 60;
+    const cornerY = H - cornerSize - 260;
+
+    // Semi-transparent background for the route thumbnail
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    const bgPad = 12;
+    ctx.beginPath();
+    if(ctx.roundRect){
+      ctx.roundRect(cornerX - bgPad, cornerY - bgPad, cornerSize + bgPad*2, cornerSize + bgPad*2, 14);
+    } else {
+      ctx.rect(cornerX - bgPad, cornerY - bgPad, cornerSize + bgPad*2, cornerSize + bgPad*2);
+    }
+    ctx.fill();
+
+    // Small "ROUTE" label
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '600 14px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '3px';
+    ctx.fillText('ROUTE', cornerX + cornerSize/2, cornerY - 20);
+
+    // Draw the route (smaller version)
+    drawRouteShape(ctx, data.route, cornerX, cornerY, cornerSize, cornerSize, data.color);
+  }
+
+  // Caption (if provided) — bottom of card, subtle
+  if(data.caption && data.caption.trim()){
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.font = 'italic 500 28px "Space Grotesk", "Georgia", serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 12;
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, H - 40, W - 180, 40);
+    ctx.shadowBlur = 0;
+  }
+}
 
 // Reset photo state when opening any share modal
 const _origOpenSession = window.openShareForSession;
