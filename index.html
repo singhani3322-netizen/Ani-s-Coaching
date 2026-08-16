@@ -738,6 +738,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',syste
 .leaflet-bar{border:1px solid var(--border) !important}
 .custom-position-marker{background:#00D4AA;width:20px;height:20px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 20px rgba(0,212,170,0.7),0 0 0 4px rgba(0,212,170,0.3);animation:posPulse 2s infinite}
 @keyframes posPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* Directional arrow marker (V5.4 Patch 16A) */
+.direction-marker{position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+.direction-marker .dir-halo{position:absolute;inset:0;background:rgba(0,212,170,0.25);border-radius:50%;animation:dirHalo 2s infinite}
+.direction-marker .dir-arrow{position:relative;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:20px solid #00D4AA;filter:drop-shadow(0 0 8px rgba(0,212,170,0.9)) drop-shadow(0 0 3px #fff);transform-origin:center 70%;transition:transform 0.3s ease-out}
+.direction-marker .dir-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 4px rgba(0,0,0,0.4)}
+@keyframes dirHalo{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.4);opacity:0.15}}
 .custom-start-marker{background:#FFD700;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(255,215,0,0.6)}
 .custom-km-marker{background:var(--surface);border:2px solid var(--accent);color:var(--accent);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,0.4)}
 </style>
@@ -2919,17 +2926,20 @@ function buildHeroBody(r, dotClass){
       </div>
     `;
 } else {
-    // Standard: 1 primary + 2 icon buttons + optional live track
+    // Check if there's a recent logged session today for share button
+    const todaySessions = allSess().filter(s => daysSince(s.date) === 0);
+    const lastToday = todaySessions.length > 0 ? todaySessions[0] : null;
+
     const logType = plan && plan.type === 'gym' ? 'gym' 
                   : plan && plan.type === 'run' ? 'run' 
                   : plan && plan.type === 'activity' ? 'activity' 
                   : 'any';
-    // Show Live Track icon only for run days or 'any' (user's choice sessions)
     const showLiveTrack = (plan && plan.type === 'run') || (logType === 'any' && !plan);
     const liveBtn = showLiveTrack 
       ? '<button class="h2-btn-icon" onclick="startLiveSessionFromHero()" title="Live track" style="color:var(--danger);border-color:rgba(239,83,80,0.4)">▶</button>' 
       : '';
-    buttonsHTML = `
+
+    let mainButtons = `
       <div class="h2-buttons">
         <button class="h2-btn-primary" onclick="openLog('${logType}')">LOG SESSION</button>
         ${liveBtn}
@@ -2937,6 +2947,17 @@ function buildHeroBody(r, dotClass){
         <button class="h2-btn-icon" onclick="openSkipModal()" title="Not today">✕</button>
       </div>
     `;
+
+    // If session was logged today, add a subtle "share" strip below
+    if(lastToday){
+      mainButtons += `
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="h2-btn-icon" style="flex:1;padding:10px 12px;color:var(--accent);border-color:rgba(0,212,170,0.4);font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase" onclick="openShareForSession('${lastToday.id}','${lastToday.kind}')">🎨 Share Today's Session</button>
+        </div>
+      `;
+    }
+
+    buttonsHTML = mainButtons;
   }
 
   return titleHTML + buttonsHTML;
@@ -3461,7 +3482,11 @@ function saveRun(){
   if(imp){ state.pendingBaselineUpdate = imp; save(); }
   renderAll();
   checkMilestones();
-  if(!isBackdated) setTimeout(() => document.getElementById('feedbackModal').classList.add('active'), 1500);
+  if(!isBackdated) {
+    // Show feedback modal, then share prompt after
+    setTimeout(() => document.getElementById('feedbackModal').classList.add('active'), 1500);
+    setTimeout(() => promptShareAfterLog(newRun.id, 'run'), 4500);
+  }
 }
 
 function saveGym(){
@@ -3501,6 +3526,7 @@ function saveActivity(){
   showToast(`${name} logged.`, 'success');
   renderAll();
   checkMilestones();
+  setTimeout(() => promptShareAfterLog(newAct.id, 'activity'), 3000);
 }
 
 function saveFeedback(feeling){
@@ -5029,20 +5055,62 @@ function updateLivePositionMarker(){
 
   const pos = [liveSession.lastPosition.lat, liveSession.lastPosition.lon];
 
+  // Calculate heading (bearing) from the last 2-3 GPS points
+  let heading = null;
+  const route = liveSession.route;
+  if(route.length >= 2){
+    // Use the last few points for smoother bearing (less jittery)
+    const recent = route.slice(-Math.min(3, route.length));
+    if(recent.length >= 2){
+      const from = recent[0];
+      const to = recent[recent.length - 1];
+      heading = calculateBearing(from.lat, from.lon, to.lat, to.lon);
+    }
+  }
+
   if(livePositionMarker){
     livePositionMarker.setLatLng(pos);
+    // Update rotation
+    if(heading !== null){
+      const el = livePositionMarker.getElement();
+      if(el){
+        const arrow = el.querySelector('.dir-arrow');
+        if(arrow) arrow.style.transform = `rotate(${heading}deg)`;
+      }
+    }
   } else {
+    // Create the arrow marker with heading
+    const rotationStyle = heading !== null ? `transform:rotate(${heading}deg)` : '';
+    const html = `<div class="direction-marker">
+      <div class="dir-halo"></div>
+      <div class="dir-arrow" style="${rotationStyle}"></div>
+      <div class="dir-dot"></div>
+    </div>`;
     const icon = L.divIcon({
-      className: 'custom-position-marker',
-      iconSize: [20, 20],
-      iconAnchor: [10, 10]
+      className: '',
+      html: html,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
     });
-    livePositionMarker = L.marker(pos, {icon: icon}).addTo(liveMap);
+    livePositionMarker = L.marker(pos, {icon: icon, zIndexOffset: 500}).addTo(liveMap);
   }
 
   if(mapFollowUser){
     liveMap.setView(pos, liveMap.getZoom(), {animate: true, duration: 0.5});
   }
+}
+
+// Calculate compass bearing from point A to point B (0=North, 90=East)
+function calculateBearing(lat1, lon1, lat2, lon2){
+  const toRad = deg => deg * Math.PI / 180;
+  const toDeg = rad => rad * 180 / Math.PI;
+  const φ1 = toRad(lat1);
+  const φ2 = toRad(lat2);
+  const Δλ = toRad(lon2 - lon1);
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  let brng = toDeg(Math.atan2(y, x));
+  return (brng + 360) % 360;
 }
 
 function drawKmMarkers(){
@@ -5377,6 +5445,28 @@ window.addEventListener('beforeunload', function(){
 });
 // ==================== V5.4 PATCH 13B — SHARE CARDS ====================
 let currentShareData = null;
+// V5.4 Patch 16A — Prompt to share after logging
+function promptShareAfterLog(sessionId, kind){
+  // Check if user has dismissed share prompts before
+  if(state.prefs.hideSharePrompts) return;
+
+  // Show a soft prompt toast that user can tap to share
+  const t = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  document.getElementById('toastText').textContent = 'Share this session? Tap to open share card.';
+  t.className = 'toast pr-toast';
+  icon.textContent = '🎨';
+  t.classList.add('show');
+  t.onclick = () => {
+    t.classList.remove('show');
+    t.onclick = null;
+    openShareForSession(sessionId, kind);
+  };
+  setTimeout(() => {
+    t.classList.remove('show');
+    t.onclick = null;
+  }, 5500);
+}
 
 // Colors for session types
 const SHARE_COLORS = {
