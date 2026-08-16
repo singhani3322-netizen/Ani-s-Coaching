@@ -5542,6 +5542,115 @@ function drawBrandHeader(ctx, dateStr, isPR){
   // Reset baseline
   ctx.textBaseline = 'alphabetic';
 }
+// V5.4 Patch 16C — Route Shape Drawing on Share Cards
+function drawRouteShape(ctx, route, boxX, boxY, boxWidth, boxHeight, color){
+  if(!route || route.length < 2) return false;
+
+  // Extract lat/lon arrays
+  const lats = route.map(p => p.lat);
+  const lons = route.map(p => p.lon);
+
+  // Find bounding box
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLon = Math.min(...lons);
+  const maxLon = Math.max(...lons);
+
+  const latRange = maxLat - minLat || 0.001;
+  const lonRange = maxLon - minLon || 0.001;
+
+  // Correct for latitude distortion (longitude degrees are smaller at higher latitudes)
+  const centerLat = (minLat + maxLat) / 2;
+  const lonScale = Math.cos(centerLat * Math.PI / 180);
+  const adjustedLonRange = lonRange * lonScale;
+
+  // Fit to box while preserving aspect ratio
+  const boxAspect = boxWidth / boxHeight;
+  const routeAspect = adjustedLonRange / latRange;
+
+  let drawW, drawH;
+  if(routeAspect > boxAspect){
+    drawW = boxWidth;
+    drawH = boxWidth / routeAspect;
+  } else {
+    drawH = boxHeight;
+    drawW = boxHeight * routeAspect;
+  }
+
+  const drawX = boxX + (boxWidth - drawW) / 2;
+  const drawY = boxY + (boxHeight - drawH) / 2;
+
+  // Map lat/lon to canvas coordinates (note: y is inverted)
+  function project(lat, lon){
+    const x = drawX + ((lon - minLon) * lonScale / adjustedLonRange) * drawW;
+    const y = drawY + drawH - ((lat - minLat) / latRange) * drawH;
+    return { x, y };
+  }
+
+  ctx.save();
+
+  // Draw a subtle background frame for the route
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  const padX = 20, padY = 20;
+  const frameX = boxX + padX, frameY = boxY + padY;
+  const frameW = boxWidth - 2 * padX, frameH = boxHeight - 2 * padY;
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(frameX, frameY, frameW, frameH, 20) : ctx.rect(frameX, frameY, frameW, frameH);
+  ctx.fill();
+
+  // Draw the route path with glow
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 20;
+
+  ctx.beginPath();
+  const firstPoint = project(route[0].lat, route[0].lon);
+  ctx.moveTo(firstPoint.x, firstPoint.y);
+  for(let i = 1; i < route.length; i++){
+    const p = project(route[i].lat, route[i].lon);
+    ctx.lineTo(p.x, p.y);
+  }
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+
+  // Draw start marker (yellow circle)
+  ctx.fillStyle = '#FFD700';
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = 'rgba(255,215,0,0.6)';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(firstPoint.x, firstPoint.y, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Draw end marker (red circle) — only if different from start
+  const lastPoint = project(route[route.length-1].lat, route[route.length-1].lon);
+  const dist = Math.hypot(lastPoint.x - firstPoint.x, lastPoint.y - firstPoint.y);
+  if(dist > 20){ // Not a loop
+    ctx.fillStyle = '#EF5350';
+    ctx.shadowColor = 'rgba(239,83,80,0.6)';
+    ctx.beginPath();
+    ctx.arc(lastPoint.x, lastPoint.y, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
+  return true;
+}
+
+// Helper: check if a route object exists and has data
+function hasRouteData(data){
+  return data && data.route && data.route.length >= 2;
+}
 
 function drawFlipFlopLogo(ctx, cx, cy, size, color){
   // Custom-drawn BAREFOOT print — clean recognizable footprint
@@ -5614,35 +5723,33 @@ function drawFlipFlopLogo(ctx, cx, cy, size, color){
 }
 function drawSessionContent(ctx, data){
   const W = 1080, H = 1920;
+  const hasRoute = hasRouteData(data);
 
   drawBrandHeader(ctx, data.dateStr, false);
 
-  let y = 640;
+  let y = 620;
 
   // BIG distance — italic Bebas Neue for classy feel
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'italic 400 320px "Bebas Neue", "SF Pro Display", -apple-system, sans-serif';
+  ctx.font = 'italic 400 300px "Bebas Neue", "SF Pro Display", -apple-system, sans-serif';
   ctx.textAlign = 'center';
   ctx.letterSpacing = '-4px';
 
-  // Subtle glow behind number
   ctx.shadowColor = hexToRgba(data.color, 0.4);
   ctx.shadowBlur = 30;
   ctx.fillText(data.mainValue, W/2, y);
   ctx.shadowBlur = 0;
 
-  // Big vertical gap — no more overlap
-  y += 80;
+  y += 70;
 
-  // Unit label — clearly separated
   ctx.fillStyle = 'rgba(255,255,255,0.65)';
-  ctx.font = '600 36px "Space Grotesk", sans-serif';
+  ctx.font = '600 34px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '8px';
   ctx.fillText(data.mainUnit.toUpperCase(), W/2, y);
 
-  y += 180;
+  y += 140;
 
-  // Divider with color accent
+  // Divider
   const dividerGrad = ctx.createLinearGradient(200, y, W-200, y);
   dividerGrad.addColorStop(0, 'transparent');
   dividerGrad.addColorStop(0.5, hexToRgba(data.color, 0.5));
@@ -5654,52 +5761,63 @@ function drawSessionContent(ctx, data){
   ctx.lineTo(W-200, y);
   ctx.stroke();
 
-  y += 100;
+  y += 80;
 
-  // Stats in horizontal row — italic for classy feel
+  // Stats row (italic values, upright labels)
   const stats = data.stats || [];
   const statsToShow = stats.slice(0, 3);
   const colWidth = (W - 200) / statsToShow.length;
 
   statsToShow.forEach((stat, i) => {
     const cx = 100 + colWidth * i + colWidth / 2;
-
-    // Value in italic
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'italic 400 64px "Bebas Neue", "SF Pro Display", sans-serif';
+    ctx.font = 'italic 400 60px "Bebas Neue", "SF Pro Display", sans-serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '0px';
     ctx.fillText(stat.value, cx, y);
-
-    // Label — upright bold (kept clean)
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '600 22px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '3px';
     ctx.fillText(stat.label.toUpperCase(), cx, y + 44);
   });
 
-  y += 180;
+  y += 130;
 
-  // Caption in italic (if provided)
+  // Route shape (if available)
+  if(hasRoute){
+    y += 20;
+    // Route label
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '4px';
+    ctx.fillText('YOUR ROUTE', W/2, y);
+    y += 30;
+    // Draw route shape in a 360px tall box
+    drawRouteShape(ctx, data.route, 80, y, W - 160, 340, data.color);
+    y += 380;
+  }
+
+  // Caption (if provided)
   if(data.caption && data.caption.trim()){
-    const dividerGrad2 = ctx.createLinearGradient(300, y, W-300, y);
-    dividerGrad2.addColorStop(0, 'transparent');
-    dividerGrad2.addColorStop(0.5, 'rgba(255,255,255,0.15)');
-    dividerGrad2.addColorStop(1, 'transparent');
-    ctx.strokeStyle = dividerGrad2;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(300, y);
-    ctx.lineTo(W-300, y);
-    ctx.stroke();
-
-    y += 80;
-
+    if(!hasRoute){
+      const dividerGrad2 = ctx.createLinearGradient(300, y, W-300, y);
+      dividerGrad2.addColorStop(0, 'transparent');
+      dividerGrad2.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+      dividerGrad2.addColorStop(1, 'transparent');
+      ctx.strokeStyle = dividerGrad2;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(300, y);
+      ctx.lineTo(W-300, y);
+      ctx.stroke();
+      y += 60;
+    }
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = 'italic 500 40px "Space Grotesk", "Georgia", serif';
+    ctx.font = 'italic 500 38px "Space Grotesk", "Georgia", serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '0px';
-    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 52);
+    wrapText(ctx, '"' + data.caption.trim() + '"', W/2, y, W - 220, 50);
   }
 }
 
@@ -5931,6 +6049,8 @@ function openShareForSession(sessionId, kind){
       {label: 'Time', value: fmtTime(s.seconds)},
       {label: 'Speed', value: kmh + ' km/h'}
     ];
+  // V5.4 Patch 16C: attach route data if available
+    if(s.route && s.route.length >= 2) data.route = s.route;
   } else if(kind === 'gym'){
     data.mainValue = s.duration;
     data.mainUnit = 'Minutes';
