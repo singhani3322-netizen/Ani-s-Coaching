@@ -6340,7 +6340,7 @@ function drawSessionBalanced(ctx, data){
 
   drawBrandHeader(ctx, data.dateStr, false);
 
-  let y = 340;
+  let y = 320;
 
   // Session type label (big, italic)
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
@@ -6557,7 +6557,7 @@ function drawSessionPoster(ctx, data){
 
   drawBrandHeader(ctx, data.dateStr, false);
 
-  let y = 500;
+  let y = 400;
 
   // Huge session type as headline
   ctx.fillStyle = '#FFFFFF';
@@ -6647,19 +6647,15 @@ function drawSessionSplit(ctx, data){
 
     drawRouteShape(ctx, data.route, 80, topStart + 40, W - 160, topHeight - 40, data.color);
   } else {
-    // No route — show big distance in the top area instead
+    // Big session label as hero
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'italic 400 320px "Bebas Neue", sans-serif';
+    ctx.font = 'italic 400 170px "Bebas Neue", sans-serif';
     ctx.textAlign = 'center';
-    ctx.letterSpacing = '-4px';
-    ctx.shadowColor = hexToRgba(data.color, 0.5);
+    ctx.letterSpacing = '3px';
+    ctx.shadowColor = hexToRgba(data.color, 0.4);
     ctx.shadowBlur = 40;
-    ctx.fillText(data.mainValue, W/2, topStart + 400);
+    ctx.fillText(data.sessionLabel.toUpperCase(), W/2, topStart + 400);
     ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.font = '600 34px "Space Grotesk", sans-serif';
-    ctx.letterSpacing = '10px';
-    ctx.fillText('KILOMETERS', W/2, topStart + 460);
   }
 
   // Divider line separating top/bottom
