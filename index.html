@@ -4269,6 +4269,179 @@ function escapeHtml(str){
   div.textContent = str;
   return div.innerHTML;
 }
+// ==================== V5.4 PATCH 16 — SHARE SAVED ROUTES ====================
+
+// Encode route coordinates into a compact shareable string
+function encodeRouteCoords(coords){
+  let result = '';
+  let prevLat = 0;
+  let prevLon = 0;
+
+  coords.forEach(p => {
+    const lat = Math.round(p.lat * 1e5);
+    const lon = Math.round(p.lon * 1e5);
+
+    let dLat = lat - prevLat;
+    let dLon = lon - prevLon;
+
+    [dLat, dLon].forEach(value => {
+      value = value < 0 ? ~(value << 1) : (value << 1);
+
+      while(value >= 0x20){
+        result += String.fromCharCode((0x20 | (value & 0x1f)) + 63);
+        value >>= 5;
+      }
+
+      result += String.fromCharCode(value + 63);
+    });
+
+    prevLat = lat;
+    prevLon = lon;
+  });
+
+  return result;
+}
+
+// Decode shared route coordinates
+function decodeRouteCoords(encoded){
+  const coords = [];
+  let index = 0;
+  let lat = 0;
+  let lon = 0;
+
+  while(index < encoded.length){
+    let shift = 0;
+    let result = 0;
+    let byte;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while(byte >= 0x20);
+
+    lat += (result & 1) ? ~(result >> 1) : (result >> 1);
+
+    shift = 0;
+    result = 0;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while(byte >= 0x20);
+
+    lon += (result & 1) ? ~(result >> 1) : (result >> 1);
+
+    coords.push({
+      lat: lat / 1e5,
+      lon: lon / 1e5
+    });
+  }
+
+  return coords;
+}
+
+// Create a shareable URL for a saved route
+async function shareSavedRoute(routeId){
+  const route = loadSavedRoutes().find(r => r.id === routeId);
+
+  if(!route || !route.coords || route.coords.length < 2){
+    showToast('This route cannot be shared', 'warn');
+    return;
+  }
+
+  const payload = {
+    v: 1,
+    name: route.name,
+    coords: encodeRouteCoords(route.coords)
+  };
+
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  const url = window.location.origin + window.location.pathname + '#shared-route=' + encoded;
+
+  const shareData = {
+    title: 'Not Strava Route',
+    text: 'Shared Not Strava route: ' + route.name,
+    url: url
+  };
+
+  // Use native share sheet where available
+  if(navigator.share && (!navigator.canShare || navigator.canShare(shareData))){
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch(e){
+      if(e.name === 'AbortError') return;
+    }
+  }
+
+  // Fallback: copy link
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('Route link copied!', 'success');
+  } catch(e){
+    prompt('Copy this route link:', url);
+  }
+}
+
+// Handle a route shared through a URL
+function checkForSharedRoute(){
+  const hash = window.location.hash || '';
+
+  if(!hash.startsWith('#shared-route=')) return;
+
+  try {
+    const encoded = hash.substring('#shared-route='.length);
+    const json = decodeURIComponent(escape(atob(encoded)));
+    const payload = JSON.parse(json);
+
+    if(payload.v !== 1 || !payload.name || !payload.coords){
+      throw new Error('Invalid route');
+    }
+
+    const coords = decodeRouteCoords(payload.coords);
+
+    if(!coords || coords.length < 2){
+      throw new Error('Invalid coordinates');
+    }
+
+    const distance = calculateRouteDistance(coords);
+
+    const message =
+      'Someone shared a route with you!\n\n' +
+      payload.name + '\n' +
+      distance.toFixed(2) + ' km\n\n' +
+      'Add this route to My Routes?';
+
+    if(confirm(message)){
+      const routes = loadSavedRoutes();
+
+      // Avoid importing the exact same route twice
+      const duplicate = routes.some(r =>
+        r.name === payload.name &&
+        r.coords &&
+        r.coords.length === coords.length &&
+        Math.abs(calculateRouteDistance(r.coords) - distance) < 0.01
+      );
+
+      if(duplicate){
+        showToast('You already have this route', 'info');
+      } else {
+        saveNewRoute(payload.name, coords, 'shared');
+        showToast('Route added to My Routes!', 'success');
+      }
+    }
+
+    // Remove shared route data from URL after processing
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+
+  } catch(e){
+    console.error('Failed to import shared route:', e);
+    showToast('Invalid or damaged route link', 'warn');
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+}
 
 // Open route detail — reuses the route modal from Patch 14
 function openRouteDetail(routeId){
@@ -4298,6 +4471,7 @@ function openRouteDetail(routeId){
       actions.style.cssText = 'padding:14px 20px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px';
       actions.innerHTML = 
         '<button class="btn btn-primary btn-sm" onclick="closeModal(\'routeModal\');startFollowRoute(\'' + routeId + '\')">▶ Follow Route</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="shareSavedRoute(\'' + routeId + '\')">↗ Share Route</button>' +
         '<button class="btn btn-secondary btn-sm" onclick="renameRoute(\'' + routeId + '\')">Rename</button>' +
         '<button class="btn btn-danger btn-sm" style="grid-column:1/-1" onclick="deleteRoute(\'' + routeId + '\');closeModal(\'routeModal\')">Delete Route</button>';
       stats.parentElement.appendChild(actions);
@@ -8427,6 +8601,7 @@ fetchWeather();
 window.addEventListener('DOMContentLoaded', () => {
   document.querySelector('.loader-sub').textContent = pickRandom(loaderPhrases);
   setupBindings();
+  checkForSharedRoute();
   setTimeout(() => {
     document.getElementById('loader').classList.add('hidden');
     const loaded = loadState();
